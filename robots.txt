@@ -5,4 +5,4 @@ Disallow:
 
 # Point crawlers to the sitemap
 
-Sitemap: https://www.afonsorek.io/sitemap.xml
+Sitemap: https://www.afonso.io/sitemap.xml
