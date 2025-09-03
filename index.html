@@ -166,8 +166,6 @@
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        /* NEW: For 3D tilt effect */
-        /* transform-style: preserve-3d; */
       }
       .hud-card:hover {
         border-color: var(--accent-color);
@@ -313,13 +311,15 @@
       #glitch-heading::before {
         left: 2px;
         text-shadow: -2px 0 #ff00c1;
-        clip-path: rect(44px, 450px, 56px, 0);
+        /* UPDATED: Changed 450px to 9999px for responsiveness */
+        clip-path: rect(44px, 9999px, 56px, 0);
         animation: glitch-anim-1 5s infinite linear alternate-reverse;
       }
       #glitch-heading::after {
         left: -2px;
         text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-        clip-path: rect(80px, 450px, 90px, 0);
+        /* UPDATED: Changed 450px to 9999px for responsiveness */
+        clip-path: rect(80px, 9999px, 90px, 0);
         animation: glitch-anim-2 3s infinite linear alternate-reverse;
       }
 
@@ -362,12 +362,10 @@
     <div class="scanline-overlay"></div>
 
     <div class="max-w-7xl mx-auto relative z-10">
-      <!-- HEADER / INTRO -->
       <header
         id="home"
         class="min-h-screen flex flex-col justify-center relative border-b border-border-color pb-16"
       >
-        <!-- Elementos Gráficos Decorativos -->
         <div class="absolute bottom-1/4 right-10 opacity-30">
           <svg
             width="80"
@@ -402,7 +400,6 @@
           </svg>
         </div>
 
-        <!-- NEW: More decor -->
         <div
           class="absolute top-1/4 left-10 opacity-20 text-accent-color font-mono text-xs hidden lg:block"
         >
@@ -412,15 +409,19 @@
         </div>
 
         <nav
-          class="fixed top-0 left-0 w-full p-4 flex justify-between items-center text-sm z-50 bg-[rgba(0,0,0,0.0)] backdrop-blur-md border-b border-border-color"
+          class="fixed top-0 left-0 w-full p-4 flex justify-between items-center text-sm z-50 bg-[rgba(10,0,20,0.5)] backdrop-blur-md border-b border-border-color"
         >
           <div>
             <a
               href="#home"
-              class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-              >[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]</a
+              class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150 whitespace-nowrap"
             >
+              [ AFONSO
+              <span class="hidden sm:inline">ROCHA REKBAIM // SWIFT_DEV</span>
+              <span class="sm:hidden">REKBAIM</span> ]
+            </a>
           </div>
+
           <div class="hidden md:flex gap-1">
             <a
               href="#projetos"
@@ -438,26 +439,72 @@
               >CONTATO</a
             >
           </div>
-          <div class="flex gap-4">
+
+          <div class="flex items-center gap-2">
+            <div class="hidden sm:flex gap-2">
+              <a
+                href="https://linkedin.com/in/afonsorek"
+                class="btn font-display text-xs element-glow-hover px-4 py-2"
+                target="_blank"
+                rel="noopener noreferrer"
+                >[ Linkedin ]</a
+              >
+              <a
+                href="https://github.com/afonsorek"
+                class="btn font-display text-xs element-glow-hover px-4 py-2"
+                target="_blank"
+                rel="noopener noreferrer"
+                >[ Github ]</a
+              >
+            </div>
+            <button id="menu-btn" class="md:hidden p-2 text-accent-color z-50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+        </nav>
+
+        <div
+          id="mobile-menu"
+          class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-40 flex flex-col items-center justify-center text-center"
+        >
+          <div class="flex flex-col gap-8 text-2xl font-display">
+            <a href="#projetos" class="mobile-menu-link">PROJETOS</a>
+            <a href="#carreira" class="mobile-menu-link">CARREIRA</a>
+            <a href="#contato" class="mobile-menu-link">CONTATO</a>
+          </div>
+          <div class="flex gap-4 mt-12">
             <a
               href="https://linkedin.com/in/afonsorek"
-              class="btn font-display text-xs element-glow-hover px-4 py-2"
+              class="btn font-display text-sm element-glow-hover px-4 py-2"
               target="_blank"
               rel="noopener noreferrer"
               >[ Linkedin ]</a
             >
             <a
               href="https://github.com/afonsorek"
-              class="btn font-display text-xs element-glow-hover px-4 py-2"
+              class="btn font-display text-sm element-glow-hover px-4 py-2"
               target="_blank"
               rel="noopener noreferrer"
               >[ Github ]</a
             >
           </div>
-        </nav>
+        </div>
 
         <h1
-          class="font-display text-7xl md:text-8xl lg:text-[9rem] font-bold leading-none mt-16"
+          class="font-display text-6xl md:text-8xl lg:text-[9rem] font-bold leading-none mt-16"
         >
           <span id="glitch-heading" data-text="<AFONSO">&lt;AFONSO</span><br />
           <span class="glow">REKBAIM/&gt</span>
@@ -489,13 +536,11 @@
         <div id="projetos"></div>
         <br /><br />
         <br /><br />
-        <!-- SEÇÃO: PROJETOS -->
         <section class="mb-24">
           <div class="section-header mb-8">
-            <h2 class="font-display text-5xl">LOG:PROJETOS_</h2>
+            <h2 class="font-display text-4xl md:text-5xl">LOG:PROJETOS_</h2>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- You Producer -->
             <div class="hud-card">
               <div>
                 <h3 class="font-display text-2xl font-bold text-accent-color">
@@ -527,7 +572,6 @@
                 </div>
               </div>
             </div>
-            <!-- Kite Odyssey -->
             <div class="hud-card">
               <div>
                 <h3 class="font-display text-2xl font-bold text-accent-color">
@@ -547,7 +591,7 @@
                   Jogo Hipercasual com campanha de tráfego pago e orgânico,
                   Analytics do Firebase e Google Ads.
                 </p>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                   <a
                     href="https://github.com/afonsorek/kite-odyssey"
                     class="btn text-xs px-3 py-1"
@@ -572,7 +616,6 @@
                 </div>
               </div>
             </div>
-            <!-- NotchNook -->
             <div class="hud-card">
               <div>
                 <h3 class="font-display text-2xl font-bold text-accent-color">
@@ -604,7 +647,6 @@
                 </div>
               </div>
             </div>
-            <!-- AdAstra -->
             <div class="hud-card">
               <div>
                 <h3 class="font-display text-2xl font-bold text-accent-color">
@@ -636,7 +678,6 @@
                 </div>
               </div>
             </div>
-            <!-- nova. -->
             <div class="hud-card">
               <div>
                 <h3 class="font-display text-2xl font-bold text-accent-color">
@@ -674,7 +715,6 @@
                 </div>
               </div>
             </div>
-            <!-- Tuts -->
             <div class="hud-card">
               <div>
                 <h3 class="font-display text-2xl font-bold text-accent-color">
@@ -717,13 +757,11 @@
         <div id="carreira"></div>
         <br /><br />
         <br /><br />
-        <!-- SEÇÃO: CARREIRA -->
         <section class="mb-24">
           <div class="section-header mb-8">
-            <h2 class="font-display text-5xl">LOG:CARREIRA_</h2>
+            <h2 class="font-display text-4xl md:text-5xl">LOG:CARREIRA_</h2>
           </div>
           <div class="border-t border-border-color">
-            <!-- Experiência 1 -->
             <div
               class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
             >
@@ -757,7 +795,6 @@
                 </ul>
               </div>
             </div>
-            <!-- Experiência 2 -->
             <div
               class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
             >
@@ -786,7 +823,6 @@
                 </ul>
               </div>
             </div>
-            <!-- Experiência 3 -->
             <div class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2">
               <div class="md:col-span-1">
                 <p class="font-display text-accent-color">[ 2023 ]</p>
@@ -820,7 +856,6 @@
         <div id="contato"></div>
         <br /><br />
         <br /><br />
-        <!-- SEÇÃO: CONTATO -->
         <footer class="text-center py-12 border-t border-border-color">
           <h2 class="font-display text-4xl md:text-5xl glow">Contato</h2>
           <p class="mt-4 text-white/70 departure">
@@ -840,38 +875,21 @@
       </main>
     </div>
 
-    <!-- <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Mouse follower spotlight
-        const body = document.body;
-        window.addEventListener("mousemove", (e) => {
-          body.style.setProperty("--mouse-x", e.clientX + "px");
-          body.style.setProperty("--mouse-y", e.clientY + "px");
-        });
+    <script>
+      const menuBtn = document.getElementById("menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const mobileMenuLinks = document.querySelectorAll(".mobile-menu-link");
 
-        // 3D Card Tilt Effect
-        const cards = document.querySelectorAll(".hud-card");
-        cards.forEach((card) => {
-          card.addEventListener("mousemove", (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
 
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-
-            const rotateX = ((y - centerY) / centerY) * -8; // Max rotation 8 degrees
-            const rotateY = ((x - centerX) / centerX) * 8;
-
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-          });
-
-          card.addEventListener("mouseleave", () => {
-            card.style.transform =
-              "perspective(1000px) rotateX(0) rotateY(0) translateY(-4px)";
-          });
+      // Add event listener to each link to close the menu on click
+      mobileMenuLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileMenu.classList.add("hidden");
         });
       });
-    </script> -->
+    </script>
   </body>
 </html>
