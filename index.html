@@ -248,7 +248,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjEuMiIgbnVtT2NTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjEuMiIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSIvPjwvc3ZnPg==");
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjEuMiIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSIvPjwvc3ZnPg==");
         opacity: 0.08;
         z-index: 100;
         pointer-events: none;
@@ -352,6 +352,7 @@
           transform: skew(0.1deg);
         }
       }
+
     </style>
   </head>
 
@@ -360,828 +361,814 @@
     <div class="scanline-overlay"></div>
 
     <div class="max-w-7xl mx-auto relative z-10">
-      <header
-        id="home"
-        class="min-h-screen flex flex-col justify-center relative border-b border-border-color pb-16"
+      <nav
+        class="fixed top-0 left-0 w-full p-4 flex justify-between items-center text-sm z-50 bg-[rgba(10,0,20,0.5)] backdrop-blur-md border-b border-border-color"
       >
-        <div class="absolute bottom-1/4 right-10 opacity-30">
-          <svg
-            width="80"
-            height="80"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="text-accent-color animate-spin"
-            style="animation-duration: 20s"
+        <div>
+          <a
+            href="#home"
+            class="hidden md:flex hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150 whitespace-nowrap"
+            data-translate-key="navTitle"
+            >[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]</a
           >
-            <path
-              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M2 12H22"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M12 2C14.5013 4.73635 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2636 12 22C9.49872 19.2636 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73635 12 2Z"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-        <div
-          class="absolute top-1/4 left-10 opacity-20 text-accent-color font-mono text-xs hidden lg:block"
-        >
-          <p>// STATUS: ONLINE</p>
-          <p>// CONN: SECURE</p>
-          <p>// BUILD: v2.5.1</p>
         </div>
 
-        <nav
-          class="fixed top-0 left-0 w-full p-4 flex justify-between items-center text-sm z-50 bg-[rgba(10,0,20,0.5)] backdrop-blur-md border-b border-border-color"
-        >
-          <div>
-            <a
-              href="#home"
-              class="hidden sm:flex hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150 whitespace-nowrap"
-              data-translate-key="navTitle"
-              >[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]</a
-            >
-          </div>
+        <div id="dev-nav-links" class="hidden md:flex gap-1">
+          <a
+            href="#projetos"
+            class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
+            data-translate-key="navProjects"
+            >PROJETOS</a
+          >
+          <a
+            href="#carreira"
+            class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
+            data-translate-key="navCareer"
+            >CARREIRA</a
+          >
+          <a
+            href="#contato"
+            class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
+            data-translate-key="navContact"
+            >CONTATO</a
+          >
+        </div>
 
-          <div class="hidden md:flex gap-1">
-            <a
-              href="#projetos"
-              class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-              data-translate-key="navProjects"
-              >PROJETOS</a
-            >
-            <a
-              href="#carreira"
-              class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-              data-translate-key="navCareer"
-              >CARREIRA</a
-            >
-            <a
-              href="#contato"
-              class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-              data-translate-key="navContact"
-              >CONTATO</a
-            >
-          </div>
-
-          <div class="flex items-center gap-2">
-            <button
-              id="lang-switcher"
-              class="btn font-display text-xs px-3 py-2"
-            >
-              [ EN ]
-            </button>
-            <div class="hidden sm:flex gap-2">
-              <a
-                href="https://linkedin.com/in/afonsorek"
-                class="btn font-display text-xs element-glow-hover px-4 py-2"
-                target="_blank"
-                rel="noopener noreferrer"
-                >[ Linkedin ]</a
-              >
-              <a
-                href="https://github.com/afonsorek"
-                class="btn font-display text-xs element-glow-hover px-4 py-2"
-                target="_blank"
-                rel="noopener noreferrer"
-                >[ Github ]</a
-              >
-            </div>
-            <button id="menu-btn" class="md:hidden p-2 text-accent-color z-50">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
-        </nav>
-
-        <div
-          id="mobile-menu"
-          class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-40 flex flex-col items-center justify-center text-center"
-        >
-          <div class="flex flex-col gap-8 text-2xl font-display">
-            <a
-              href="#projetos"
-              class="mobile-menu-link"
-              data-translate-key="navProjectsMobile"
-              >PROJETOS</a
-            >
-            <a
-              href="#carreira"
-              class="mobile-menu-link"
-              data-translate-key="navCareerMobile"
-              >CARREIRA</a
-            >
-            <a
-              href="#contato"
-              class="mobile-menu-link"
-              data-translate-key="navContactMobile"
-              >CONTATO</a
-            >
-          </div>
-          <div class="flex gap-4 mt-12">
+        <div class="flex items-center gap-2">
+          <a href="/music/" class="btn font-display text-xs px-3 py-2" style="text-decoration:none">
+            [ MUSIC ]
+          </a>
+          <button id="lang-switcher" class="btn font-display text-xs px-3 py-2">
+            [ EN ]
+          </button>
+          <div class="hidden sm:flex gap-2">
             <a
               href="https://linkedin.com/in/afonsorek"
-              class="btn font-display text-sm element-glow-hover px-4 py-2"
+              class="btn font-display text-xs element-glow-hover px-4 py-2"
               target="_blank"
               rel="noopener noreferrer"
               >[ Linkedin ]</a
             >
             <a
               href="https://github.com/afonsorek"
-              class="btn font-display text-sm element-glow-hover px-4 py-2"
+              class="btn font-display text-xs element-glow-hover px-4 py-2"
               target="_blank"
               rel="noopener noreferrer"
               >[ Github ]</a
             >
           </div>
+          <button id="menu-btn" class="md:hidden p-2 text-accent-color z-50">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
         </div>
+      </nav>
 
-        <h1
-          class="font-display text-6xl md:text-8xl lg:text-[9rem] font-bold leading-none mt-16"
+      <div
+        id="mobile-menu"
+        class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-40 flex flex-col items-center justify-center text-center"
+      >
+        <div
+          id="dev-mobile-links"
+          class="flex flex-col gap-8 text-2xl font-display"
         >
-          <span id="glitch-heading" data-text="<AFONSO">&lt;AFONSO</span><br />
-          <span class="glow">REKBAIM/&gt</span>
-        </h1>
-        <p class="mt-8 max-w-lg text-lg font-light departure">
-          <span data-translate-key="heroLine1"
-            ><span class="text-accent-color">></span> Desenvolvedor no
-            ecossistema Apple.</span
-          ><br />
-          <span data-translate-key="heroLine2"
-            ><span class="text-accent-color">></span> Multiplataforma com
-            Flutter.</span
-          ><br />
-          <span data-translate-key="heroLine3"
-            ><span class="text-accent-color">></span> Web front-end (React &
-            Angular).</span
-          ><br />
-          <span data-translate-key="heroLine4"
-            ><span class="text-accent-color">></span> 7 anos de
-            experiência.</span
-          ><br />
-          <span data-translate-key="heroLine5"
-            ><span class="text-accent-color">></span> Aplicativo Top Charts na
-            Appstore.</span
-          ><br />
-          <span data-translate-key="heroLine6"
-            ><span class="text-accent-color">></span> Mais de 15 apps
-            produzidos.</span
-          ><br />
-          <span data-translate-key="heroLine7"
-            ><span class="text-accent-color">></span> Formação em UI/UX,
-            acessibilidade e business.</span
+          <a
+            href="#projetos"
+            class="mobile-menu-link"
+            data-translate-key="navProjectsMobile"
+            >PROJETOS</a
           >
-        </p>
-      </header>
-
-      <main class="mt-16">
-        <div id="projetos"></div>
-        <br /><br /><br /><br />
-        <section class="mb-24">
-          <div class="section-header mb-8">
-            <h2
-              class="font-display text-4xl md:text-5xl"
-              data-translate-key="projectsTitle"
-            >
-              LOG:PROJETOS_
-            </h2>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="hud-card">
-              <div>
-                <h3 class="font-display text-2xl font-bold text-accent-color">
-                  You Producer
-                </h3>
-                <p
-                  class="text-white/80 mt-2 font-light"
-                  data-translate-key="project1Subtitle"
-                >
-                  Top #3 na App Store em jogos de música.
-                </p>
-              </div>
-              <div class="mt-4">
-                <img
-                  src="Images/you-producer.jpeg"
-                  alt="Project image for You Producer"
-                  class="project-image w-full mb-4"
-                />
-                <p
-                  class="text-white/70 font-light mb-4"
-                  data-translate-key="project1Desc"
-                >
-                  Meu primeiro app publicado. Projeto de uma semana sobre
-                  produção musical em SwiftUI.
-                </p>
-                <div class="flex gap-2">
-                  <a
-                    href="https://apps.apple.com/br/app/you-producer/id6469336427?l=en-GB"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >App Store</a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="hud-card">
-              <div>
-                <h3 class="font-display text-2xl font-bold text-accent-color">
-                  Kite Odyssey
-                </h3>
-                <p
-                  class="text-white/80 mt-2 font-light"
-                  data-translate-key="project2Subtitle"
-                >
-                  Jogo Hipercasual com SpriteKit e UIKit.
-                </p>
-              </div>
-              <div class="mt-4">
-                <img
-                  src="Images/kite-odyssey.jpg"
-                  alt="Project image for Kite Odyssey"
-                  class="project-image w-full mb-4"
-                />
-                <p
-                  class="text-white/70 font-light mb-4"
-                  data-translate-key="project2Desc"
-                >
-                  Jogo Hipercasual com campanha de tráfego pago e orgânico,
-                  Analytics do Firebase e Google Ads.
-                </p>
-                <div class="flex flex-wrap gap-2">
-                  <a
-                    href="https://github.com/afonsorek/kite-odyssey"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >GitHub</a
-                  >
-                  <a
-                    href="https://apps.apple.com/br/app/kite-odyssey/id6479834293?l=en-GB"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >App Store</a
-                  >
-                  <a
-                    href="https://www.instagram.com/kiteodysseythegame/"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Instagram</a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="hud-card">
-              <div>
-                <h3 class="font-display text-2xl font-bold text-accent-color">
-                  NotchNook
-                </h3>
-                <p
-                  class="text-white/80 mt-2 font-light"
-                  data-translate-key="project3Subtitle"
-                >
-                  App utilitário para macOS.
-                </p>
-              </div>
-              <div class="mt-4">
-                <img
-                  src="Images/notchnook.png"
-                  alt="Project image for NotchNook"
-                  class="project-image w-full mb-4"
-                />
-                <p
-                  class="text-white/70 font-light mb-4"
-                  data-translate-key="project3Desc"
-                >
-                  App em SwiftUI que expande as funcionalidades do notch do
-                  Macbook. Focado em experiência de uso.
-                </p>
-                <div class="flex gap-2">
-                  <a
-                    href="https://lo.cafe/notchnook"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Website</a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="hud-card">
-              <div>
-                <h3 class="font-display text-2xl font-bold text-accent-color">
-                  AdAstra
-                </h3>
-                <p
-                  class="text-white/80 mt-2 font-light"
-                  data-translate-key="project4Subtitle"
-                >
-                  App para conectar alunos da Apple Academy.
-                </p>
-              </div>
-              <div class="mt-4">
-                <img
-                  src="Images/ad-astra.png"
-                  alt="Project image for AdAstra"
-                  class="project-image w-full mb-4"
-                />
-                <p
-                  class="text-white/70 font-light mb-4"
-                  data-translate-key="project4Desc"
-                >
-                  Utiliza tecnologias do iOS 18, views com cenas 3D e backend
-                  serverless para gerenciar conexões entre os alunos.
-                </p>
-                <div class="flex gap-2">
-                  <a
-                    href="https://github.com/apple-developer-academy-pucpr/AdAstra"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >GitHub</a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="hud-card">
-              <div>
-                <h3 class="font-display text-2xl font-bold text-accent-color">
-                  nova.
-                </h3>
-                <p
-                  class="text-white/80 mt-2 font-light"
-                  data-translate-key="project5Subtitle"
-                >
-                  App de reflexões diárias (estilo Obsidian).
-                </p>
-              </div>
-              <div class="mt-4">
-                <img
-                  src="Images/nova.png"
-                  alt="Project image for nova."
-                  class="project-image w-full mb-4"
-                />
-                <p
-                  class="text-white/70 font-light mb-4"
-                  data-translate-key="project5Desc"
-                >
-                  Incentiva reflexões com notificações remotas, áudio espacial e
-                  outras tecnologias.
-                </p>
-                <div class="flex gap-2">
-                  <a
-                    href="https://github.com/AndreWozniack/nova."
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >GitHub</a
-                  >
-                  <a
-                    href="https://www.behance.net/gallery/213420991/nova"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Behance</a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="hud-card">
-              <div>
-                <h3 class="font-display text-2xl font-bold text-accent-color">
-                  Tuts
-                </h3>
-                <p
-                  class="text-white/80 mt-2 font-light"
-                  data-translate-key="project6Subtitle"
-                >
-                  App de musicalização para crianças.
-                </p>
-              </div>
-              <div class="mt-4">
-                <img
-                  src="Images/tuts.png"
-                  alt="Project image for Tuts"
-                  class="project-image w-full mb-4"
-                />
-                <p
-                  class="text-white/70 font-light mb-4"
-                  data-translate-key="project6Desc"
-                >
-                  Foco em controle de som, animações fluidas, pesquisas de
-                  usuário e testes de usabilidade.
-                </p>
-                <div class="flex gap-2">
-                  <a
-                    href="https://github.com/afonsorek/Tuts"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >GitHub</a
-                  >
-                  <a
-                    href="https://www.behance.net/gallery/200864867/Tuts-App"
-                    class="btn text-xs px-3 py-1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Behance</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div id="carreira"></div>
-        <br /><br /><br /><br />
-        <section class="mb-24">
-          <div class="section-header mb-8">
-            <h2
-              class="font-display text-4xl md:text-5xl"
-              data-translate-key="careerTitle"
-            >
-              LOG:CARREIRA_
-            </h2>
-          </div>
-          <div class="border-t border-border-color">
-            <div
-              class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
-            >
-              <div class="md:col-span-1">
-                <p
-                  class="font-display text-accent-color"
-                  data-translate-key="job1Date"
-                >
-                  [ 2025-PRESENTE ]
-                </p>
-                <img
-                  src="Images/apple.jpg"
-                  alt="Apple Developer Academy Logo"
-                  class="project-image mt-4 w-full rounded-md"
-                />
-              </div>
-              <div class="md:col-span-3">
-                <h3
-                  class="text-xl font-bold text-white font-display"
-                  data-translate-key="job1Title"
-                >
-                  Mentor de Desenvolvimento iOS
-                </h3>
-                <p
-                  class="mt-1 text-sm text-accent-color"
-                  data-translate-key="job1Company"
-                >
-                  Apple Developer Academy
-                </p>
-                <ul
-                  class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
-                >
-                  <li data-translate-key="job1Desc1">
-                    Preparação de workshops voltados a tecnologias Apple.
-                  </li>
-                  <li data-translate-key="job1Desc2">
-                    Pesquisa aprofundada em novas tecnologias e projetos
-                    Open-Source.
-                  </li>
-                  <li data-translate-key="job1Desc3">
-                    Suporte prestado a mais de 10 aplicações em menos de 2
-                    meses.
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div
-              class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
-            >
-              <div class="md:col-span-1">
-                <p
-                  class="font-display text-accent-color"
-                  data-translate-key="job2Date"
-                >
-                  [ 2024-2025 ]
-                </p>
-                <img
-                  src="Images/locafe.png"
-                  alt="Lo.Cafe Logo"
-                  class="project-image mt-4 w-full rounded-md"
-                />
-              </div>
-              <div class="md:col-span-3">
-                <h3
-                  class="text-xl font-bold text-white font-display"
-                  data-translate-key="job2Title"
-                >
-                  Desenvolvedor Pleno iOS e macOS
-                </h3>
-                <p
-                  class="mt-1 text-sm text-accent-color"
-                  data-translate-key="job2Company"
-                >
-                  Lo.Cafe
-                </p>
-                <ul
-                  class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
-                >
-                  <li data-translate-key="job2Desc1">
-                    Desenvolvimento FullStack de aplicativos iOS e macOS.
-                  </li>
-                  <li data-translate-key="job2Desc2">
-                    Atuação nos principais produtos da empresa.
-                  </li>
-                  <li data-translate-key="job2Desc3">
-                    Independência na idealização e produção dos aplicativos.
-                  </li>
-                  <li data-translate-key="job2Desc4">Alto foco em UI/UX.</li>
-                </ul>
-              </div>
-            </div>
-            <div class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2">
-              <div class="md:col-span-1">
-                <p
-                  class="font-display text-accent-color"
-                  data-translate-key="job3Date"
-                >
-                  [ 2023 ]
-                </p>
-                <img
-                  src="Images/uex.png"
-                  alt="UEX Tecnologia Logo"
-                  class="project-image mt-4 w-full rounded-md"
-                />
-              </div>
-              <div class="md:col-span-3">
-                <h3
-                  class="text-xl font-bold text-white font-display"
-                  data-translate-key="job3Title"
-                >
-                  Software Engineer Pleno
-                </h3>
-                <p
-                  class="mt-1 text-sm text-accent-color"
-                  data-translate-key="job3Company"
-                >
-                  UEX Tecnologia
-                </p>
-                <ul
-                  class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
-                >
-                  <li data-translate-key="job3Desc1">
-                    Grande flexibilidade entre equipes e diferentes projetos.
-                  </li>
-                  <li data-translate-key="job3Desc2">
-                    Abstração de inúmeros componentes, low-code interno.
-                  </li>
-                  <li data-translate-key="job3Desc3">
-                    Entregas otimizadas, orçando 20% a menos para as mesmas
-                    entregas.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div id="contato"></div>
-        <br /><br /><br /><br />
-        <footer class="text-center py-12 border-t border-border-color">
-          <h2
-            class="font-display text-4xl md:text-5xl glow"
-            data-translate-key="contactTitle"
+          <a
+            href="#carreira"
+            class="mobile-menu-link"
+            data-translate-key="navCareerMobile"
+            >CARREIRA</a
           >
-            Contato
-          </h2>
-          <p class="mt-4 text-white/70 departure">
-            <span data-translate-key="contactSubtitle"
-              >Disponível para novos projetos e colaborações</span
+          <a
+            href="#contato"
+            class="mobile-menu-link"
+            data-translate-key="navContactMobile"
+            >CONTATO</a
+          >
+        </div>
+        <div class="flex gap-4 mt-12">
+          <a
+            href="https://linkedin.com/in/afonsorek"
+            class="btn font-display text-sm element-glow-hover px-4 py-2"
+            target="_blank"
+            rel="noopener noreferrer"
+            >[ Linkedin ]</a
+          >
+          <a
+            href="https://github.com/afonsorek"
+            class="btn font-display text-sm element-glow-hover px-4 py-2"
+            target="_blank"
+            rel="noopener noreferrer"
+            >[ Github ]</a
+          >
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- =================== PORTFÓLIO DE DESENVOLVEDOR ==================== -->
+      <!-- =================================================================== -->
+      <div id="developer-portfolio">
+        <header
+          id="home"
+          class="min-h-screen flex flex-col justify-center relative border-b border-border-color pb-16"
+        >
+          <div class="absolute bottom-1/4 right-10 opacity-30">
+            <svg
+              width="80"
+              height="80"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="text-accent-color animate-spin"
+              style="animation-duration: 20s"
             >
-            <span class="blinking-cursor font-display text-accent-color"
-              >|</span
+              <path
+                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                stroke="currentColor"
+                stroke-width="1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M2 12H22"
+                stroke="currentColor"
+                stroke-width="1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 2C14.5013 4.73635 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2636 12 22C9.49872 19.2636 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73635 12 2Z"
+                stroke="currentColor"
+                stroke-width="1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div
+            class="absolute top-1/4 left-10 opacity-20 text-accent-color font-mono text-xs hidden lg:block"
+          >
+            <p>// STATUS: ONLINE</p>
+            <p>// CONN: SECURE</p>
+            <p>// BUILD: v2.5.1</p>
+          </div>
+          <h1
+            class="font-display text-6xl md:text-8xl lg:text-[9rem] font-bold leading-none mt-16"
+          >
+            <span id="glitch-heading" data-text="<AFONSO">&lt;AFONSO</span
+            ><br />
+            <span class="glow">REKBAIM/&gt</span>
+          </h1>
+          <p class="mt-8 max-w-lg text-lg font-light departure">
+            <span data-translate-key="heroLine1"
+              ><span class="text-accent-color">></span> Desenvolvedor no
+              ecossistema Apple.</span
+            ><br />
+            <span data-translate-key="heroLine2"
+              ><span class="text-accent-color">></span> Multiplataforma com
+              Flutter.</span
+            ><br />
+            <span data-translate-key="heroLine3"
+              ><span class="text-accent-color">></span> Web front-end (React &
+              Angular).</span
+            ><br />
+            <span data-translate-key="heroLine4"
+              ><span class="text-accent-color">></span> 7 anos de
+              experiência.</span
+            ><br />
+            <span data-translate-key="heroLine5"
+              ><span class="text-accent-color">></span> Aplicativo Top Charts na
+              Appstore.</span
+            ><br />
+            <span data-translate-key="heroLine6"
+              ><span class="text-accent-color">></span> Mais de 15 apps
+              produzidos.</span
+            ><br />
+            <span data-translate-key="heroLine7"
+              ><span class="text-accent-color">></span> Formação em UI/UX,
+              acessibilidade e business.</span
             >
           </p>
-          <a
-            href="mailto:afonsorrekbaim@gmail.com"
-            class="btn text-lg px-8 py-3 mt-8 inline-block element-glow-hover font-display"
-            data-translate-key="contactButton"
-            >[ ENVIAR MENSAGEM ]</a
-          >
-          <p class="mt-24 text-xs opacity-50">@2025 - Afonso Rekbaim</p>
-        </footer>
-      </main>
+        </header>
+        <main class="mt-16">
+          <div id="projetos"></div>
+          <br /><br /><br /><br />
+          <section class="mb-24">
+            <div class="section-header mb-8">
+              <h2
+                class="font-display text-4xl md:text-5xl"
+                data-translate-key="projectsTitle"
+              >
+                LOG:PROJETOS_
+              </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <!-- Seus 6 cards de projeto aqui, como estavam antes. Exemplo: -->
+              <div class="hud-card">
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-accent-color">
+                    You Producer
+                  </h3>
+
+                  <p
+                    class="text-white/80 mt-2 font-light"
+                    data-translate-key="project1Subtitle"
+                  >
+                    Top #3 na App Store em jogos de música.
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <img
+                    src="Images/you-producer.jpeg"
+                    alt="Project image for You Producer"
+                    class="project-image w-full mb-4"
+                  />
+
+                  <p
+                    class="text-white/70 font-light mb-4"
+                    data-translate-key="project1Desc"
+                  >
+                    Meu primeiro app publicado. Projeto de uma semana sobre
+                    produção musical em SwiftUI.
+                  </p>
+
+                  <div class="flex gap-2">
+                    <a
+                      href="https://apps.apple.com/br/app/you-producer/id6469336427?l=en-GB"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >App Store</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="hud-card">
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-accent-color">
+                    Kite Odyssey
+                  </h3>
+
+                  <p
+                    class="text-white/80 mt-2 font-light"
+                    data-translate-key="project2Subtitle"
+                  >
+                    Jogo Hipercasual com SpriteKit e UIKit.
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <img
+                    src="Images/kite-odyssey.jpg"
+                    alt="Project image for Kite Odyssey"
+                    class="project-image w-full mb-4"
+                  />
+
+                  <p
+                    class="text-white/70 font-light mb-4"
+                    data-translate-key="project2Desc"
+                  >
+                    Jogo Hipercasual com campanha de tráfego pago e orgânico,
+                    Analytics do Firebase e Google Ads.
+                  </p>
+
+                  <div class="flex flex-wrap gap-2">
+                    <a
+                      href="https://github.com/afonsorek/kite-odyssey"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >GitHub</a
+                    >
+
+                    <a
+                      href="https://apps.apple.com/br/app/kite-odyssey/id6479834293?l=en-GB"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >App Store</a
+                    >
+
+                    <a
+                      href="https://www.instagram.com/kiteodysseythegame/"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Instagram</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="hud-card">
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-accent-color">
+                    NotchNook
+                  </h3>
+
+                  <p
+                    class="text-white/80 mt-2 font-light"
+                    data-translate-key="project3Subtitle"
+                  >
+                    App utilitário para macOS.
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <img
+                    src="Images/notchnook.png"
+                    alt="Project image for NotchNook"
+                    class="project-image w-full mb-4"
+                  />
+
+                  <p
+                    class="text-white/70 font-light mb-4"
+                    data-translate-key="project3Desc"
+                  >
+                    App em SwiftUI que expande as funcionalidades do notch do
+                    Macbook. Focado em experiência de uso.
+                  </p>
+
+                  <div class="flex gap-2">
+                    <a
+                      href="https://lo.cafe/notchnook"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Website</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="hud-card">
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-accent-color">
+                    AdAstra
+                  </h3>
+
+                  <p
+                    class="text-white/80 mt-2 font-light"
+                    data-translate-key="project4Subtitle"
+                  >
+                    App para conectar alunos da Apple Academy.
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <img
+                    src="Images/ad-astra.png"
+                    alt="Project image for AdAstra"
+                    class="project-image w-full mb-4"
+                  />
+
+                  <p
+                    class="text-white/70 font-light mb-4"
+                    data-translate-key="project4Desc"
+                  >
+                    Utiliza tecnologias do iOS 18, views com cenas 3D e backend
+                    serverless para gerenciar conexões entre os alunos.
+                  </p>
+
+                  <div class="flex gap-2">
+                    <a
+                      href="https://github.com/apple-developer-academy-pucpr/AdAstra"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >GitHub</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="hud-card">
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-accent-color">
+                    nova.
+                  </h3>
+
+                  <p
+                    class="text-white/80 mt-2 font-light"
+                    data-translate-key="project5Subtitle"
+                  >
+                    App de reflexões diárias (estilo Obsidian).
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <img
+                    src="Images/nova.png"
+                    alt="Project image for nova."
+                    class="project-image w-full mb-4"
+                  />
+
+                  <p
+                    class="text-white/70 font-light mb-4"
+                    data-translate-key="project5Desc"
+                  >
+                    Incentiva reflexões com notificações remotas, áudio espacial
+                    e outras tecnologias.
+                  </p>
+
+                  <div class="flex gap-2">
+                    <a
+                      href="https://github.com/AndreWozniack/nova."
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >GitHub</a
+                    >
+
+                    <a
+                      href="https://www.behance.net/gallery/213420991/nova"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Behance</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="hud-card">
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-accent-color">
+                    Tuts
+                  </h3>
+
+                  <p
+                    class="text-white/80 mt-2 font-light"
+                    data-translate-key="project6Subtitle"
+                  >
+                    App de musicalização para crianças.
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <img
+                    src="Images/tuts.png"
+                    alt="Project image for Tuts"
+                    class="project-image w-full mb-4"
+                  />
+
+                  <p
+                    class="text-white/70 font-light mb-4"
+                    data-translate-key="project6Desc"
+                  >
+                    Foco em controle de som, animações fluidas, pesquisas de
+                    usuário e testes de usabilidade.
+                  </p>
+
+                  <div class="flex gap-2">
+                    <a
+                      href="https://github.com/afonsorek/Tuts"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >GitHub</a
+                    >
+
+                    <a
+                      href="https://www.behance.net/gallery/200864867/Tuts-App"
+                      class="btn text-xs px-3 py-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Behance</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- ... Repita para os outros 5 projetos ... -->
+            </div>
+          </section>
+          <div id="carreira"></div>
+          <br /><br /><br /><br />
+          <div id="carreira"></div>
+
+          <br /><br /><br /><br />
+
+          <section class="mb-24">
+            <div class="section-header mb-8">
+              <h2
+                class="font-display text-4xl md:text-5xl"
+                data-translate-key="careerTitle"
+              >
+                LOG:CARREIRA_
+              </h2>
+            </div>
+
+            <div class="border-t border-border-color">
+              <div
+                class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
+              >
+                <div class="md:col-span-1">
+                  <p
+                    class="font-display text-accent-color"
+                    data-translate-key="job1Date"
+                  >
+                    [ 2025-PRESENTE ]
+                  </p>
+
+                  <img
+                    src="Images/apple.jpg"
+                    alt="Apple Developer Academy Logo"
+                    class="project-image mt-4 w-full rounded-md"
+                  />
+                </div>
+
+                <div class="md:col-span-3">
+                  <h3
+                    class="text-xl font-bold text-white font-display"
+                    data-translate-key="job1Title"
+                  >
+                    Mentor de Desenvolvimento iOS
+                  </h3>
+
+                  <p
+                    class="mt-1 text-sm text-accent-color"
+                    data-translate-key="job1Company"
+                  >
+                    Apple Developer Academy
+                  </p>
+
+                  <ul
+                    class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
+                  >
+                    <li data-translate-key="job1Desc1">
+                      Preparação de workshops voltados a tecnologias Apple.
+                    </li>
+
+                    <li data-translate-key="job1Desc2">
+                      Pesquisa aprofundada em novas tecnologias e projetos
+                      Open-Source.
+                    </li>
+
+                    <li data-translate-key="job1Desc3">
+                      Suporte prestado a mais de 10 aplicações em menos de 2
+                      meses.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div
+                class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
+              >
+                <div class="md:col-span-1">
+                  <p
+                    class="font-display text-accent-color"
+                    data-translate-key="job2Date"
+                  >
+                    [ 2024-2025 ]
+                  </p>
+
+                  <img
+                    src="Images/locafe.png"
+                    alt="Lo.Cafe Logo"
+                    class="project-image mt-4 w-full rounded-md"
+                  />
+                </div>
+
+                <div class="md:col-span-3">
+                  <h3
+                    class="text-xl font-bold text-white font-display"
+                    data-translate-key="job2Title"
+                  >
+                    Desenvolvedor Pleno iOS e macOS
+                  </h3>
+
+                  <p
+                    class="mt-1 text-sm text-accent-color"
+                    data-translate-key="job2Company"
+                  >
+                    Lo.Cafe
+                  </p>
+
+                  <ul
+                    class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
+                  >
+                    <li data-translate-key="job2Desc1">
+                      Desenvolvimento FullStack de aplicativos iOS e macOS.
+                    </li>
+
+                    <li data-translate-key="job2Desc2">
+                      Atuação nos principais produtos da empresa.
+                    </li>
+
+                    <li data-translate-key="job2Desc3">
+                      Independência na idealização e produção dos aplicativos.
+                    </li>
+
+                    <li data-translate-key="job2Desc4">Alto foco em UI/UX.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2">
+                <div class="md:col-span-1">
+                  <p
+                    class="font-display text-accent-color"
+                    data-translate-key="job3Date"
+                  >
+                    [ 2023 ]
+                  </p>
+
+                  <img
+                    src="Images/uex.png"
+                    alt="UEX Tecnologia Logo"
+                    class="project-image mt-4 w-full rounded-md"
+                  />
+                </div>
+
+                <div class="md:col-span-3">
+                  <h3
+                    class="text-xl font-bold text-white font-display"
+                    data-translate-key="job3Title"
+                  >
+                    Software Engineer Pleno
+                  </h3>
+
+                  <p
+                    class="mt-1 text-sm text-accent-color"
+                    data-translate-key="job3Company"
+                  >
+                    UEX Tecnologia
+                  </p>
+
+                  <ul
+                    class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
+                  >
+                    <li data-translate-key="job3Desc1">
+                      Grande flexibilidade entre equipes e diferentes projetos.
+                    </li>
+
+                    <li data-translate-key="job3Desc2">
+                      Abstração de inúmeros componentes, low-code interno.
+                    </li>
+
+                    <li data-translate-key="job3Desc3">
+                      Entregas otimizadas, orçando 20% a menos para as mesmas
+                      entregas.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div id="contato"></div>
+
+          <br /><br /><br /><br />
+
+          <footer class="text-center py-12 border-t border-border-color">
+            <h2
+              class="font-display text-4xl md:text-5xl glow"
+              data-translate-key="contactTitle"
+            >
+              Contato
+            </h2>
+
+            <p class="mt-4 text-white/70 departure">
+              <span data-translate-key="contactSubtitle"
+                >Disponível para novos projetos e colaborações</span
+              >
+
+              <span class="blinking-cursor font-display text-accent-color"
+                >|</span
+              >
+            </p>
+
+            <a
+              href="mailto:afonsorrekbaim@gmail.com"
+              class="btn text-lg px-8 py-3 mt-8 inline-block element-glow-hover font-display"
+              data-translate-key="contactButton"
+              >[ ENVIAR MENSAGEM ]</a
+            >
+
+            <p class="mt-24 text-xs opacity-50">@2025 - Afonso Rekbaim</p>
+          </footer>
+        </main>
+      </div>
+
+
     </div>
 
     <script>
-      const menuBtn = document.getElementById("menu-btn");
-      const mobileMenu = document.getElementById("mobile-menu");
-      const mobileMenuLinks = document.querySelectorAll(".mobile-menu-link");
-      menuBtn.addEventListener("click", () => {
-        mobileMenu.classList.toggle("hidden");
-      });
-      mobileMenuLinks.forEach((link) => {
-        link.addEventListener("click", () => {
-          mobileMenu.classList.add("hidden");
-        });
-      });
-    </script>
-
-    <script>
-      const translations = {
-        en: {
-          pageTitle: "Afonso Rocha Rekbaim :: Swift Developer",
-          navTitle: "[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]",
-          navProjects: "PROJECTS",
-          navCareer: "CAREER",
-          navContact: "CONTACT",
-          navProjectsMobile: "PROJECTS",
-          navCareerMobile: "CAREER",
-          navContactMobile: "CONTACT",
-          heroLine1:
-            '<span class="text-accent-color">></span> Developer in the Apple ecosystem.',
-          heroLine2:
-            '<span class="text-accent-color">></span> Cross-platform with Flutter.',
-          heroLine3:
-            '<span class="text-accent-color">></span> Web front-end (React & Angular).',
-          heroLine4:
-            '<span class="text-accent-color">></span> 7 years of experience.',
-          heroLine5:
-            '<span class="text-accent-color">></span> Top Charts app on the App Store.',
-          heroLine6:
-            '<span class="text-accent-color">></span> Over 15 apps produced.',
-          heroLine7:
-            '<span class="text-accent-color">></span> Trained in UI/UX, accessibility, and business.',
-          projectsTitle: "LOG:PROJECTS_",
-          project1Subtitle: "Top #3 on the App Store in music games.",
-          project1Desc:
-            "My first published app. A one-week project about music production in SwiftUI.",
-          project2Subtitle: "Hypercasual game with SpriteKit and UIKit.",
-          project2Desc:
-            "Hypercasual game with paid and organic traffic campaigns, Firebase Analytics, and Google Ads.",
-          project3Subtitle: "Utility app for macOS.",
-          project3Desc:
-            "A SwiftUI app that expands the functionalities of the Macbook's notch. Focused on user experience.",
-          project4Subtitle: "App to connect Apple Academy students.",
-          project4Desc:
-            "Uses iOS 18 technologies, views with 3D scenes, and a serverless backend to manage connections between students.",
-          project5Subtitle: "Daily reflection app (Obsidian style).",
-          project5Desc:
-            "Encourages reflections with remote notifications, spatial audio, and other technologies.",
-          project6Subtitle: "Music education app for children.",
-          project6Desc:
-            "Focus on sound control, fluid animations, user research, and usability testing.",
-          careerTitle: "LOG:CAREER_",
-          job1Date: "[ 2025-PRESENT ]",
-          job1Title: "iOS Development Mentor",
-          job1Company: "Apple Developer Academy",
-          job1Desc1: "Preparation of workshops focused on Apple technologies.",
-          job1Desc2:
-            "In-depth research on new technologies and Open-Source projects.",
-          job1Desc3:
-            "Provided support to over 10 applications in less than 2 months.",
-          job2Title: "Mid-Level iOS and macOS Developer",
-          job2Company: "Lo.Cafe",
-          job2Date: "[ 2024-2025 ]",
-          job2Desc1: "Full-Stack development of iOS and macOS applications.",
-          job2Desc2: "Worked on the company's main products.",
-          job2Desc3:
-            "Independence in the idealization and production of applications.",
-          job2Desc4: "Strong focus on UI/UX.",
-          job3Title: "Mid-Level Software Engineer",
-          job3Company: "UEX Tecnologia",
-          job3Date: "[ 2023 ]",
-          job3Desc1: "High flexibility between teams and different projects.",
-          job3Desc2: "Abstraction of numerous components, internal low-code.",
-          job3Desc3:
-            "Optimized deliveries, quoting 20% less for the same tasks.",
-          contactTitle: "Contact",
-          contactSubtitle: "Available for new projects and collaborations",
-          contactButton: "[ SEND MESSAGE ]",
-        },
-        pt: {
-          pageTitle: "Afonso Rocha Rekbaim :: Desenvolvedor Swift",
-          navTitle: "[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]",
-          navProjects: "PROJETOS",
-          navCareer: "CARREIRA",
-          navContact: "CONTATO",
-          navProjectsMobile: "PROJETOS",
-          navCareerMobile: "CARREIRA",
-          navContactMobile: "CONTATO",
-          heroLine1:
-            '<span class="text-accent-color">></span> Desenvolvedor no ecossistema Apple.',
-          heroLine2:
-            '<span class="text-accent-color">></span> Multiplataforma com Flutter.',
-          heroLine3:
-            '<span class="text-accent-color">></span> Web front-end (React & Angular).',
-          heroLine4:
-            '<span class="text-accent-color">></span> 7 anos de experiência.',
-          heroLine5:
-            '<span class="text-accent-color">></span> Aplicativo Top Charts na Appstore.',
-          heroLine6:
-            '<span class="text-accent-color">></span> Mais de 15 apps produzidos.',
-          heroLine7:
-            '<span class="text-accent-color">></span> Formação em UI/UX, acessibilidade e business.',
-          projectsTitle: "LOG:PROJETOS_",
-          project1Subtitle: "Top #3 na App Store em jogos de música.",
-          project1Desc:
-            "Meu primeiro app publicado. Projeto de uma semana sobre produção musical em SwiftUI.",
-          project2Subtitle: "Jogo Hipercasual com SpriteKit e UIKit.",
-          project2Desc:
-            "Jogo Hipercasual com campanha de tráfego pago e orgânico, Analytics do Firebase e Google Ads.",
-          project3Subtitle: "App utilitário para macOS.",
-          project3Desc:
-            "App em SwiftUI que expande as funcionalidades do notch do Macbook. Focado em experiência de uso.",
-          project4Subtitle: "App para conectar alunos da Apple Academy.",
-          project4Desc:
-            "Utiliza tecnologias do iOS 18, views com cenas 3D e backend serverless para gerenciar conexões entre os alunos.",
-          project5Subtitle: "App de reflexões diárias (estilo Obsidian).",
-          project5Desc:
-            "Incentiva reflexões com notificações remotas, áudio espacial e outras tecnologias.",
-          project6Subtitle: "App de musicalização para crianças.",
-          project6Desc:
-            "Foco em controle de som, animações fluidas, pesquisas de usuário e testes de usabilidade.",
-          careerTitle: "LOG:CARREIRA_",
-          job1Date: "[ 2025-PRESENTE ]",
-          job1Title: "Mentor de Desenvolvimento iOS",
-          job1Company: "Apple Developer Academy",
-          job1Desc1: "Preparação de workshops voltados a tecnologias Apple.",
-          job1Desc2:
-            "Pesquisa aprofundada em novas tecnologias e projetos Open-Source.",
-          job1Desc3:
-            "Suporte prestado a mais de 10 aplicações em menos de 2 meses.",
-          job2Title: "Desenvolvedor Pleno iOS e macOS",
-          job2Company: "Lo.Cafe",
-          job2Date: "[ 2024-2025 ]",
-          job2Desc1: "Desenvolvimento FullStack de aplicativos iOS e macOS.",
-          job2Desc2: "Atuação nos principais produtos da empresa.",
-          job2Desc3: "Independência na idealização e produção dos aplicativos.",
-          job2Desc4: "Alto foco em UI/UX.",
-          job3Title: "Software Engineer Pleno",
-          job3Company: "UEX Tecnologia",
-          job3Date: "[ 2023 ]",
-          job3Desc1:
-            "Grande flexibilidade entre equipes e diferentes projetos.",
-          job3Desc2: "Abstração de inúmeros componentes, low-code interno.",
-          job3Desc3:
-            "Entregas otimizadas, orçando 20% a menos para as mesmas entregas.",
-          contactTitle: "Contato",
-          contactSubtitle: "Disponível para novos projetos e colaborações",
-          contactButton: "[ ENVIAR MENSAGEM ]",
-        },
-      };
-
-      const langSwitcher = document.getElementById("lang-switcher");
-      let currentLang = localStorage.getItem("language") || "pt";
-
-      const setLanguage = (lang) => {
-        const elements = document.querySelectorAll("[data-translate-key]");
-        elements.forEach((el) => {
-          const key = el.getAttribute("data-translate-key");
-          if (translations[lang][key]) {
-            el.innerHTML = translations[lang][key];
-          }
-        });
-        document.title = translations[lang].pageTitle;
-        document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
-
-        // Update language switcher button text
-        langSwitcher.textContent = lang === "en" ? "[ PT ]" : "[ EN ]";
-      };
-
-      langSwitcher.addEventListener("click", () => {
-        currentLang = currentLang === "en" ? "pt" : "en";
-        localStorage.setItem("language", currentLang);
-        setLanguage(currentLang);
-      });
-
-      // Set initial language on page load
       document.addEventListener("DOMContentLoaded", () => {
+        const translations = {
+          en: {
+            pageTitle: "Afonso Rocha Rekbaim :: Swift Developer",
+            navTitle: "[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]",
+            navProjects: "PROJECTS",
+            navCareer: "CAREER",
+            navContact: "CONTACT",
+            navProjectsMobile: "PROJECTS",
+            navCareerMobile: "CAREER",
+            navContactMobile: "CONTACT",
+            heroLine1:
+              '<span class="text-accent-color">></span> Developer in the Apple ecosystem.',
+            heroLine2:
+              '<span class="text-accent-color">></span> Cross-platform with Flutter.',
+            heroLine3:
+              '<span class="text-accent-color">></span> Web front-end (React & Angular).',
+            heroLine4:
+              '<span class="text-accent-color">></span> 7 years of experience.',
+            heroLine5:
+              '<span class="text-accent-color">></span> Top Charts app on the App Store.',
+            heroLine6:
+              '<span class="text-accent-color">></span> Over 15 apps produced.',
+            heroLine7:
+              '<span class="text-accent-color">></span> Trained in UI/UX, accessibility, and business.',
+            projectsTitle: "LOG:PROJECTS_",
+            careerTitle: "LOG:CAREER_",
+            contactTitle: "Contact",
+            contactSubtitle: "Available for new projects and collaborations",
+            contactButton: "[ SEND MESSAGE ]",
+          },
+          pt: {
+            pageTitle: "Afonso Rocha Rekbaim :: Desenvolvedor Swift",
+            navTitle: "[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]",
+            navProjects: "PROJETOS",
+            navCareer: "CARREIRA",
+            navContact: "CONTATO",
+            navProjectsMobile: "PROJETOS",
+            navCareerMobile: "CARREIRA",
+            navContactMobile: "CONTATO",
+            heroLine1:
+              '<span class="text-accent-color">></span> Desenvolvedor no ecossistema Apple.',
+            heroLine2:
+              '<span class="text-accent-color">></span> Multiplataforma com Flutter.',
+            heroLine3:
+              '<span class="text-accent-color">></span> Web front-end (React & Angular).',
+            heroLine4:
+              '<span class="text-accent-color">></span> 7 anos de experiência.',
+            heroLine5:
+              '<span class="text-accent-color">></span> Aplicativo Top Charts na Appstore.',
+            heroLine6:
+              '<span class="text-accent-color">></span> Mais de 15 apps produzidos.',
+            heroLine7:
+              '<span class="text-accent-color">></span> Formação em UI/UX, acessibilidade e business.',
+            projectsTitle: "LOG:PROJETOS_",
+            careerTitle: "LOG:CARREIRA_",
+            contactTitle: "Contato",
+            contactSubtitle: "Disponível para novos projetos e colaborações",
+            contactButton: "[ ENVIAR MENSAGEM ]",
+          },
+        };
+        const langSwitcher = document.getElementById("lang-switcher");
+        let currentLang = localStorage.getItem("language") || "pt";
+        const setLanguage = (lang) => {
+          document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
+          const elements = document.querySelectorAll("[data-translate-key]");
+          elements.forEach((el) => {
+            const key = el.getAttribute("data-translate-key");
+            if (translations[lang] && translations[lang][key]) {
+              el.innerHTML = translations[lang][key];
+            }
+          });
+          document.title = translations[lang].pageTitle;
+          langSwitcher.textContent = lang === "en" ? "[ PT ]" : "[ EN ]";
+        };
+        langSwitcher.addEventListener("click", () => {
+          currentLang = currentLang === "en" ? "pt" : "en";
+          localStorage.setItem("language", currentLang);
+          setLanguage(currentLang);
+        });
         setLanguage(currentLang);
+
+        const menuBtn = document.getElementById("menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const mobileMenuLinks = document.querySelectorAll(".mobile-menu-link");
+
+        menuBtn.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+
+        mobileMenuLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            mobileMenu.classList.add("hidden");
+          });
+        });
       });
     </script>
   </body>

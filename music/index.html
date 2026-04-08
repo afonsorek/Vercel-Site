@@ -1,0 +1,2644 @@
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>𝄞⨾💿✮˚.⋆•アフォンソ — Music Portfolio</title>
+  <link rel="canonical" href="https://www.afonso.io/music/" />
+  <meta name="description" content="Music portfolio of Afonso Rekbaim — chiptune, DnB, synthwave, and experimental sound design for games and interactive media." />
+  <meta property="og:title" content="Afonso Rekbaim :: Music Portfolio" />
+  <meta property="og:description" content="Chiptune, DnB, synthwave, and experimental sound design for games. Listen to my tracks and explore my musical journey." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.afonso.io/music/" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=VT323&display=swap"
+    rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Departure Mono';
+      src: url('src/Departure.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    body {
+      background-image: url("src/bg-tile.png");
+      background-repeat: repeat;
+      overflow-x: hidden;
+      font-family: "Century Gothic", Verdana, sans-serif;
+      color: #55c1ef;
+    }
+
+    #topborder {
+      background-image: url("src/arabesco.png");
+      background-repeat: repeat-x;
+      height: 83px;
+      width: 100%;
+      position: fixed;
+      top: -12px;
+      left: 0;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    #bottomborder {
+      background-image: url("src/arabesco.png");
+      background-repeat: repeat-x;
+      height: 83px;
+      width: 100%;
+      position: fixed;
+      bottom: -12px;
+      left: 0;
+      z-index: 999;
+      pointer-events: none;
+      transform: scaleY(-1);
+    }
+
+    #all {
+      width: 1000px;
+      margin: 0 auto;
+      padding-top: 80px;
+      padding-bottom: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    /* =========================================
+         CAIXAS EXTERNAS (RETAS, BRUTALISTAS, Y2K)
+         ========================================= */
+    #side {
+      width: 175px;
+      position: sticky;
+      top: 20px;
+    }
+
+    #main {
+      width: 605px;
+      position: relative;
+    }
+
+    #side-right {
+      width: 175px;
+      position: sticky;
+      top: 20px;
+    }
+
+    #profile {
+      background-image:
+        linear-gradient(0deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.1)),
+        url("src/black.gif");
+      background-color: #f0ffff;
+      width: 175px;
+      margin-bottom: 25px;
+      color: #ffffff;
+      border: 2px double #7f0fd5;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    #pfp {
+      background-image: url("src/oiiai.gif");
+      background-size: cover;
+      width: 140px;
+      height: 115px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+
+    #nav,
+    #chatbox,
+    #aboutme-box {
+      background-image:
+        linear-gradient(0deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.3)), url("src/black.gif");
+      background-color: #fefefe;
+      width: 175px;
+      color: #ffffff;
+      text-shadow: 1px 1px 0px #7f0fd5;
+      border: 2px double #7f0fd5;
+      box-sizing: border-box;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .box-deco-top {
+      background-image: url("src/arabesco.png");
+      background-size: auto 100%;
+      background-repeat: repeat-x;
+      height: 18px;
+      width: 100%;
+      border-bottom: 2px double #7f0fd5;
+    }
+
+    .box-deco-bottom {
+      background-image: url("src/arabesco.png");
+      background-size: auto 100%;
+      background-repeat: repeat-x;
+      height: 18px;
+      width: 100%;
+      border-top: 2px double #7f0fd5;
+      transform: scaleY(-1);
+    }
+
+    #navheader,
+    #chatboxheader,
+    #aboutmeheader {
+      border-bottom: 2px double #7f0fd5;
+      background-color: #f4f2f6;
+      margin: 0px;
+      line-height: 16px;
+      padding: 8px 5px;
+      font-size: 16px;
+      color: #723dcc;
+      text-shadow: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .headericon {
+      height: 22px;
+      width: auto;
+      vertical-align: middle;
+    }
+
+    .navbow {
+      background-image: url("https://blob.gifcities.org/gifcities/6D456JY7ZKT4VC2U7YOYUTII7VCSNORN.gif");
+      background-size: 100%;
+      background-repeat: no-repeat;
+      width: 80px;
+      height: 60px;
+      position: absolute;
+      right: 2px;
+      top: 1px;
+      z-index: 2;
+    }
+
+    .chatbow {
+      background-image: url("https://soapbubbleseal.net/chat.gif");
+      background-size: 100%;
+      background-repeat: no-repeat;
+      width: 80px;
+      height: 60px;
+      position: absolute;
+      right: 2px;
+      top: 1px;
+      z-index: 2;
+    }
+
+    ul {
+      margin: 0px;
+      padding: 13px 10px 10px 16px;
+      line-height: 28px;
+    }
+
+    li {
+      list-style-type: none;
+      margin: -6px;
+      font-size: 16px;
+    }
+
+    #side a,
+    #side-right a {
+      text-decoration: none;
+      color: #ffffff;
+      text-shadow: 1px 1px 0px #7f0fd5;
+      background-color: transparent;
+    }
+
+    #side a:hover,
+    #side-right a:hover {
+      font-style: italic;
+      color: #190cff;
+      text-shadow: 1px 1px 0px #ffffff;
+    }
+
+    #title {
+      font-family:
+        Century Gothic,
+        Verdana,
+        sans-serif;
+      border-bottom: 3px double #190cff;
+      line-height: 15px;
+      width: 600px;
+      margin: 0px;
+      color: #7f0fd5;
+      background-color: #f4f2f6;
+      padding: 16px 0px 12px 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #content {
+      background-color: #fefefe;
+      width: 575px;
+      padding: 15px;
+      min-height: 500px;
+    }
+
+    .gif-center {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    /* PLAYLIST STYLE */
+    .playlist-container {
+      margin-top: 30px;
+      border-top: 2px dotted #190cff;
+      padding-top: 20px;
+    }
+
+    .playlist-header {
+      font-family:
+        Century Gothic,
+        Verdana,
+        sans-serif;
+      font-size: 18px;
+      color: #7f0fd5;
+      margin-bottom: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #playlist-ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    #playlist-ul li {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dotted #7f0fd5;
+      list-style: none;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .track-left {
+      width: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .status-gif {
+      width: 28px;
+      height: auto;
+    }
+
+    .track-right {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-right: 10px;
+    }
+
+    .track-title {
+      font-family: "Departure Mono", monospace;
+      font-size: 20px;
+      color: #7f0fd5;
+      background-color: transparent;
+      padding: 2px 8px;
+      text-shadow: none;
+      border: 1px solid transparent;
+    }
+
+    .track-title:hover {
+      color: white;
+      background-color: #190cff;
+    }
+
+    .track-stats {
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      color: #7f0fd5;
+      opacity: 0.8;
+    }
+
+    .btn-show-more {
+      display: block;
+      margin: 20px auto 0;
+      background-color: transparent;
+      color: #7f0fd5;
+      border: 2px solid #7f0fd5;
+      padding: 8px 20px;
+      font-family: "Departure Mono", monospace;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-show-more:hover {
+      background-color: #7f0fd5;
+      color: white;
+    }
+
+    /* =========================================
+         INÍCIO DO CSS DO PLAYER 3D (RESTAURADO E INTACTO)
+         ========================================= */
+    .player-3d-perspective {
+      perspective: 1200px;
+      width: 100%;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      font-family: "Outfit", sans-serif;
+      user-select: none;
+    }
+
+    .player-wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+      width: 100%;
+    }
+
+    .hud-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 15px;
+      transform-style: preserve-3d;
+    }
+
+    .hud-side {
+      display: flex;
+      transform: translateZ(20px);
+    }
+
+    .stats-panel {
+      background: rgba(244, 242, 246, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(127, 15, 213, 0.2);
+      border-radius: 12px;
+      /* RESTAURADO */
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 15px rgba(127, 15, 213, 0.1);
+    }
+
+    .stat-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #723dcc;
+      letter-spacing: 1px;
+      font-family: "Departure Mono", monospace;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      color: #7f0fd5;
+      font-family: "Departure Mono", monospace;
+      text-shadow:
+        1px 0px 0px #190cff,
+        -1px 0px 0px #d710ff;
+      line-height: 1;
+    }
+
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 4px);
+      grid-template-rows: repeat(5, 4px);
+      gap: 2px;
+    }
+
+    .pixel {
+      width: 4px;
+      height: 4px;
+      background: rgba(127, 15, 213, 0.1);
+      border-radius: 1px;
+      transition:
+        background 0.1s,
+        box-shadow 0.1s;
+    }
+
+    .pixel.on {
+      background: #7f0fd5;
+      box-shadow: 0 0 5px #7f0fd5;
+    }
+
+    .pixel.on-alt {
+      background: #d710ff;
+      box-shadow: 0 0 5px #d710ff;
+    }
+
+    .artist-badge {
+      background: rgba(244, 242, 246, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      /* RESTAURADO */
+      padding: 8px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #7f0fd5;
+      transform: translateZ(30px);
+      box-shadow: 0 4px 15px rgba(127, 15, 213, 0.1);
+      border: 1px solid rgba(127, 15, 213, 0.2);
+    }
+
+    .artist-avatar {
+      width: 25px;
+      height: 25px;
+      background: rgba(127, 15, 213, 0.1);
+      border-radius: 50%;
+      /* RESTAURADO */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+      border: 1px solid rgba(127, 15, 213, 0.3);
+    }
+
+    .artist-info h2 {
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+      color: #7f0fd5;
+    }
+
+    .artist-info p {
+      font-family: "Departure Mono", monospace;
+      font-size: 13px;
+      color: #723dcc;
+      margin: 0;
+    }
+
+    .player-core {
+      background: rgba(244, 242, 246, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      /* RESTAURADO */
+      padding: 10px 20px;
+      width: 100%;
+      height: 100px;
+      box-shadow: 0 10px 30px rgba(127, 15, 213, 0.15);
+      border: 1px solid rgba(127, 15, 213, 0.3);
+      position: relative;
+      transform-style: preserve-3d;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    /* NOVA WAVEFORM: ONDA HORIZONTAL DESLIZANTE */
+    .waveform-window {
+      height: 70px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      transform: translateZ(20px);
+      /* Efeito de fade nas bordas para a onda sumir suavemente */
+      mask-image: linear-gradient(to right,
+          transparent,
+          black 10%,
+          black 90%,
+          transparent);
+      -webkit-mask-image: linear-gradient(to right,
+          transparent,
+          black 10%,
+          black 90%,
+          transparent);
+    }
+
+    .waveform-container {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: max-content;
+      gap: 3px;
+      /* Animação pausada por padrão */
+      animation: scrollWave 15s linear infinite;
+      animation-play-state: paused;
+    }
+
+    /* Desliza a onda para a esquerda quando tocar */
+    .is-playing .waveform-container {
+      animation-play-state: running;
+    }
+
+    .wave-bar {
+      width: 4px;
+      background: rgba(127, 15, 213, 0.2);
+      border-radius: 2px;
+      /* Barras da wave devem manter a ponta redonda para estética */
+      transition:
+        background 0.3s,
+        box-shadow 0.3s;
+    }
+
+    .is-playing .wave-bar {
+      background: #7f0fd5;
+      box-shadow: 0 0 8px rgba(127, 15, 213, 0.6);
+    }
+
+    /* Loop perfeito de 0 a 50% */
+    @keyframes scrollWave {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .submission-text {
+      text-align: center;
+      font-family: "Departure Mono", monospace;
+      color: #7f0fd5;
+      font-size: 16px;
+      margin-top: 10px;
+      transform: translateZ(20px);
+      letter-spacing: 1px;
+    }
+
+    .controls-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+      transform: translateZ(30px);
+    }
+
+    .controls-pill {
+      background: rgba(244, 242, 246, 0.8);
+      padding: 5px 20px;
+      border-radius: 30px;
+      /* RESTAURADO */
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      border: 1px solid rgba(127, 15, 213, 0.3);
+      box-shadow: 0 5px 15px rgba(127, 15, 213, 0.1);
+    }
+
+    .controls-pill button {
+      background: none;
+      border: none;
+      color: #7f0fd5;
+      cursor: pointer;
+      font-size: 20px;
+      /* RESTAURADO PARA ÍCONES */
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: none;
+    }
+
+    .controls-pill button:hover {
+      color: #190cff;
+      transform: scale(1.1);
+    }
+
+    .controls-pill .btn-play {
+      background: none;
+      color: #7f0fd5;
+      width: auto;
+      height: 35px;
+      font-size: 24px;
+      padding: 0;
+      border: none;
+      box-shadow: 0 3px 10px rgba(127, 15, 213, 0.3);
+      border-radius: 5px;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 5px #7f0fd5;
+        background: rgba(127, 15, 213, 0.1);
+      }
+
+      50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 20px #ff00ff, 0 0 10px #fff;
+        background: rgba(127, 15, 213, 0.4);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px #7f0fd5;
+        background: rgba(127, 15, 213, 0.1);
+      }
+    }
+
+    .first-play-glow {
+      animation: pulseGlow 1.2s infinite ease-in-out !important;
+      z-index: 100005;
+    }
+
+    /* =========================================
+         WMP VISUALIZER CSS
+         ========================================= */
+    .vis-bar {
+      width: 11%;
+      background: linear-gradient(to top,
+          #00ff00 0%,
+          #ffff00 60%,
+          #ff0000 100%);
+      transform-origin: bottom;
+      border-top: 2px solid #fff;
+    }
+
+    .controls-pill .btn-play:hover {
+      background: #190cff;
+      color: white;
+    }
+
+    /* =========================================
+         FIM DO CSS DO PLAYER 3D
+         ========================================= */
+
+    /* =========================================
+         CHAOS ZONE — FLOATING AD BUTTONS
+         ========================================= */
+    #chaos-float {
+      position: fixed;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .chaos-btn {
+      display: block;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      transition:
+        transform 0.1s,
+        filter 0.1s;
+      line-height: 0;
+    }
+
+    .chaos-btn:hover {
+      transform: scale(1.12);
+      filter: brightness(1.2) drop-shadow(0 0 4px #ff00ff);
+    }
+
+    .chaos-btn:active {
+      transform: scale(0.93);
+    }
+
+    .chaos-btn img {
+      display: block;
+      image-rendering: pixelated;
+      width: 130px;
+      height: auto;
+    }
+
+    /* Wiggle animation to draw attention */
+    @keyframes adWiggle {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(-2deg);
+      }
+
+      75% {
+        transform: rotate(2deg);
+      }
+    }
+
+    .chaos-btn img:hover {
+      animation: adWiggle 0.3s ease-in-out infinite;
+    }
+
+    /* --- MLG Overlay --- */
+    #mlg-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    #mlg-overlay.active {
+      display: block;
+    }
+
+    .mlg-gif {
+      position: absolute;
+      image-rendering: pixelated;
+    }
+
+    /* --- Nyan Cats --- */
+    .nyan-cat-spawn {
+      position: fixed;
+      z-index: 88888;
+      pointer-events: none;
+      image-rendering: pixelated;
+      height: 80px;
+      width: auto;
+      animation: nyanFly linear forwards;
+    }
+
+    @keyframes nyanFly {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(calc(100vw + 350px));
+      }
+    }
+
+    /* --- 360 spin --- */
+    body.spinning-360 {
+      animation: spin360 0.7s linear 1;
+    }
+
+    @keyframes spin360 {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* --- BSOD overlay --- */
+    #bsod-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #0830d0;
+      color: white;
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      padding: 60px 80px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    #bsod-overlay.active {
+      display: block;
+    }
+
+    /* --- Shake --- */
+    @keyframes screenShake {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      10% {
+        transform: translate(-8px, -6px) rotate(-1deg);
+      }
+
+      20% {
+        transform: translate(8px, 6px) rotate(1deg);
+      }
+
+      30% {
+        transform: translate(-6px, 8px) rotate(0deg);
+      }
+
+      40% {
+        transform: translate(6px, -8px) rotate(1deg);
+      }
+
+      50% {
+        transform: translate(-8px, 6px) rotate(-1deg);
+      }
+
+      60% {
+        transform: translate(8px, -6px) rotate(1deg);
+      }
+
+      70% {
+        transform: translate(-6px, -8px) rotate(0deg);
+      }
+
+      80% {
+        transform: translate(6px, 8px) rotate(-1deg);
+      }
+
+      90% {
+        transform: translate(-4px, -4px) rotate(1deg);
+      }
+
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+    }
+
+    body.shaking {
+      animation: screenShake 0.5s ease-out;
+    }
+
+    /* --- Confetti --- */
+    .confetti-piece {
+      position: fixed;
+      z-index: 55555;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+      border-radius: 2px;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* =========================================
+         Y2K / NEOFUTURISMO EXTRAS
+         ========================================= */
+
+    /* --- Marquee ticker bar --- */
+    #marquee-bar {
+      background: linear-gradient(90deg,
+          #7f0fd5 0%,
+          #190cff 50%,
+          #7f0fd5 100%);
+      background-size: 200% 100%;
+      animation: marqueeBg 4s linear infinite;
+      color: #fff;
+      font-family: "Departure Mono", monospace;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 2px solid #d710ff;
+      border-bottom: 2px solid #d710ff;
+      margin-bottom: 8px;
+    }
+
+    @keyframes marqueeBg {
+      0% {
+        background-position: 0% 0%;
+      }
+
+      100% {
+        background-position: 200% 0%;
+      }
+    }
+
+    #marquee-bar marquee {
+      display: inline-block;
+    }
+
+    /* --- Under Construction banner --- */
+    .under-construction {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: repeating-linear-gradient(45deg,
+          #ff0 0px,
+          #ff0 10px,
+          #000 10px,
+          #000 20px);
+      color: #000;
+      font-family: Impact, sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 5px 10px;
+      margin: 12px 0;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* --- Blink --- */
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .blink {
+      animation: blink 0.9s step-start infinite;
+    }
+
+    /* --- Badge strip (88x31 style) --- */
+    .badge-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px 6px;
+      justify-content: center;
+    }
+
+    .badge-strip img {
+      image-rendering: pixelated;
+      height: 31px;
+      width: auto;
+      border: 1px solid #7f0fd5;
+      transition: transform 0.15s;
+    }
+
+    .badge-strip img:hover {
+      transform: scale(1.15);
+    }
+
+    /* --- Visitor counter box --- */
+    .y2k-counter-box {
+      background: #000;
+      border: 2px double #7f0fd5;
+      font-family: "Departure Mono", monospace;
+      font-size: 14px;
+      color: #00ff00;
+      text-align: center;
+      padding: 6px 8px;
+      margin: 8px 0;
+      text-shadow: 0 0 6px #00ff00;
+    }
+
+    .y2k-counter-digits {
+      font-size: 26px;
+      letter-spacing: 4px;
+      color: #00ff00;
+      text-shadow:
+        0 0 10px #00ff00,
+        0 0 20px #00ff00;
+    }
+
+    /* --- Music GIF decorations in sidebar --- */
+    .sidebar-gif-row {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 0;
+      flex-wrap: wrap;
+    }
+
+    .sidebar-gif-row img {
+      max-width: 80px;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    /* --- Horizontal retro divider --- */
+    .retro-divider {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 14px 0 8px 0;
+    }
+
+    .retro-divider::before,
+    .retro-divider::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg,
+          transparent,
+          #7f0fd5,
+          #190cff,
+          #7f0fd5,
+          transparent);
+    }
+
+    .retro-divider span {
+      font-family: "Departure Mono", monospace;
+      font-size: 14px;
+      color: #d710ff;
+      white-space: nowrap;
+      letter-spacing: 2px;
+    }
+
+    /* --- Ad banner sidebar strip --- */
+    .ad-banner-right {
+      border: 2px double #7f0fd5;
+      overflow: hidden;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: block;
+      transition: filter 0.2s;
+    }
+
+    .ad-banner-right:hover {
+      filter: brightness(1.2);
+    }
+
+    .ad-banner-right img {
+      display: block;
+      width: 100%;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    /* --- New! badge --- */
+    .new-badge {
+      display: inline-block;
+      background: red;
+      color: #fff;
+      font-family: Impact, sans-serif;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 1px 5px;
+      margin-left: 4px;
+      vertical-align: middle;
+      letter-spacing: 1px;
+      animation: blink 1s step-start infinite;
+    }
+
+
+
+    /* --- GIF banner strip in main content --- */
+    .gif-banner-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 6px;
+      margin: 16px 0 8px 0;
+      padding: 8px 6px;
+      background: linear-gradient(90deg,
+          rgba(127, 15, 213, 0.08),
+          rgba(25, 12, 255, 0.08),
+          rgba(127, 15, 213, 0.08));
+      border-top: 1px dashed #7f0fd5;
+      border-bottom: 1px dashed #7f0fd5;
+    }
+
+    .gif-banner-strip img {
+      height: 50px;
+      width: auto;
+      image-rendering: pixelated;
+    }
+
+    /* --- First Time Play Overlay --- */
+    #first-play-overlay {
+      position: fixed;
+      inset: 0;
+      /* Rectangle Opacity */
+      background: rgba(15, 15, 15, 0.95);
+      z-index: 100000;
+      display: none;
+    }
+
+    .player-highlight {
+      z-index: 100001 !important;
+      position: relative;
+    }
+
+    /* --- Music-reactive background glow --- */
+    #music-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background: radial-gradient(ellipse at center, rgba(127, 15, 213, 0.08) 0%, transparent 70%);
+    }
+
+    /* --- Accessibility Static Mode --- */
+    body.static-mode * {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    body.static-mode canvas {
+      display: none !important;
+    }
+
+    body.static-mode .player-wrapper {
+      box-shadow: none !important;
+    }
+
+    body.static-mode img[src*=".gif"] {
+      display: none !important;
+    }
+
+    body.static-mode .chaos-btn {
+      background: #c0c0c0 !important;
+      border: 2px outset #fff !important;
+      padding: 8px 12px !important;
+      font-family: inherit !important;
+      font-size: 14px !important;
+      color: black !important;
+      text-shadow: none !important;
+      margin-bottom: 5px;
+    }
+
+    body.static-mode #chaos-float {
+      display: none !important;
+    }
+
+    body.static-mode .navbow,
+    body.static-mode .chatbow,
+    body.static-mode #pfp {
+      background-image: none !important;
+      background-color: transparent !important;
+    }
+
+    /* --- Rainbow Button Animation --- */
+    @keyframes rainbow-border-anim {
+      0% {
+        border-color: #ff0000;
+      }
+
+      14% {
+        border-color: #ffa500;
+      }
+
+      28% {
+        border-color: #ffff00;
+      }
+
+      42% {
+        border-color: #008000;
+      }
+
+      57% {
+        border-color: #0000ff;
+      }
+
+      71% {
+        border-color: #4b0082;
+      }
+
+      85% {
+        border-color: #ee82ee;
+      }
+
+      100% {
+        border-color: #ff0000;
+      }
+    }
+
+    .rainbow-border-btn {
+      border: 3px solid #ff0000;
+      animation: rainbow-border-anim 3s linear infinite;
+    }
+
+    /* =========================================
+         FIM DO CSS EXTRAS
+         ========================================= */
+  </style>
+</head>
+
+<body>
+  <div id="first-play-overlay"></div>
+
+  <div id="onboarding-warning"
+    style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 380px; background: #c0c0c0; border: 2px outset #dfdfdf; font-family: 'MS Sans Serif', sans-serif, 'Courier New'; z-index: 100002; display: none; box-shadow: 2px 2px 10px rgba(0,0,0,0.8);">
+    <div
+      style="background: linear-gradient(90deg, #000080, #1084d0); padding: 5px 8px; color: white; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+      <span>Motion and Sound Stimuli</span>
+      <span
+        style="background: #c0c0c0; color: black; border: 1px outset #fff; padding: 0 4px; font-size: 11px; cursor: default;">X</span>
+    </div>
+    <div style="padding: 15px; text-align: center; color: black;">
+      <h2
+        style="color: red; margin: 0 0 15px 0; font-size: 28px; font-weight: bold; text-shadow: 1px 1px 0px #fff; letter-spacing: 2px;">
+        WARNING</h2>
+      <p style="margin-top: 0; font-size: 14px;">This site contains moving images, GIFs, and sound stimuli.</p>
+      <p style="font-size: 14px; margin-bottom: 20px;">Please choose your experience mode:</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button onclick="chooseExperience('static')"
+          style="padding: 4px 8px; cursor: pointer; font-family: inherit; font-size: 13px; border: 2px outset #fff; background: #c0c0c0;">Static
+          Mode</button>
+        <button onclick="chooseExperience('full')" class="rainbow-border-btn"
+          style="padding: 4px 8px; cursor: pointer; font-family: inherit; font-size: 13px; background: #c0c0c0; font-weight: bold;">Full
+          Experience</button>
+      </div>
+    </div>
+  </div>
+  <div id="music-glow"></div>
+  <div id="topborder"></div>
+  <div id="bottomborder"></div>
+
+  <!-- ===== CHAOS ZONE FLOATING BUTTONS ===== -->
+  <div id="chaos-float">
+
+    <button class="chaos-btn" id="btn-nyan" title="🌈 NYAN CATS">
+      <img src="https://blob.gifcities.org/gifcities/H2ZGNOHEJUBHTJPSYNDWD53LOTO6BOUX.gif" alt="Nyan Cats" />
+    </button>
+    <button class="chaos-btn" id="btn-360" title="🔄 360 NO SCOPE">
+      <img src="https://blob.gifcities.org/gifcities/2LMYFVFFMMSA3FAO2GAMOXSDCVDCNIT4.gif" alt="360" />
+    </button>
+    <button class="chaos-btn" id="btn-shake" title="🎉 EARTHQUAKE">
+      <img src="https://blob.gifcities.org/gifcities/33CBDF3BP3RU5MRRTYTLF7642R5TKQUA.gif" alt="Shake" />
+    </button>
+
+  </div>
+  <!-- ===== END CHAOS ZONE ===== -->
+
+  <div id="all">
+    <div id="side">
+      <div id="profile">
+        <center>
+          <p style="text-shadow: none">
+            ɑׁׅ֮⨍ᨵׁׅꪀׁׅ꯱ׁׅ֒ᨵׁׅ's 𝕸𝖚𝖘𝖎𝖈 𝕻𝖔𝖗𝖙𝖋𝖔𝖑𝖎𝖔 2026
+          </p>
+        </center>
+        <div id="pfp">
+          <center>
+            <img src="src/paint.png" width="155" height="155" style="margin-left: -5px; margin-top: -5px" />
+          </center>
+        </div>
+        <br />
+        <center>
+          <p style="text-shadow: none">Welcome to my site!!!</p>
+        </center>
+      </div>
+
+      <div id="nav">
+        <div class="navbow"></div>
+        <div class="box-deco-top"></div>
+        <h2 id="navheader">
+          <img src="https://soapbubbleseal.net/h02-icon-shell.gif" class="headericon" />
+          Nav
+        </h2>
+        <span>
+          <ul>
+            <li><a href="/" style="text-decoration:none">💻 Portfolio</a></li>
+            <li><a href="#title" style="text-decoration:none">🏠 Welcome</a></li>
+            <li><a href="#playerPerspective" style="text-decoration:none">🎵 Player</a></li>
+            <li><a href="#trackDescription" style="text-decoration:none">ℹ️ Track Info</a></li>
+            <li><a href="#playlist-header-nav" style="text-decoration:none">💿 Track List</a></li>
+            <li><a href="#careerSection" style="text-decoration:none">💼 Career</a></li>
+          </ul>
+        </span>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <div id="chatbox">
+        <div class="chatbow"></div>
+        <div class="box-deco-top"></div>
+        <h2 id="chatboxheader">
+          <img src="https://soapbubbleseal.net/small_palm.gif" class="headericon" />
+          Chat
+        </h2>
+        <span>
+          <iframe src="https://www3.cbox.ws/box/?boxid=3553722&boxtag=QYH0MZ" width="100%" height="300"
+            allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0"
+            scrolling="auto"></iframe>
+        </span>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+
+
+
+    </div>
+
+    <div id="main">
+      <h1 id="title">
+        <img src="https://soapbubbleseal.net/c12-flower-hibiscus.gif" class="headericon" />
+        𝄞⨾💿✮˚.⋆ Aϝσɳʂσ ᏒᏋᏦᏰᏗᎥᎷ
+      </h1>
+
+      <div id="content">
+        <!-- Welcome GIF -->
+        <div class="gif-center" style="margin: 8px 0 0 0">
+          <img src="https://blob.gifcities.org/gifcities/C3M7AJSAYLIKUNBMQPNTRBICWT5BQDN4.gif" alt="Welcome!"
+            style="max-width: 100px; height: auto; image-rendering: pixelated" />
+
+          <img src="https://blob.gifcities.org/gifcities/IYTE7LR4E6PSPJC3XG5IT3WM3QCLL2TG.gif" alt="Welcome!"
+            style="max-width: 40%; height: auto; image-rendering: pixelated" />
+
+          <img src="https://blob.gifcities.org/gifcities/C3M7AJSAYLIKUNBMQPNTRBICWT5BQDN4.gif" alt="Welcome!"
+            style="max-width: 100px; height: auto; image-rendering: pixelated" />
+        </div>
+        <div class="player-3d-perspective" id="playerPerspective">
+          <div class="player-wrapper" id="playerWrapper">
+            <div class="hud-top">
+              <div class="hud-side">
+                <div class="stats-panel">
+                  <div class="stat-block">
+                    <span class="stat-label">BPM</span>
+                    <span class="stat-value" id="statBpm">---</span>
+                  </div>
+                  <div class="stat-block">
+                    <span class="stat-label">TIME</span>
+                    <span class="stat-value" id="statTime">--/--</span>
+                  </div>
+                  <div class="stat-block">
+                    <span class="stat-label">KEY</span>
+                    <span class="stat-value" id="statKey">---</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="artist-badge">
+                <div class="artist-avatar">🎧</div>
+                <div class="artist-info">
+                  <h2 id="trackTitle">NOME DA MÚSICA</h2>
+                  <p>
+                    PROJETO • <span id="trackNumber">01</span>/<span class="trackTotal">00</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="hud-side">
+                <div class="stats-panel">
+                  <div class="pixel-grid" id="pixelGrid1"></div>
+                  <div class="pixel-grid" id="pixelGrid2"></div>
+                  <div class="pixel-grid" id="pixelGrid3"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="player-core" id="playerCore">
+              <div class="waveform-window">
+                <div class="waveform-container" id="waveform"></div>
+              </div>
+            </div>
+
+            <div class="submission-text">
+              Track <span id="trackNumberSub">1</span> /
+              <span class="trackTotal">00</span>
+            </div>
+
+            <div class="controls-wrapper" style="position: relative">
+              <div id="skip-audio-btn"
+                style="position: absolute; right: 105%; top: 50%; transform: translateY(-20%); z-index: 100001; text-align: center; cursor: pointer; display: none; padding-right: 15px; width: max-content;"
+                onclick="dismissOverlay()">
+                <div style="background: white; border: 2px solid #7f0fd5; margin-bottom: 5px; display: inline-block;">
+                  <img src="https://blob.gifcities.org/gifcities/KYVDH57ENWIVEURCI34KQRBD4ON2XLTO.gif"
+                    style="width: 100px; image-rendering: pixelated; display: block;" alt="I can't listen right now" />
+                </div>
+                <div
+                  style="font-family: 'Departure Mono', monospace; color: white; background: #000; padding: 4px 8px; border: 2px dashed #7f0fd5; font-size: 16px; text-shadow: 1px 1px 0px #7f0fd5;">
+                  I can't listen right now
+                </div>
+              </div>
+              <!-- Animated Click Here + Arrow pointing to the play button -->
+              <div style="
+                    position: absolute;
+                    left: 105%;
+                    top: -5px;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 5px;
+                    z-index: 50;
+                    width: max-content;
+                  ">
+                <img src="https://blob.gifcities.org/gifcities/5QS7OMAB25OCTGECVOVT6MKLVJSFOXEA.gif" style="
+                      width: 40px;
+                      transform: scaleX(-1);
+                      image-rendering: pixelated;
+                      margin-right: 5px;
+                    " alt="arrow pointing left" />
+                <img src="https://blob.gifcities.org/gifcities/KT64L3GTCRKE3YJ5F4SL367VSCXZRQUJ.gif"
+                  style="width: 80px; image-rendering: pixelated" alt="click here" />
+              </div>
+              <div class="controls-pill">
+                <button id="btnPrev">⏮</button>
+                <button class="btn-play" id="btnPlay">
+                  <img src="https://blob.gifcities.org/gifcities/BAQTUDFRHRCC6TEY36YZ6LZZ3GF5ULYR.gif" alt="Play"
+                    style="height: 35px; image-rendering: pixelated" />
+                </button>
+                <button id="btnNext">⏭</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Track Info (dynamic, updates with current song) -->
+        <div class="playlist-header">
+          <img src="https://soapbubbleseal.net/h02-icon-shell.gif" class="headericon" />
+          Track Info
+        </div>
+        <div id="trackDescription" style="
+            background: #fbf9ff;
+            border: 2px dashed #7f0fd5;
+            color: #7f0fd5;
+            padding: 12px;
+            text-shadow: none;
+            line-height: 1.4;
+            font-family: 'Departure Mono', monospace;
+            font-size: 16px;
+            margin-bottom: 15px;
+          ">
+          (Loading track info...)
+        </div>
+        <div class="playlist-container">
+          <!-- GIF banner strip above playlist -->
+          <!-- <div class="gif-banner-strip">
+            <img src="https://blob.gifcities.org/gifcities/3BEBZOGHTZOGGL5E2I6EDB46NOVXVO2V.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/3FJGXSGBZ25OXJZ4TUSB2OYOHPGHM426.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/36YDUI67DDVTYVDSCK4WCXLX5FCDIG2T.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/4D7DYVYXK5AZVQJFW5H52BWI6KGYBZBH.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/4JIDCRB7XP5ZVXSZ3GCU5Q4GIKKZVF26.gif" alt="music gif" />
+          </div> -->
+
+          <div class="playlist-header" id="playlist-header-nav">
+            <img src="https://soapbubbleseal.net/small_palm.gif" class="headericon" />
+            Track List <span class="new-badge">NEW</span>
+          </div>
+          <ul id="playlist-ul"></ul>
+          <button id="btnShowMore" class="btn-show-more">SHOW MORE</button>
+
+          <!-- Career / Experience section -->
+          <div class="playlist-header" style="margin-top: 25px;">
+            <img src="https://soapbubbleseal.net/f05-icon-tropical_drink.gif" class="headericon" />
+            Career
+          </div>
+          <div id="careerSection" style="
+            background: #fbf9ff;
+            border: 2px dashed #7f0fd5;
+            color: #723dcc;
+            padding: 14px;
+            text-shadow: none;
+            line-height: 1.6;
+            font-family: 'Departure Mono', monospace;
+            font-size: 21px;
+          ">
+            <!-- ===== EDITAR CARREIRA AQUI ===== -->
+            <p style="color: #d710ff; font-size: 23px; margin-top: 0;">Musical Producer & Sound Designer</p>
+
+            <p style="font-size: 16px; margin-left: 10px;">I started producing in <b style="color:#d710ff">2021</b>, using
+              <b style="color:#d710ff">Ableton
+                Live</b> as my main DAW. My focus is on experimental sound design and sounds that mix
+              nostalgia with my personal taste. I have made music for over 20 games along the way, with 5 awarded games
+              by Apple on the WWDC Swift Student challenge competition using my tunes.
+            </p>
+
+            <p style="color: #d710ff; font-size: 23px;">Interest</p>
+            <ul style="margin: 0;">
+              <li>Sound Design for games and interactive media</li>
+              <li>Sound synthesis (FM, granular, subtractive)</li>
+              <li>Experimental and microtonal composition</li>
+              <li>Chiptune, DnB, Acustic, Dubstep and Synthwave</li>
+            </ul>
+
+            <p style="color: #d710ff; font-size: 23px;">Tools</p>
+            <ul style="margin: 0; padding-left: 18px;">
+              <li>Ableton Live Suite, Reaper, Pro Tools</li>
+              <li>Serum, Vital, Operator, Trackers</li>
+            </ul>
+
+            <p style="color: #d710ff; font-size: 23px;">Contact</p>
+            <p style="font-size: 16px; margin-left: 10;">Want to collaborate or exchange ideas about sound? Look at the
+              box on the side
+              and get in touch with me through my social medias!</p>
+            <!-- ===== FIM DA SEÇÃO DE CARREIRA ===== -->
+          </div>
+
+        </div>
+
+        <!-- (Back button moved to absolute right edge) -->
+      </div>
+    </div>
+
+    <div id="side-right">
+      <!-- About Me Box -->
+      <div id="aboutme-box" style="margin-bottom: 14px; position: relative">
+        <div class="box-deco-top"></div>
+        <h2 id="aboutmeheader">
+          <img src="https://soapbubbleseal.net/f05-icon-tropical_drink.gif" class="headericon" />
+          About Me
+        </h2>
+        <div style="
+              padding: 10px;
+              font-size: 14px;
+              text-align: justify;
+              line-height: 1.4;
+              text-shadow: 1px 1px 0px #7f0fd5;
+              color: #ffffff;
+            ">
+          <img
+            src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUydHVhZHZidzFvYTkwZTVrYndzbW5ta29tYmRpN3Iwc3k1bHg1Z2t2bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3oriO6yTZKmTqUI9tS/200.gif"
+            style="width: 100%; margin-bottom: 10px" />
+
+          <p style="margin-top: 0">
+            Hi! I'm Afonso. This is my music portfolio. I created this little
+            corner to document my sound projects, mixing a bit of nostalgia and
+            experimentation. Feel free to look around and listen to my music, this is a safe place!
+          </p>
+          <p>
+            There are some cool things on the side,
+            click on everything!
+          </p>
+          <div style="clear: both"></div>
+        </div>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <!-- Music GIF decorations -->
+      <div style="
+            background-image:
+              linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.15),
+                rgba(255, 255, 255, 0.15)
+              ),
+              url(&quot;src/black.gif&quot;);
+            border: 2px double #7f0fd5;
+            margin-bottom: 14px;
+          ">
+        <div class="box-deco-top"></div>
+        <div class="sidebar-gif-row" style="
+              padding: 10px 4px;
+              display: flex;
+              gap: 4px;
+              justify-content: center;
+            ">
+          <img src="https://blob.gifcities.org/gifcities/2GEUTTMSVZB6SGSMTKJGYPWRWENJ5L7Y.gif" title="music"
+            style="width: 35px; height: auto" />
+          <img src="https://blob.gifcities.org/gifcities/2GFQMUYFJE3ZRL6FYUVFP2MIMFIAFDTT.gif" title="music"
+            style="width: 35px; height: auto" />
+          <img src="https://blob.gifcities.org/gifcities/33NY7NQDOL6YJH4FCOFLDSXEH3T4QOEN.gif" title="music"
+            style="width: 35px; height: auto" />
+        </div>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <!-- Visitor counter -->
+      <div class="y2k-counter-box">
+        <div style="font-size: 11px; letter-spacing: 2px; margin-bottom: 2px">
+          ✦ VISITORS ✦
+        </div>
+        <div class="y2k-counter-digits" id="visitorCounter">000000</div>
+        <div style="font-size: 10px; margin-top: 2px; opacity: 0.7">
+          since APR 2026
+        </div>
+      </div>
+
+      <!-- Badge strip -->
+      <div style="
+            background-image:
+              linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.1)
+              ),
+              url(&quot;src/black.gif&quot;);
+            border: 2px double #7f0fd5;
+            margin-bottom: 14px;
+          ">
+        <div class="badge-strip" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 4px;
+              padding: 8px 0;
+            ">
+          <img src="https://soapbubbleseal.net/happypeach.gif" title="Happy Peach"
+            style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/aloha.gif" title="Aloha" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/new.gif" title="NEW!" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/loveabug.gif" title="Love a Bug" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/exitbutton.gif" title="Exit" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/kawasaki.gif" title="Kawasaki" style="max-width: 90%; height: auto" />
+        </div>
+      </div>
+
+      <!-- More music GIFs -->
+      <div class="sidebar-gif-row" style="margin-top: 8px; justify-content: space-evenly">
+        <img src="https://blob.gifcities.org/gifcities/36Q2B5MPXW7CE66DLLJC5A7F7SBCHEGU.gif" title="music"
+          style="width: 40%; max-width: 65px; height: auto" />
+        <img src="https://blob.gifcities.org/gifcities/4IKK5SLS6UTBURIKTPYNI63LUSLMIF67.gif" title="music"
+          style="width: 40%; max-width: 65px; height: auto" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Ad Banner Right -->
+  <a href="#" style="position: fixed; top: 150px; right: 20px; z-index: 9999">
+    <img src="https://blob.gifcities.org/gifcities/2445PYAJG2TWMJCW3J3HD62RZGA6YSTG.gif"
+      style="image-rendering: pixelated; width: 150px; height: auto" alt="Advertisement" />
+  </a>
+
+  <!-- Floating Contact Me Banner Right -->
+  <div
+    style="position: fixed; top: 50%; transform: translateY(-50%); right: 20px; z-index: 9999; width: 190px; background: #fbf9ff; border: 2px double #7f0fd5; text-align: center; font-family: 'Departure Mono', monospace;">
+    <div
+      style="background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('src/black.gif'); padding: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; border-bottom: 1px solid #7f0fd5;">
+      <span style="color:white;text-shadow: 1px 1px 0 #7f0fd5;font-size:20px;">Contact Me</span>
+    </div>
+    <div style="padding: 12px;">
+      <a href="mailto:afonsorrekbaim@gmail.com"
+        style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
+        <img src="https://soapbubbleseal.net/h02-icon-shell.gif"
+          style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
+        Email Me
+      </a>
+      <div style="font-size: 10px; color: #723dcc; margin-top: 4px; margin-bottom: 14px; word-break: break-word;">
+        afonsorrekbaim@gmail.com
+      </div>
+
+      <a href="https://linkedin.com/in/afonsorek" target="_blank"
+        style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
+        <img src="https://soapbubbleseal.net/small_palm.gif"
+          style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
+        LinkedIn
+      </a>
+      <div style="font-size: 14px; color: #723dcc; margin-top: 4px; word-break: break-word;">
+        /in/afonsorek
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Back Button -->
+  <a href="#" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999">
+    <img src="https://blob.gifcities.org/gifcities/JEWJXWXSNRAGZ4DTPQHOGLO6WAAQTWFL.gif" alt="Back"
+      style="image-rendering: pixelated; width: 140px; height: auto" />
+  </a>
+
+  <!-- Floating Windows Media Player Visualizer Left -->
+  <div id="wmp-float" style="
+        position: fixed;
+        top: 60px;
+        left: 15px;
+        width: 320px;
+        border: 2px outset #dfdfdf;
+        background: #c0c0c0;
+        font-family:
+          &quot;MS Sans Serif&quot;, sans-serif, &quot;Courier New&quot;;
+        z-index: 100001;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        display: none;
+      ">
+    <div style="
+          background: linear-gradient(90deg, #000080, #1084d0);
+          padding: 5px 8px;
+          color: white;
+          font-weight: bold;
+          font-size: 13px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <span>Windows Media Player</span>
+      <span style="
+            background: #c0c0c0;
+            color: black;
+            border: 1px outset #fff;
+            padding: 0 4px;
+            font-size: 11px;
+            cursor: default;
+          ">X</span>
+    </div>
+    <div style="
+          background: #000;
+          margin: 6px;
+          height: 180px;
+          border: 2px inset #fff;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        ">
+      <!-- State: Paused / Stopped -->
+      <div id="wmp-text" style="
+            color: #0f0;
+            font-family: &quot;Departure Mono&quot;, monospace;
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.2;
+            padding: 10px;
+          ">
+        <img src="https://blob.gifcities.org/gifcities/MCBIF7OO7JJHFWBXGBJWKDLUVJGRFTH7.gif"
+          style="width: 30px; margin-bottom: 5px" /><br />
+        Play any music<br />to see<br />something cool
+      </div>
+
+      <!-- State: Playing (Visualizer) -->
+      <div id="wmp-vis" style="
+            display: none;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+          ">
+        <canvas id="wmp-canvas" width="300" height="175" style="width: 100%; height: 100%; display: block;"></canvas>
+      </div>
+    </div>
+    <!-- Simple WMP controls decor -->
+    <div style="
+          display: flex;
+          gap: 4px;
+          padding: 2px 4px 4px 4px;
+          justify-content: center;
+        ">
+      <div style="
+            width: 20px;
+            height: 12px;
+            border: 1px outset #fff;
+            background: #c0c0c0;
+          "></div>
+      <div style="
+            width: 20px;
+            height: 12px;
+            border: 1px outset #fff;
+            background: #c0c0c0;
+          "></div>
+      <div style="
+            width: 20px;
+            height: 12px;
+            border: 1px outset #fff;
+            background: #c0c0c0;
+          "></div>
+    </div>
+  </div>
+
+  <script>
+    const playlist = [
+      {
+        title: "Very BASSic tune",
+        file: "src/sounds/chipbass.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "3.3 MB",
+        description: "I wanted a very agressive bass on this one, and I think I got it! I really liked the vibe of this one. (Don't listen it on a car, it will likely explode)"
+      },
+      {
+        title: "I am dumb but not so much",
+        file: "src/sounds/nowIalmostunderstand.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "4.5 MB",
+        description: "This is an experiment I made for a game which the villan was kinda goofy, but needed a battle theme that transmited exitement and a little bit of worry. I think I did a good job!"
+      },
+      {
+        title: "Waiting for you <3",
+        file: "src/sounds/waitingforyou.wav",
+        bpm: 138,
+        timeSignature: "3/4",
+        key: "A Min",
+        size: "3.1 MB",
+        description: "It was the menu song for a project of a dark themed rhythm game called Ravenous Rhythm. It fitted pretty well."
+      },
+      {
+        title: "Falling on a steady pace",
+        file: "src/sounds/staircase.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "6.2 MB",
+        description: "A chiptune study to try to give some movement to the song, giving the impression it keeps going and going and going and going and going..."
+      },
+      {
+        title: "Bubble Café",
+        file: "src/sounds/bubble-café.wav",
+        bpm: 165,
+        timeSignature: "4/4",
+        key: "F# Min",
+        size: "2.8 MB",
+        description: "The coffee area theme for a Fuitiger Aero 8bit themed game on the global game jam in 2024."
+      },
+      {
+        title: "Very Cheap Tune :P",
+        file: "src/sounds/cheaptune.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "1.9 MB",
+        description: "A scalating chiptune with a lot texture on it made inpired by the chipsets and Trackers from the 90's. One of my favourites"
+      },
+      {
+        title: "Synthwave 80's",
+        file: "src/sounds/synthwave.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "5.1 MB",
+        description: "A very very very synthwave sound. Made for the sake of it! I really liked exploring gate verbs, this aesthetic and the sounds of the 80's. Maybe in the future I'll put lyrics on it!."
+      },
+      {
+        title: "50% of a Dubstep",
+        file: "src/sounds/Dubstep-estudo.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "2.4 MB",
+        description: "This is my first attempt to make the 'wobble basses' of Dubstep. I think it turned out pretty well! Focus on the drop, the buildup was kinda lazy tho"
+      },
+      {
+        title: "Baarh",
+        file: "src/sounds/dnb-medieval-final.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "7.0 MB",
+        description: "Medieval meets DnB. I made it for a game I created with my girfriend on the GGJ26, an autorunner with a lot of energy!"
+      },
+      {
+        title: "PS2000",
+        file: "src/sounds/ambiental-microtonal.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "8.5 MB",
+        description: "This one I made with an App I created called iMicro, a microtonal controller for iOS. I really liked exploring microtonal music, it's something I want to explore more in the future. It is the menu song for a game"
+      },
+      {
+        title: "Let it rainnn",
+        file: "src/sounds/lofionarainyday.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "4.8 MB",
+        description: "Lo-fi with a looot of rain on it, a little bit of everything and a very chill vibe. A good experimentation!"
+      },
+      {
+        title: "Nomarl",
+        file: "src/sounds/normaluntilnotnormal.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "2.6 MB",
+        description: "A song for a trailer of the Ravenous Rhythm game, it all seems fine until it is not..."
+      },
+      {
+        title: "Nightwave",
+        file: "src/sounds/nightwave.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "6.0 MB",
+        description: "An agressive synthwave inspired bu the game Furi, Carpenter Brut and this kind of vibe."
+      },
+    ];
+
+    const trackTotalElements = document.querySelectorAll(".trackTotal");
+    trackTotalElements.forEach((el) => (el.innerText = playlist.length));
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let audio = new Audio();
+    audio.crossOrigin = "anonymous";
+    let isShowingAll = false;
+
+    let audioCtx, analyser, audioSource, dataArray;
+    let wmpCanvas, wmpCtx;
+    let timeOffset = 0;
+
+    async function initVisualizer() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        audioSource = audioCtx.createMediaElementSource(audio);
+        audioSource.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        wmpCanvas = document.getElementById("wmp-canvas");
+        if (wmpCanvas) wmpCtx = wmpCanvas.getContext("2d");
+        drawVisualizer();
+      }
+      if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+      }
+    }
+
+    let smoothedData = null;
+    let particles = [];
+
+    function drawVisualizer() {
+      requestAnimationFrame(drawVisualizer);
+      if (!analyser || !wmpCtx || !wmpCanvas) return;
+
+      analyser.getByteFrequencyData(dataArray);
+
+      let isBlocked = true;
+      for (let i = 0; i < dataArray.length; i++) {
+        if (dataArray[i] > 0) { isBlocked = false; break; }
+      }
+
+      // Smooth the data for fluid motion
+      if (!smoothedData) smoothedData = new Float32Array(dataArray.length);
+      for (let i = 0; i < dataArray.length; i++) {
+        let target = isBlocked && isPlaying
+          ? Math.abs(Math.sin(timeOffset * 2.5 + i * 0.15) * 140) + Math.random() * 40
+          : dataArray[i];
+        smoothedData[i] += (target - smoothedData[i]) * 0.45; // Increased from 0.18 for more responsiveness
+      }
+
+      // Calculate average energy for the background glow
+      let avgEnergy = 0;
+      for (let i = 0; i < smoothedData.length; i++) avgEnergy += smoothedData[i];
+      avgEnergy /= smoothedData.length;
+
+      // Update the background glow element
+      const glowEl = document.getElementById("music-glow");
+      if (glowEl && isPlaying) {
+        const glowIntensity = Math.min(avgEnergy / 255 * 0.8, 0.65); // Increased max from 0.2 to 0.65
+        const hue = (timeOffset * 15) % 360;
+        glowEl.style.opacity = glowIntensity;
+        glowEl.style.background = `radial-gradient(ellipse at center, hsla(${hue}, 80%, 50%, 0.25) 0%, transparent 80%)`;
+      } else if (glowEl) {
+        glowEl.style.opacity = "0";
+      }
+
+      if (!isPlaying) return;
+
+      timeOffset += 0.04;
+      const W = wmpCanvas.width, H = wmpCanvas.height;
+      const cx = W / 2, cy = H / 2;
+
+      // Fade previous frame (trail effect)
+      wmpCtx.fillStyle = "rgba(0, 0, 0, 0.18)";
+      wmpCtx.fillRect(0, 0, W, H);
+
+      // === Layer 1: 3D rotating wireframe ring ===
+      const ringCount = 3;
+      for (let ring = 0; ring < ringCount; ring++) {
+        const ringPhase = ring * (Math.PI * 2 / ringCount);
+        wmpCtx.beginPath();
+        const pts = 48;
+        for (let i = 0; i <= pts; i++) {
+          const angle = (i / pts) * Math.PI * 2;
+          const freqIdx = Math.floor((i / pts) * smoothedData.length) % smoothedData.length;
+          const amp = smoothedData[freqIdx] / 255;
+
+          // 3D torus projection with proportional frequency balancing
+          const baseR = 30 + ring * 12;
+          const highFreqFactor = 1 + (freqIdx / smoothedData.length) * 0.6;
+          const r = baseR + (amp * highFreqFactor * 28);
+          const tilt = 0.6 + ring * 0.15;
+          const rotateSpeed = timeOffset * (0.4 + ring * 0.2) + ringPhase;
+
+          let x3d = r * Math.cos(angle + rotateSpeed);
+          let y3d = r * Math.sin(angle + rotateSpeed) * tilt;
+          let z3d = r * Math.sin(angle + rotateSpeed) * 0.3;
+
+          // Simple perspective
+          const perspective = 120 / (120 + z3d);
+          const x = cx + x3d * perspective;
+          const y = cy + y3d * perspective;
+
+          if (i === 0) wmpCtx.moveTo(x, y);
+          else wmpCtx.lineTo(x, y);
+        }
+        const hue = (timeOffset * 30 + ring * 90) % 360;
+        wmpCtx.strokeStyle = `hsla(${hue}, 100%, 65%, 0.7)`;
+        wmpCtx.lineWidth = 1.5;
+        wmpCtx.stroke();
+      }
+
+      // === Layer 2: Frequency bars arranged in a circle (equalizer ring) ===
+      const barCount = 32;
+      for (let i = 0; i < barCount; i++) {
+        const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+        const freqIdx = Math.floor((i / barCount) * smoothedData.length);
+        const amp = smoothedData[freqIdx] / 255;
+
+        const highFreqFactor = 1 + (freqIdx / smoothedData.length) * 0.6;
+        const innerR = 18;
+        const outerR = innerR + (amp * highFreqFactor * 35);
+
+        const x1 = cx + innerR * Math.cos(angle);
+        const y1 = cy + innerR * Math.sin(angle);
+        const x2 = cx + outerR * Math.cos(angle);
+        const y2 = cy + outerR * Math.sin(angle);
+
+        const hue = (i / barCount * 360 + timeOffset * 50) % 360;
+        wmpCtx.beginPath();
+        wmpCtx.moveTo(x1, y1);
+        wmpCtx.lineTo(x2, y2);
+        wmpCtx.strokeStyle = `hsla(${hue}, 100%, 55%, ${0.3 + amp * 0.7})`;
+        wmpCtx.lineWidth = 2.5;
+        wmpCtx.stroke();
+      }
+
+      // === Layer 3: Center pulsing orb ===
+      const bassAvg = (smoothedData[0] + smoothedData[1] + smoothedData[2]) / 3 / 255;
+      const orbR = 8 + Math.pow(bassAvg, 1.2) * 25; // More bouncy orb
+      const orbHue = (timeOffset * 60) % 360;
+      const grad = wmpCtx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
+      grad.addColorStop(0, `hsla(${orbHue}, 100%, 80%, 0.9)`);
+      grad.addColorStop(0.5, `hsla(${orbHue}, 100%, 60%, 0.4)`);
+      grad.addColorStop(1, "transparent");
+      wmpCtx.fillStyle = grad;
+      wmpCtx.beginPath();
+      wmpCtx.arc(cx, cy, orbR, 0, Math.PI * 2);
+      wmpCtx.fill();
+
+      // === Layer 4: Floating particles ===
+      if (particles.length < 30 && Math.random() < 0.3) {
+        particles.push({
+          x: cx, y: cy,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          life: 1,
+          hue: Math.random() * 360,
+          size: 1 + Math.random() * 2
+        });
+      }
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx * (1 + bassAvg * 2);
+        p.y += p.vy * (1 + bassAvg * 2);
+        p.life -= 0.015;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        wmpCtx.beginPath();
+        wmpCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        wmpCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.life * 0.6})`;
+        wmpCtx.fill();
+      }
+    }
+
+    const playerWrapper = document.getElementById("playerWrapper");
+    const playerCore = document.getElementById("playerCore");
+    const waveform = document.getElementById("waveform");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const trackTitle = document.getElementById("trackTitle");
+    const trackNumber = document.getElementById("trackNumber");
+    const trackNumberSub = document.getElementById("trackNumberSub");
+    const playlistUl = document.getElementById("playlist-ul");
+    const btnShowMore = document.getElementById("btnShowMore");
+
+    const statBpm = document.getElementById("statBpm");
+    const statTime = document.getElementById("statTime");
+    const statKey = document.getElementById("statKey");
+
+    const playGif =
+      "https://blob.gifcities.org/gifcities/JFVT6XCY7WO2LQYDTOJROPUABH4BLQGC.gif";
+    const pauseGif =
+      "https://blob.gifcities.org/gifcities/QSACATJGJTXCUYFQOEGUDRDAOMSCMO5D.gif";
+
+    // 1. GERADOR DA ONDA ESTÁTICA E DESLIZANTE
+    function buildWaveform() {
+      waveform.innerHTML = "";
+      const waveHeights = [];
+      const numUniqueBars = 80;
+
+      // Gera alturas aleatórias simulando uma onda de áudio densa
+      for (let i = 0; i < numUniqueBars; i++) {
+        waveHeights.push(Math.floor(Math.random() * 70) + 20); // Alturas entre 20% e 90%
+      }
+
+      // Duplica o array para o loop de scroll funcionar perfeitamente sem cortes
+      const fullWave = [...waveHeights, ...waveHeights];
+
+      fullWave.forEach((h) => {
+        let bar = document.createElement("div");
+        bar.className = "wave-bar";
+        bar.style.height = `${h}%`;
+        waveform.appendChild(bar);
+      });
+    }
+    buildWaveform();
+
+    function renderPlaylist() {
+      playlistUl.innerHTML = "";
+      const limit = isShowingAll ? playlist.length : 5;
+
+      for (let index = 0; index < limit; index++) {
+        let track = playlist[index];
+        let li = document.createElement("li");
+
+        // GIF Funcional
+        let gifDiv = document.createElement("div");
+        gifDiv.className = "track-left";
+        let img = document.createElement("img");
+        img.src =
+          index === currentTrackIndex && isPlaying ? pauseGif : playGif;
+        img.className = "status-gif";
+        img.id = `status-gif-${index}`;
+        gifDiv.appendChild(img);
+
+        // Dados da música
+        let infoDiv = document.createElement("div");
+        infoDiv.className = "track-right";
+
+        let titleSpan = document.createElement("span");
+        titleSpan.className = "track-title";
+        titleSpan.innerText = `${index + 1}. ${track.title}.mp3`;
+        titleSpan.id = `track-title-${index}`;
+
+        let statsSpan = document.createElement("span");
+        statsSpan.className = "track-stats";
+        statsSpan.innerText = `SIZE: ${track.size}`;
+
+        infoDiv.appendChild(titleSpan);
+        infoDiv.appendChild(statsSpan);
+
+        li.appendChild(gifDiv);
+        li.appendChild(infoDiv);
+
+        // Função de click
+        const handleTrackClick = () => {
+          if (!localStorage.getItem("afonso_first_play_done")) {
+            localStorage.setItem("afonso_first_play_done", "true");
+            const overlay = document.getElementById("first-play-overlay");
+            const perspective = document.getElementById("playerPerspective");
+            if (overlay) overlay.style.display = "none";
+            if (perspective) perspective.classList.remove("player-highlight");
+          }
+
+          if (currentTrackIndex === index) {
+            togglePlay();
+          } else {
+            currentTrackIndex = index;
+            loadTrack(currentTrackIndex);
+            initVisualizer();
+            audio.play().catch((err) => console.log(err));
+            isPlaying = true;
+            updatePlayState();
+          }
+        };
+
+        li.onclick = handleTrackClick;
+
+        playlistUl.appendChild(li);
+      }
+
+      updatePlaylistHighlight();
+    }
+
+    btnShowMore.onclick = () => {
+      isShowingAll = !isShowingAll;
+      btnShowMore.innerText = isShowingAll ? "SHOW LESS" : "SHOW MORE";
+      renderPlaylist();
+    };
+
+    function updatePlayState() {
+      const wmpText = document.getElementById("wmp-text");
+      const wmpVis = document.getElementById("wmp-vis");
+
+      const isStatic = document.body.classList.contains("static-mode");
+
+      if (isPlaying) {
+        if (isStatic) {
+          btnPlay.innerHTML = '<span style="font-weight:bold; font-size:16px;">❚❚ PAUSE</span>';
+        } else {
+          btnPlay.innerHTML =
+            '<img src="https://blob.gifcities.org/gifcities/57UH7EA3WLOGZIJE6YJFJ3Z3EUUGKHS6.gif" alt="Pause" style="height:35px; image-rendering:pixelated;" />';
+        }
+        playerCore.classList.add("is-playing");
+        if (wmpText) wmpText.style.display = "none";
+        if (wmpVis) wmpVis.style.display = "flex";
+      } else {
+        if (isStatic) {
+          btnPlay.innerHTML = '<span style="font-weight:bold; font-size:16px;">► PLAY</span>';
+        } else {
+          btnPlay.innerHTML =
+            '<img src="https://blob.gifcities.org/gifcities/BAQTUDFRHRCC6TEY36YZ6LZZ3GF5ULYR.gif" alt="Play" style="height:35px; image-rendering:pixelated;" />';
+        }
+        playerCore.classList.remove("is-playing");
+        if (wmpText) wmpText.style.display = "block";
+        if (wmpVis) wmpVis.style.display = "none";
+      }
+      updatePlaylistHighlight();
+    }
+
+    function updatePlaylistHighlight() {
+      const limit = isShowingAll ? playlist.length : 5;
+      for (let idx = 0; idx < limit; idx++) {
+        const titleSpan = document.getElementById(`track-title-${idx}`);
+        const statusGif = document.getElementById(`status-gif-${idx}`);
+
+        if (!titleSpan || !statusGif) continue;
+
+        if (idx === currentTrackIndex) {
+          titleSpan.style.backgroundColor = "#7f0fd5";
+          titleSpan.style.color = "white";
+          statusGif.src = isPlaying ? pauseGif : playGif;
+        } else {
+          titleSpan.style.backgroundColor = "transparent";
+          titleSpan.style.color = "#7f0fd5";
+          statusGif.src = playGif;
+        }
+      }
+    }
+
+    const pixelGrids = [
+      document.getElementById("pixelGrid1"),
+      document.getElementById("pixelGrid2"),
+      document.getElementById("pixelGrid3"),
+    ];
+
+    pixelGrids.forEach((grid) => {
+      for (let i = 0; i < 25; i++) {
+        let p = document.createElement("div");
+        p.className = "pixel";
+        grid.appendChild(p);
+      }
+    });
+
+    const frames = [
+      [
+        0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+        0, 0,
+      ],
+      [
+        0, 0, 1, 0, 0, 0, 1, 2, 1, 0, 1, 2, 2, 2, 1, 0, 1, 2, 1, 0, 0, 0, 1,
+        0, 0,
+      ],
+      [
+        1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0,
+        0, 1,
+      ],
+      [
+        1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 2, 0, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1,
+        1, 1,
+      ],
+    ];
+
+    const idleFrame = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0,
+    ];
+
+    let currentFrameIndex = 0;
+
+    setInterval(() => {
+      pixelGrids.forEach((grid, index) => {
+        let frameToDraw = idleFrame;
+
+        if (isPlaying) {
+          let offsetIndex = (currentFrameIndex + index) % frames.length;
+          frameToDraw = frames[offsetIndex];
+        }
+
+        const pixels = grid.children;
+        for (let i = 0; i < 25; i++) {
+          pixels[i].className = "pixel";
+          if (frameToDraw[i] === 1) pixels[i].classList.add("on");
+          else if (frameToDraw[i] === 2) pixels[i].classList.add("on-alt");
+        }
+      });
+
+      if (isPlaying) {
+        currentFrameIndex = (currentFrameIndex + 1) % frames.length;
+      }
+    }, 300);
+
+    function loadTrack(index) {
+      const track = playlist[index];
+      trackTitle.innerText = track.title;
+
+      const trackDescription = document.getElementById("trackDescription");
+      if (trackDescription) {
+        trackDescription.innerText = track.description || "Descrição em breve...";
+      }
+      trackNumber.innerText = String(index + 1).padStart(2, "0");
+      trackNumberSub.innerText = index + 1;
+
+      statBpm.innerText = track.bpm || "---";
+      statTime.innerText = track.timeSignature || "--/--";
+      statKey.innerText = track.key || "---";
+
+      audio.src = track.file;
+
+      if (index >= 5 && !isShowingAll) {
+        isShowingAll = true;
+        btnShowMore.innerText = "SHOW LESS";
+        renderPlaylist();
+      } else {
+        updatePlaylistHighlight();
+      }
+    }
+
+    function dismissOverlay() {
+      if (!localStorage.getItem("afonso_first_play_done")) {
+        localStorage.setItem("afonso_first_play_done", "true");
+        const overlay = document.getElementById("first-play-overlay");
+        const perspective = document.getElementById("playerPerspective");
+        const skipBtn = document.getElementById("skip-audio-btn");
+        const playBtn = document.getElementById("btnPlay");
+        if (overlay) overlay.style.display = "none";
+        if (perspective) perspective.classList.remove("player-highlight");
+        if (skipBtn) skipBtn.style.display = "none";
+        if (playBtn) playBtn.classList.remove("first-play-glow");
+      }
+    }
+
+    async function togglePlay() {
+      dismissOverlay();
+
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+        updatePlayState();
+      } else {
+        await initVisualizer();
+        audio
+          .play()
+          .catch((e) => console.log("Simulando reprodução visual."));
+        isPlaying = true;
+        updatePlayState();
+      }
+    }
+
+    function nextTrack() {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+      if (isPlaying) audio.play().catch((e) => { });
+      updatePlayState();
+    }
+
+    function prevTrack() {
+      currentTrackIndex =
+        (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrackIndex);
+      if (isPlaying) audio.play().catch((e) => { });
+      updatePlayState();
+    }
+
+    btnPlay.addEventListener("click", togglePlay);
+    btnNext.addEventListener("click", nextTrack);
+    btnPrev.addEventListener("click", prevTrack);
+    audio.addEventListener("ended", nextTrack);
+
+    loadTrack(0);
+    renderPlaylist();
+
+    if (!localStorage.getItem("afonso_first_play_done")) {
+      document.getElementById("first-play-overlay").style.display = "block";
+      document.getElementById("onboarding-warning").style.display = "block";
+    } else {
+      document.getElementById("wmp-float").style.display = "block";
+      if (localStorage.getItem("afonso_static_mode") === "true") {
+        enableStaticMode();
+      }
+    }
+
+    function chooseExperience(type) {
+      document.getElementById("onboarding-warning").style.display = "none";
+      if (type === 'static') {
+        localStorage.setItem("afonso_static_mode", "true");
+        enableStaticMode();
+        dismissOverlay();
+        document.getElementById("wmp-float").style.display = "block";
+      } else {
+        localStorage.removeItem("afonso_static_mode");
+        document.getElementById("skip-audio-btn").style.display = "block";
+        document.getElementById("playerPerspective").classList.add("player-highlight");
+        document.getElementById("btnPlay").classList.add("first-play-glow");
+        document.getElementById("wmp-float").style.display = "block";
+      }
+    }
+
+    function enableStaticMode() {
+      document.body.classList.add("static-mode");
+
+      const staticFallbacks = document.querySelectorAll('img[src*=".gif"]');
+      staticFallbacks.forEach(img => {
+        if (img.dataset.frozen) return;
+
+        let alt = img.alt ? img.alt.toUpperCase() : "";
+        let fallbackText = "";
+
+        // Generate text fallbacks ONLY for functional buttons. Use standard unicode symbols, NO EMOJIS.
+        if (img.closest('#btnPlay')) {
+          fallbackText = isPlaying ? "❚❚ PAUSE" : "► PLAY";
+        }
+        else if (img.closest('.chaos-btn')) {
+          fallbackText = img.parentElement.title ? `[ ${img.parentElement.title.toUpperCase()} ]` : (alt ? `[ ${alt} ]` : "[ BTN ]");
+        }
+        else if (alt === "BACK" && img.closest('a')) {
+          fallbackText = "▲ BACK TO TOP";
+        }
+
+        if (fallbackText) {
+          let fallback = document.createElement("span");
+          fallback.className = "static-fallback-text";
+          fallback.style.fontSize = "16px";
+          fallback.style.fontWeight = "bold";
+          fallback.style.fontFamily = "monospace";
+          fallback.innerText = fallbackText;
+          img.parentNode.insertBefore(fallback, img);
+        }
+
+        img.dataset.frozen = "true";
+      });
+    }
+
+    /* --- Visitor Counter --- */
+    (function animateCounter() {
+      const el = document.getElementById("visitorCounter");
+      if (!el) return;
+      // Fake a stored count from localStorage, start at a "realistic" base
+      const storageKey = "afonso_visit_count";
+      let count = parseInt(localStorage.getItem(storageKey) || "0");
+      if (count === 0) {
+        count = 14723 + Math.floor(Math.random() * 2000);
+        localStorage.setItem(storageKey, count);
+      } else {
+        count += 1;
+        localStorage.setItem(storageKey, count);
+      }
+      // Animate count-up from 0 to count
+      const duration = 1800;
+      const start = Date.now();
+      function tick() {
+        const progress = Math.min((Date.now() - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * count);
+        el.textContent = String(current).padStart(6, "0");
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+    let isTicking = false;
+    playerWrapper.addEventListener("mousemove", (e) => {
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          const rect = playerWrapper.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          const rotateX = ((y - e.clientY) / (rect.height / 2)) * 10;
+          const rotateY = ((e.clientX - x) / (rect.width / 2)) * 10;
+
+          playerWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+          isTicking = false;
+        });
+        isTicking = true;
+      }
+    });
+
+    playerWrapper.addEventListener("mouseleave", () => {
+      playerWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    });
+  </script>
+
+  <!-- ============================= CHAOS ZONE JS ============================= -->
+  <script>
+    /* MLG Module Removed */
+
+    /* ------------- Nyan Cats ------------- */
+    const nyanSrc = "https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif"; // nyan cat
+
+    function spawnNyanCat() {
+      const cat = document.createElement("img");
+      cat.src = nyanSrc;
+      cat.className = "nyan-cat-spawn";
+      const topPct = Math.random() * 90;
+      cat.style.top = topPct + "vh";
+      cat.style.left = "-300px";
+      const duration = 2.5 + Math.random() * 2;
+      cat.style.animationDuration = duration + "s";
+      document.body.appendChild(cat);
+      cat.addEventListener("animationend", () => cat.remove());
+    }
+
+    document.getElementById("btn-nyan").addEventListener("click", () => {
+      const totalCats = 15;
+      for (let i = 0; i < totalCats; i++) {
+        setTimeout(spawnNyanCat, i * 200);
+      }
+    });
+
+    /* ------------- 360 Spin ------------- */
+    let spinTimeout360 = null;
+    document.getElementById("btn-360").addEventListener("click", () => {
+      document.body.style.transformOrigin = "center center";
+      document.body.classList.remove("spinning-360"); // reset
+      void document.body.offsetWidth; // force reflow
+      document.body.classList.add("spinning-360");
+      clearTimeout(spinTimeout360);
+      spinTimeout360 = setTimeout(
+        () => document.body.classList.remove("spinning-360"),
+        800,
+      );
+    });
+
+    /* ------------- Earthquake Shake + Confetti ------------- */
+    const confettiColors = [
+      "#ff0000",
+      "#ffff00",
+      "#00ff00",
+      "#00ffff",
+      "#ff00ff",
+      "#ff6600",
+      "#7f0fd5",
+      "#190cff",
+    ];
+
+    function launchConfetti() {
+      const count = 80;
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.left = Math.random() * 100 + "vw";
+          piece.style.top = "-20px";
+          piece.style.background =
+            confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          piece.style.width = 6 + Math.random() * 10 + "px";
+          piece.style.height = 6 + Math.random() * 10 + "px";
+          piece.style.animationDuration = 2 + Math.random() * 3 + "s";
+          piece.style.animationDelay = Math.random() * 0.5 + "s";
+          document.body.appendChild(piece);
+          piece.addEventListener("animationend", () => piece.remove());
+        }, i * 30);
+      }
+    }
+
+    let shakeTimeout = null;
+    document.getElementById("btn-shake").addEventListener("click", () => {
+      document.body.classList.remove("shaking");
+      void document.body.offsetWidth;
+      document.body.classList.add("shaking");
+      launchConfetti();
+      clearTimeout(shakeTimeout);
+      shakeTimeout = setTimeout(
+        () => document.body.classList.remove("shaking"),
+        600,
+      );
+    });
+
+
+
+    /* ------------- PFP Zoom Animation ------------- */
+    document.getElementById("pfp").addEventListener("click", function (e) {
+      if (document.getElementById("pfp-clone")) return;
+      const rect = this.getBoundingClientRect();
+
+      // Create a raw <img> of the cat GIF instead of cloning the frame
+      const clone = document.createElement("img");
+      clone.id = "pfp-clone";
+      clone.src = "src/oiiai.gif";
+      clone.style.position = "fixed";
+      clone.style.width = rect.width + "px";
+      clone.style.height = rect.height + "px";
+      clone.style.top = rect.top + "px";
+      clone.style.left = rect.left + "px";
+      clone.style.margin = "0";
+      clone.style.objectFit = "cover";
+      clone.style.zIndex = "999999";
+      clone.style.imageRendering = "pixelated";
+      clone.style.transition = "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)";
+      document.body.appendChild(clone);
+
+      setTimeout(() => {
+        clone.style.top = "50%";
+        clone.style.left = "50%";
+        clone.style.transform = "translate(-50%, -50%) scale(5)";
+      }, 50);
+
+      setTimeout(() => {
+        clone.style.top = rect.top + "px";
+        clone.style.left = rect.left + "px";
+        clone.style.transform = "translate(0, 0) scale(1)";
+      }, 2500);
+
+      setTimeout(() => {
+        clone.remove();
+      }, 3000);
+    });
+  </script>
+</body>
+
+</html>
