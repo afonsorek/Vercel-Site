@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>𝄞⨾💿✮˚.⋆•アフォンソ — Music Portfolio</title>
   <link rel="canonical" href="https://www.afonso.io/music/" />
-  <meta name="description" content="Music portfolio of Afonso Rekbaim — chiptune, DnB, synthwave, and experimental sound design for games and interactive media." />
+  <meta name="description"
+    content="Music portfolio of Afonso Rekbaim — chiptune, DnB, synthwave, and experimental sound design for games and interactive media." />
   <meta property="og:title" content="Afonso Rekbaim :: Music Portfolio" />
-  <meta property="og:description" content="Chiptune, DnB, synthwave, and experimental sound design for games. Listen to my tracks and explore my musical journey." />
+  <meta property="og:description"
+    content="Chiptune, DnB, synthwave, and experimental sound design for games. Listen to my tracks and explore my musical journey." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.afonso.io/music/" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=VT323&display=swap"
@@ -1234,6 +1236,153 @@
     /* =========================================
          FIM DO CSS EXTRAS
          ========================================= */
+    /* =========================================
+         MOBILE RESPONSIVE TWEAKS
+         ========================================= */
+    @media (max-width: 1000px) {
+      body {
+        background-size: 100px;
+      }
+
+      /* Hide top and bottom floating boxes on mobile */
+      #topborder, #bottomborder {
+        display: none !important;
+      }
+
+      #all {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        overflow-x: hidden;
+      }
+
+      #side, #main, #side-right {
+        width: 95%;
+        max-width: none;
+        position: static;
+        margin-bottom: 20px;
+      }
+
+      /* Reorder components: Player first, Side Nav middle, Contact end */
+      #main {
+        order: 1;
+      }
+      #side {
+        order: 2;
+      }
+      #side-right {
+        order: 3;
+      }
+
+      /* User clarification: Remove "floating box" styles and ADS on mobile */
+      #aboutme-box, #nav {
+        display: none !important;
+      }
+      
+      #profile, #chatbox {
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      .player-core, .stats-panel, .artist-badge {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      #chatboxheader, #navheader, #title {
+        background: transparent !important;
+        border: none !important;
+        padding-left: 0;
+      }
+      
+      #title {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 18px;
+        white-space: wrap;
+        line-height: normal;
+      }
+
+      #floating-ad-banner {
+        display: none !important;
+      }
+      
+      #skip-audio-btn {
+        transform: scale(0.6) translateY(-20%) !important;
+        transform-origin: right center !important;
+        right: 100% !important;
+        padding-right: 5px !important;
+      }
+      
+      #floating-contact-banner {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        margin: 20px 0;
+      }
+
+      #content {
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent !important;
+      }
+
+      /* Stack player elements */
+      .hud-top {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .hud-side, .artist-badge, .controls-wrapper {
+        transform: none !important;
+      }
+      
+      .player-3d-perspective {
+        perspective: none;
+      }
+      
+      .player-wrapper {
+        transform: none !important;
+      }
+
+      .track-right {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .gif-center img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Hide floating chaos ads and visualizers on mobile to avoid covering content */
+      #chaos-float, #wmp-float {
+        display: none !important;
+      }
+
+      #btt-btn-img {
+        width: 70px !important;
+      }
+
+      .btn-show-more {
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      /* Make sure tracking pixels scale well */
+      .waveform-window {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 
@@ -1508,7 +1657,8 @@
             <!-- ===== EDITAR CARREIRA AQUI ===== -->
             <p style="color: #d710ff; font-size: 23px; margin-top: 0;">Musical Producer & Sound Designer</p>
 
-            <p style="font-size: 16px; margin-left: 10px;">I started producing in <b style="color:#d710ff">2021</b>, using
+            <p style="font-size: 16px; margin-left: 10px;">I started producing in <b style="color:#d710ff">2021</b>,
+              using
               <b style="color:#d710ff">Ableton
                 Live</b> as my main DAW. My focus is on experimental sound design and sounds that mix
               nostalgia with my personal taste. I have made music for over 20 games along the way, with 5 awarded games
@@ -1533,6 +1683,44 @@
             <p style="font-size: 16px; margin-left: 10;">Want to collaborate or exchange ideas about sound? Look at the
               box on the side
               and get in touch with me through my social medias!</p>
+
+            <div id="mobile-contact-container">
+              <!-- Floating Ad Banner Right -->
+              <a href="#" style="position: fixed; top: 150px; right: 20px; z-index: 9999" id="floating-ad-banner">
+                <img src="https://blob.gifcities.org/gifcities/2445PYAJG2TWMJCW3J3HD62RZGA6YSTG.gif"
+                  style="image-rendering: pixelated; width: 150px; height: auto" alt="Advertisement" />
+              </a>
+
+              <!-- Floating Contact Me Banner Right -->
+              <div id="floating-contact-banner"
+                style="position: fixed; top: 50%; transform: translateY(-50%); right: 20px; z-index: 9999; width: 190px; background: #fbf9ff; border: 2px double #7f0fd5; text-align: center; font-family: 'Departure Mono', monospace;">
+                <div
+                  style="background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('src/black.gif'); padding: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; border-bottom: 1px solid #7f0fd5;">
+                  <span style="color:white;text-shadow: 1px 1px 0 #7f0fd5;font-size:20px;">Contact Me</span>
+                </div>
+                <div style="padding: 12px;">
+                  <a href="mailto:afonsorrekbaim@gmail.com"
+                    style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
+                    <img src="https://soapbubbleseal.net/h02-icon-shell.gif"
+                      style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
+                    Email Me
+                  </a>
+                  <div style="font-size: 10px; color: #723dcc; margin-top: 4px; margin-bottom: 14px; word-break: break-word;">
+                    afonsorrekbaim@gmail.com
+                  </div>
+
+                  <a href="https://linkedin.com/in/afonsorek" target="_blank"
+                    style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
+                    <img src="https://soapbubbleseal.net/small_palm.gif"
+                      style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
+                    LinkedIn
+                  </a>
+                  <div style="font-size: 14px; color: #723dcc; margin-top: 4px; word-break: break-word;">
+                    /in/afonsorek
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- ===== FIM DA SEÇÃO DE CARREIRA ===== -->
           </div>
 
@@ -1655,46 +1843,10 @@
     </div>
   </div>
 
-  <!-- Floating Ad Banner Right -->
-  <a href="#" style="position: fixed; top: 150px; right: 20px; z-index: 9999">
-    <img src="https://blob.gifcities.org/gifcities/2445PYAJG2TWMJCW3J3HD62RZGA6YSTG.gif"
-      style="image-rendering: pixelated; width: 150px; height: auto" alt="Advertisement" />
-  </a>
-
-  <!-- Floating Contact Me Banner Right -->
-  <div
-    style="position: fixed; top: 50%; transform: translateY(-50%); right: 20px; z-index: 9999; width: 190px; background: #fbf9ff; border: 2px double #7f0fd5; text-align: center; font-family: 'Departure Mono', monospace;">
-    <div
-      style="background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('src/black.gif'); padding: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; border-bottom: 1px solid #7f0fd5;">
-      <span style="color:white;text-shadow: 1px 1px 0 #7f0fd5;font-size:20px;">Contact Me</span>
-    </div>
-    <div style="padding: 12px;">
-      <a href="mailto:afonsorrekbaim@gmail.com"
-        style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
-        <img src="https://soapbubbleseal.net/h02-icon-shell.gif"
-          style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
-        Email Me
-      </a>
-      <div style="font-size: 10px; color: #723dcc; margin-top: 4px; margin-bottom: 14px; word-break: break-word;">
-        afonsorrekbaim@gmail.com
-      </div>
-
-      <a href="https://linkedin.com/in/afonsorek" target="_blank"
-        style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
-        <img src="https://soapbubbleseal.net/small_palm.gif"
-          style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
-        LinkedIn
-      </a>
-      <div style="font-size: 14px; color: #723dcc; margin-top: 4px; word-break: break-word;">
-        /in/afonsorek
-      </div>
-    </div>
-  </div>
-
   <!-- Floating Back Button -->
-  <a href="#" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999">
+  <a href="#" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999" id="floating-back-btn">
     <img src="https://blob.gifcities.org/gifcities/JEWJXWXSNRAGZ4DTPQHOGLO6WAAQTWFL.gif" alt="Back"
-      style="image-rendering: pixelated; width: 140px; height: auto" />
+      style="image-rendering: pixelated; width: 140px; height: auto" id="btt-btn-img" />
   </a>
 
   <!-- Floating Windows Media Player Visualizer Left -->
