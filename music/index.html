@@ -1245,7 +1245,8 @@
       }
 
       /* Hide top and bottom floating boxes on mobile */
-      #topborder, #bottomborder {
+      #topborder,
+      #bottomborder {
         display: none !important;
       }
 
@@ -1259,7 +1260,9 @@
         overflow-x: hidden;
       }
 
-      #side, #main, #side-right {
+      #side,
+      #main,
+      #side-right {
         width: 95%;
         max-width: none;
         position: static;
@@ -1270,19 +1273,23 @@
       #main {
         order: 1;
       }
+
       #side {
         order: 2;
       }
+
       #side-right {
         order: 3;
       }
 
       /* User clarification: Remove "floating box" styles and ADS on mobile */
-      #aboutme-box, #nav {
+      #aboutme-box,
+      #nav {
         display: none !important;
       }
-      
-      #profile, #chatbox {
+
+      #profile,
+      #chatbox {
         width: 100%;
         box-sizing: border-box;
         background: transparent !important;
@@ -1290,17 +1297,21 @@
         box-shadow: none !important;
       }
 
-      .player-core, .stats-panel, .artist-badge {
+      .player-core,
+      .stats-panel,
+      .artist-badge {
         width: 100%;
         box-sizing: border-box;
       }
-      
-      #chatboxheader, #navheader, #title {
+
+      #chatboxheader,
+      #navheader,
+      #title {
         background: transparent !important;
         border: none !important;
         padding-left: 0;
       }
-      
+
       #title {
         width: 100%;
         box-sizing: border-box;
@@ -1312,14 +1323,14 @@
       #floating-ad-banner {
         display: none !important;
       }
-      
+
       #skip-audio-btn {
         transform: scale(0.6) translateY(-20%) !important;
         transform-origin: right center !important;
         right: 100% !important;
         padding-right: 5px !important;
       }
-      
+
       #floating-contact-banner {
         position: static !important;
         transform: none !important;
@@ -1340,14 +1351,16 @@
         gap: 15px;
       }
 
-      .hud-side, .artist-badge, .controls-wrapper {
+      .hud-side,
+      .artist-badge,
+      .controls-wrapper {
         transform: none !important;
       }
-      
+
       .player-3d-perspective {
         perspective: none;
       }
-      
+
       .player-wrapper {
         transform: none !important;
       }
@@ -1364,7 +1377,8 @@
       }
 
       /* Hide floating chaos ads and visualizers on mobile to avoid covering content */
-      #chaos-float, #wmp-float {
+      #chaos-float,
+      #wmp-float {
         display: none !important;
       }
 
@@ -1377,7 +1391,7 @@
         width: 100%;
         box-sizing: border-box;
       }
-      
+
       /* Make sure tracking pixels scale well */
       .waveform-window {
         max-width: 100%;
@@ -1705,7 +1719,8 @@
                       style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
                     Email Me
                   </a>
-                  <div style="font-size: 10px; color: #723dcc; margin-top: 4px; margin-bottom: 14px; word-break: break-word;">
+                  <div
+                    style="font-size: 10px; color: #723dcc; margin-top: 4px; margin-bottom: 14px; word-break: break-word;">
                     afonsorrekbaim@gmail.com
                   </div>
 
@@ -1949,6 +1964,15 @@
 
   <script>
     const playlist = [
+      {
+        title: ">.<",
+        file: "../Audio/>.<.mp3",
+        bpm: "120",
+        timeSignature: "4/4",
+        key: "G Min",
+        size: "8.2 MB",
+        description: "IDK bro, this is my favourite song. It is still developing but I like it so much I already put it here!!"
+      },
       {
         title: "Very BASSic tune",
         file: "src/sounds/chipbass.wav",
