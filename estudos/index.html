@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estruturação I — Caderno de Estudos</title>
+  <link rel="canonical" href="https://www.afonso.io/estudos/" />
+  <meta name="description" content="Caderno de estudos interativo para a disciplina de Estruturação da Música I — intervalos, armaduras de clave, percepção auditiva e escrita na pauta." />
+  <meta property="og:title" content="Estruturação I — Caderno de Estudos" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.afonso.io/estudos/" />
+  <link rel="icon" href="../Images/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: "Departure Mono";
+      src: url("../Fonts/DepartureMonoNerdFontMono-Regular.otf") format("opentype");
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050010;
+      --surface: rgba(15, 5, 30, 0.85);
+      --accent: #be93fd;
+      --accent-dim: rgba(190, 147, 253, 0.15);
+      --accent-border: rgba(190, 147, 253, 0.25);
+      --text: #d9c2ff;
+      --text-dim: rgba(217, 194, 255, 0.5);
+      --text-bright: #fff;
+      --ok: #6ee7a0;
+      --ok-dim: rgba(110, 231, 160, 0.15);
+      --err: #ff6b6b;
+      --err-dim: rgba(255, 107, 107, 0.15);
+      --warn: #fbbf24;
+      --warn-dim: rgba(251, 191, 36, 0.12);
+      --mono: "Departure Mono", "SF Mono", "Fira Code", monospace;
+      --sans: "Inter", system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text); font-family: var(--sans);
+      line-height: 1.6; min-height: 100vh; overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(190,147,253,0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(190,147,253,0.04) 1px, transparent 1px);
+      background-size: 48px 48px; pointer-events: none; z-index: -2;
+    }
+    body::after {
+      content: ""; position: fixed; top: -40%; left: -20%; width: 140%; height: 140%;
+      background:
+        radial-gradient(ellipse at 15% 20%, rgba(190,147,253,0.12), transparent 50%),
+        radial-gradient(ellipse at 85% 80%, rgba(120,80,200,0.08), transparent 50%);
+      animation: ambientDrift 40s ease-in-out infinite alternate;
+      pointer-events: none; z-index: -1; filter: blur(60px);
+    }
+    @keyframes ambientDrift {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(5%, -5%) scale(1.05); }
+    }
+    .noise {
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMS4yIiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIi8+PC9zdmc+");
+      opacity: 0.06; pointer-events: none; z-index: 9999;
+    }
+    ::-webkit-scrollbar { width: 6px; background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5, 0, 16, 0.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--accent-border); padding: 0 24px;
+    }
+    .topnav-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .topnav-brand { font-family: var(--mono); font-size: 13px; color: var(--accent); white-space: nowrap; }
+    .topnav-brand a { color: var(--text-dim); font-size: 11px; margin-left: 8px; }
+    .topnav-brand a:hover { color: var(--accent); }
+    .tabs { display: flex; gap: 2px; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      font-family: var(--mono); font-size: 12px; padding: 8px 14px;
+      color: var(--text-dim); background: transparent; border: none;
+      cursor: pointer; white-space: nowrap; transition: color 0.15s, background 0.15s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn:hover { color: var(--text); background: var(--accent-dim); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--accent-dim); }
+
+    /* LAYOUT */
+    .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+    .tab-content { display: none; animation: fadeUp 0.25s ease-out; }
+    .tab-content.visible { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface); border: 1px solid var(--accent-border);
+      padding: 24px; position: relative; backdrop-filter: blur(4px);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card::before, .card::after {
+      content: ""; position: absolute; width: 12px; height: 12px;
+      border-color: var(--accent); transition: border-color 0.2s; pointer-events: none;
+    }
+    .card::before { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+    .card::after  { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+    .card:hover::before, .card:hover::after { border-color: #fff; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
+    /* TYPOGRAPHY */
+    .section-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .section-title { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; line-height: 1.2; }
+    .section-sub { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; max-width: 560px; }
+    h3.card-title { font-family: var(--mono); font-size: 16px; color: var(--accent); margin-bottom: 8px; }
+    .card p { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+    .tag { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 3px 8px; border: 1px solid var(--accent-border); color: var(--text-dim); letter-spacing: 1px; }
+
+    /* BUTTONS */
+    .btn { font-family: var(--mono); font-size: 13px; padding: 10px 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px; }
+    .btn:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 16px rgba(190,147,253,0.3); }
+    .btn:active { transform: scale(0.97); }
+    .btn-sm { padding: 6px 12px; font-size: 11px; }
+    .btn-ok { border-color: var(--ok); color: var(--ok); }
+    .btn-ok:hover { background: var(--ok); color: var(--bg); box-shadow: 0 0 16px rgba(110,231,160,0.3); }
+    .btn-err { border-color: var(--err); color: var(--err); }
+    .btn-err:hover { background: var(--err); color: var(--bg); }
+    .btn-warn { border-color: var(--warn); color: var(--warn); }
+    .btn-warn:hover { background: var(--warn); color: var(--bg); }
+
+    /* DASHBOARD */
+    .hero-banner {
+      border: 1px solid var(--accent-border); padding: 40px 32px; margin-bottom: 32px;
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, rgba(190,147,253,0.06) 0%, transparent 60%), var(--surface);
+    }
+    .hero-banner::before { content: "EMI"; position: absolute; right: -20px; top: -30px; font-family: var(--mono); font-size: 180px; font-weight: 900; color: rgba(190,147,253,0.04); pointer-events: none; line-height: 1; }
+    .hero-title { font-family: var(--mono); font-size: clamp(24px, 5vw, 42px); color: var(--text-bright); font-weight: 700; line-height: 1.15; margin-bottom: 12px; }
+    .hero-title span { color: var(--accent); }
+    .hero-sub { font-size: 15px; color: var(--text-dim); max-width: 480px; line-height: 1.6; }
+    .stat-row { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    .stat-box { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--accent-border); padding: 16px; text-align: center; }
+    .stat-box .num { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .stat-box .label { font-size: 11px; color: var(--text-dim); margin-top: 4px; font-family: var(--mono); letter-spacing: 1px; }
+    .countdown { font-family: var(--mono); font-size: 12px; color: var(--warn); margin-top: 8px; }
+
+    /* STAFF EDITOR */
+    .staff-wrapper { background: var(--surface); border: 1px solid var(--accent-border); overflow: hidden; margin-bottom: 20px; }
+    .staff-header { padding: 20px 24px; border-bottom: 1px solid var(--accent-border); background: rgba(190,147,253,0.03); }
+    .staff-question { font-size: 16px; font-weight: 600; color: var(--text-bright); line-height: 1.4; }
+    .staff-toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; padding: 12px 24px;
+      background: rgba(190,147,253,0.02); border-bottom: 1px solid var(--accent-border);
+      align-items: center; justify-content: space-between;
+    }
+    .tool-group { display: flex; gap: 4px; align-items: center; }
+    .tool-group-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-right: 6px; text-transform: uppercase; }
+    .tool-btn { font-family: var(--mono); font-size: 12px; padding: 5px 10px; border: 1px solid var(--accent-border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.12s; }
+    .tool-btn:hover { border-color: var(--accent); color: var(--text); }
+    .tool-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .tool-btn.danger { border-color: rgba(255,107,107,0.3); color: var(--err); }
+    .tool-btn.danger:hover { background: var(--err); color: var(--bg); border-color: var(--err); }
+    .staff-svg-wrap { background: #fdfaf2; overflow-x: auto; cursor: crosshair; position: relative; }
+    .staff-svg-wrap svg { display: block; min-width: 600px; width: 100%; height: auto; }
+    /* hover guide line */
+    .staff-guide { position: absolute; left: 0; right: 0; height: 2px; background: rgba(190,147,253,0.3); pointer-events: none; display: none; z-index: 5; }
+    .staff-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-top: 1px solid var(--accent-border); }
+    .hint-box { margin: 12px 24px; padding: 12px 16px; background: var(--warn-dim); border: 1px solid rgba(251,191,36,0.2); color: var(--warn); font-size: 13px; display: none; line-height: 1.5; }
+    .hint-box.visible { display: block; animation: fadeUp 0.2s ease-out; }
+    .task-counter { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+
+    /* NOTE LABELS on hover */
+    .note-label-row {
+      display: flex; justify-content: space-around; padding: 4px 60px 4px 80px;
+      background: rgba(190,147,253,0.02); border-bottom: 1px solid var(--accent-border);
+      font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.5px;
+    }
+
+    /* QUIZ */
+    .quiz-box { background: var(--surface); border: 1px solid var(--accent-border); padding: 28px; margin-bottom: 16px; position: relative; }
+    .quiz-counter { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 1.5px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .quiz-question { font-size: 18px; font-weight: 700; color: var(--text-bright); line-height: 1.4; margin-bottom: 20px; }
+    .quiz-img { background: #fdfaf2; border: 1px solid var(--accent-border); margin-bottom: 20px; overflow-x: auto; }
+    .quiz-img svg { display: block; width: 100%; height: auto; min-width: 340px; }
+    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px) { .quiz-options { grid-template-columns: 1fr; } }
+    .quiz-opt {
+      font-family: var(--sans); font-size: 14px; font-weight: 500; padding: 14px 16px;
+      background: rgba(190,147,253,0.06); border: 1px solid var(--accent-border);
+      color: var(--text); cursor: pointer; text-align: left; transition: all 0.12s; line-height: 1.4;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-dim); }
+    .quiz-opt:disabled { cursor: default; opacity: 0.6; }
+    .quiz-opt.correct { border-color: var(--ok) !important; background: var(--ok-dim) !important; color: var(--ok) !important; opacity: 1 !important; box-shadow: 0 0 12px rgba(110,231,160,0.15); }
+    .quiz-opt.wrong { border-color: var(--err) !important; background: var(--err-dim) !important; color: var(--err) !important; opacity: 1 !important; }
+    .quiz-hint { margin-top: 16px; padding: 12px 16px; background: var(--warn-dim); border-left: 3px solid var(--warn); color: var(--warn); font-size: 13px; line-height: 1.5; display: none; }
+    .quiz-hint.visible { display: block; animation: fadeUp 0.2s ease-out; }
+    .quiz-next { margin-top: 20px; display: none; text-align: right; }
+    .quiz-next.visible { display: block; animation: fadeUp 0.15s ease-out; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); font-family: var(--mono); font-size: 13px; padding: 12px 24px; border: 1px solid; z-index: 9998; pointer-events: none; opacity: 0; transition: transform 0.3s ease-out, opacity 0.3s ease-out; backdrop-filter: blur(8px); }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.ok { background: var(--ok-dim); border-color: rgba(110,231,160,0.3); color: var(--ok); }
+    .toast.err { background: var(--err-dim); border-color: rgba(255,107,107,0.3); color: var(--err); }
+
+    /* EAR TRAINING */
+    .ear-center { display: flex; flex-direction: column; align-items: center; margin: 24px 0 32px; }
+    .play-btn {
+      width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--accent);
+      background: transparent; color: var(--accent); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .play-btn:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 30px rgba(190,147,253,0.3); }
+    .play-btn:active { transform: scale(0.95); }
+    .play-btn.playing { animation: pulse 0.8s ease-in-out infinite; }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(190,147,253,0.4); }
+      50% { box-shadow: 0 0 0 16px rgba(190,147,253,0); }
+    }
+    .play-btn svg { width: 32px; height: 32px; }
+    .play-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 12px; letter-spacing: 1px; }
+
+    .dir-toggles { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
+    .dir-toggle {
+      font-family: var(--mono); font-size: 11px; padding: 5px 14px;
+      border: 1px solid var(--accent-border); background: transparent; color: var(--text-dim);
+      cursor: pointer; transition: all 0.12s;
+    }
+    .dir-toggle.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+
+    .direction-badge { font-family: var(--mono); font-size: 11px; padding: 4px 10px; border: 1px solid var(--accent-border); color: var(--text-dim); margin-top: 8px; display: none; }
+    .direction-badge.visible { display: inline-block; }
+
+    .block-toggles { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+    .block-toggle {
+      font-family: var(--mono); font-size: 12px; padding: 6px 16px;
+      border: 1px solid var(--accent-border); background: transparent; color: var(--text-dim);
+      cursor: pointer; transition: all 0.12s;
+    }
+    .block-toggle.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+    .interval-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; width: 100%; max-width: 600px; margin: 0 auto; }
+    .interval-btn {
+      font-family: var(--mono); font-size: 14px; padding: 16px 8px;
+      background: rgba(190,147,253,0.05); border: 1px solid var(--accent-border);
+      color: var(--text); cursor: pointer; text-align: center; transition: all 0.1s;
+    }
+    .interval-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-1px); }
+    .interval-btn:active:not(:disabled) { transform: translateY(1px); }
+    .interval-btn:disabled { opacity: 0.4; cursor: default; }
+    .interval-btn .id { font-size: 18px; font-weight: 700; display: block; }
+    .interval-btn .name { font-size: 9px; color: var(--text-dim); display: block; margin-top: 4px; letter-spacing: 0.5px; }
+    .streak-display { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 20px; }
+    .streak-display .streak-num { color: var(--accent); font-size: 18px; font-weight: 700; }
+
+    /* REPORTS */
+    .report-card { background: var(--surface); border: 1px solid var(--accent-border); padding: 24px; margin-bottom: 16px; }
+    .report-card h3 { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-bottom: 16px; letter-spacing: 1px; }
+    .bar-wrap { height: 8px; background: rgba(190,147,253,0.08); overflow: hidden; margin: 8px 0 4px; }
+    .bar-fill { height: 100%; transition: width 0.8s ease-out; }
+    .bar-fill.purple { background: var(--accent); }
+    .bar-fill.green { background: var(--ok); }
+    .report-pct { font-family: var(--mono); font-size: 36px; font-weight: 700; line-height: 1; }
+    .report-detail { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+    .reset-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--accent-border); text-align: center; }
+
+    .sep { border: none; border-top: 1px solid var(--accent-border); margin: 40px 0; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); } 40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.4s ease-out; }
+
+    @media (max-width: 640px) {
+      .topnav { padding: 0 12px; }
+      .topnav-inner { height: 48px; }
+      .topnav-brand { font-size: 11px; }
+      .tab-btn { font-size: 11px; padding: 6px 10px; }
+      .container { padding: 20px 16px 60px; }
+      .hero-banner { padding: 24px 20px; }
+      .hero-banner::before { font-size: 100px; top: -15px; right: -10px; }
+      .section-title { font-size: 22px; }
+      .card { padding: 16px; }
+      .staff-header { padding: 16px; }
+      .staff-toolbar { padding: 10px 16px; gap: 8px; }
+      .staff-footer { padding: 10px 16px; }
+      .hint-box { margin: 10px 16px; }
+      .quiz-box { padding: 20px; }
+      .quiz-question { font-size: 16px; }
+      .interval-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="topnav-brand">ESTRUTURAÇÃO_I <a href="/">← voltar</a></div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="home">início</button>
+        <button class="tab-btn" data-tab="theory">prova 1</button>
+        <button class="tab-btn" data-tab="ear">prova 2</button>
+        <button class="tab-btn" data-tab="reports">relatório</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- TAB: HOME -->
+    <section id="tab-home" class="tab-content visible">
+      <div class="hero-banner">
+        <div class="section-label">caderno de estudos</div>
+        <h1 class="hero-title">Estruturação da<br><span>Música I</span></h1>
+        <p class="hero-sub">Treino prático pra prova: intervalos, armaduras, escrita na pauta e percepção auditiva. Sem enrolação.</p>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="num" id="home-total">0</div><div class="label">respostas</div></div>
+        <div class="stat-box"><div class="num" id="home-correct">0</div><div class="label">acertos</div></div>
+        <div class="stat-box"><div class="num" id="home-pct">—</div><div class="label">aproveit.</div></div>
+        <div class="stat-box"><div class="num" id="home-streak">0</div><div class="label">melhor streak</div></div>
+      </div>
+      <div class="card-grid">
+        <div class="card" onclick="switchTab('theory')" style="cursor:pointer">
+          <div class="tag" style="margin-bottom:12px">08/06 — ESCRITA</div>
+          <h3 class="card-title">Prova 1: Teoria</h3>
+          <p>Armaduras de clave, classificação de intervalos, escalas e escrita na pauta. A parte teórica e visual.</p>
+          <div style="margin-top:16px"><button class="btn btn-sm">abrir treino →</button></div>
+          <div class="countdown" id="cd-p1"></div>
+        </div>
+        <div class="card" onclick="switchTab('ear')" style="cursor:pointer">
+          <div class="tag" style="margin-bottom:12px">11/06 — AUDITIVA</div>
+          <h3 class="card-title">Prova 2: Percepção</h3>
+          <p>Identificação de intervalos no ouvido — ascendentes e descendentes. Treino por blocos progressivos.</p>
+          <div style="margin-top:16px"><button class="btn btn-sm">abrir treino →</button></div>
+          <div class="countdown" id="cd-p2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: THEORY -->
+    <section id="tab-theory" class="tab-content">
+      <div class="section-label">exercício prático</div>
+      <div class="section-title">Escrita na Pauta</div>
+      <div class="section-sub">Monte armaduras, escalas e intervalos diretamente na pauta. Use as ferramentas e valide.</div>
+
+      <div class="staff-wrapper" id="staff-editor">
+        <div class="staff-header">
+          <div class="task-counter" id="staff-counter">tarefa 1 de 8</div>
+          <div class="staff-question" id="staff-question">Carregando...</div>
+        </div>
+        <div id="staff-hint" class="hint-box"></div>
+        <div class="staff-toolbar">
+          <div style="display:flex;flex-wrap:wrap;gap:12px">
+            <div class="tool-group">
+              <span class="tool-group-label">armadura</span>
+              <button class="tool-btn" data-tool="arm_sharp">♯</button>
+              <button class="tool-btn" data-tool="arm_flat">♭</button>
+            </div>
+            <div class="tool-group">
+              <span class="tool-group-label">nota</span>
+              <button class="tool-btn active" data-tool="nota_natural">♩</button>
+              <button class="tool-btn" data-tool="nota_sharp">♩♯</button>
+              <button class="tool-btn" data-tool="nota_flat">♩♭</button>
+            </div>
+          </div>
+          <div class="tool-group">
+            <button class="tool-btn" id="staff-undo" title="Desfazer">↩</button>
+            <button class="tool-btn danger" id="staff-clear" title="Limpar">✕</button>
+          </div>
+        </div>
+        <div class="staff-svg-wrap" id="staff-svg-area">
+          <div class="staff-guide" id="staff-guide"></div>
+          <svg id="staff-svg" viewBox="0 0 620 300"></svg>
+        </div>
+        <div class="staff-footer">
+          <button class="btn btn-sm btn-warn" id="staff-hint-btn">dica</button>
+          <button class="btn btn-sm btn-ok" id="staff-validate">validar →</button>
+        </div>
+      </div>
+
+      <hr class="sep">
+
+      <!-- VISUAL INTERVAL IDENTIFICATION -->
+      <div class="section-label">leitura visual</div>
+      <div class="section-title">Nomeie o Intervalo</div>
+      <div class="section-sub">Veja o intervalo na pauta e identifique a classificação correta.</div>
+      <div id="visual-interval-area"></div>
+
+      <hr class="sep">
+
+      <!-- THEORY QUIZ -->
+      <div class="section-label">questões teóricas</div>
+      <div class="section-title">Teoria Direta</div>
+      <div class="section-sub">Questões sobre armaduras, intervalos, escalas e o círculo das quintas. Sem consulta.</div>
+      <div id="quiz-area"></div>
+    </section>
+
+    <!-- TAB: EAR -->
+    <section id="tab-ear" class="tab-content">
+      <div class="section-label">percepção auditiva</div>
+      <div class="section-title">Treino de Ouvido</div>
+      <div class="section-sub">Ouça o intervalo e identifique. Ative/desative blocos conforme seu nível.</div>
+
+      <div style="text-align:center">
+        <div class="block-toggles">
+          <button class="block-toggle active" data-block="1">Bloco 1 — Justos</button>
+          <button class="block-toggle active" data-block="2">Bloco 2 — 3as/6as</button>
+          <button class="block-toggle active" data-block="3">Bloco 3 — 2as/7as/trít</button>
+        </div>
+        <div class="section-label" style="margin-top:16px;margin-bottom:8px">direção</div>
+        <div class="dir-toggles" id="dir-toggles">
+          <button class="dir-toggle active" data-dir="both">ambos</button>
+          <button class="dir-toggle" data-dir="asc">↑ ascendente</button>
+          <button class="dir-toggle" data-dir="desc">↓ descendente</button>
+        </div>
+      </div>
+
+      <div class="ear-center">
+        <button class="play-btn" id="ear-play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="8,5 19,12 8,19"/></svg>
+        </button>
+        <div class="play-label" id="ear-label">clique pra começar</div>
+        <div class="direction-badge" id="ear-direction"></div>
+      </div>
+
+      <div id="ear-feedback" style="text-align:center;margin-bottom:16px"></div>
+      <div class="interval-grid" id="interval-grid"></div>
+      <div class="streak-display">streak atual: <span class="streak-num" id="ear-streak">0</span></div>
+    </section>
+
+    <!-- TAB: REPORTS -->
+    <section id="tab-reports" class="tab-content">
+      <div class="section-label">seu desempenho</div>
+      <div class="section-title">Relatório</div>
+      <div class="section-sub">Progresso salvo localmente no seu navegador.</div>
+      <div class="card-grid">
+        <div class="report-card">
+          <h3>// TEORIA & ESCRITA</h3>
+          <div class="report-pct" id="rep-theory-pct" style="color:var(--accent)">—</div>
+          <div class="report-detail" id="rep-theory-detail">0 / 0 acertos</div>
+          <div class="bar-wrap"><div class="bar-fill purple" id="rep-theory-bar" style="width:0%"></div></div>
+        </div>
+        <div class="report-card">
+          <h3>// PERCEPÇÃO AUDITIVA</h3>
+          <div class="report-pct" id="rep-ear-pct" style="color:var(--ok)">—</div>
+          <div class="report-detail" id="rep-ear-detail">0 / 0 acertos</div>
+          <div class="bar-wrap"><div class="bar-fill green" id="rep-ear-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="report-card" style="margin-top:16px">
+        <h3>// MELHOR STREAK</h3>
+        <div class="report-pct" id="rep-streak" style="color:var(--warn)">0</div>
+        <div class="report-detail">acertos consecutivos (percepção)</div>
+      </div>
+      <div class="reset-section"><button class="btn btn-sm btn-err" id="reset-stats">resetar tudo</button></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function() {
+    "use strict";
+
+    /* ===== DATA ===== */
+    var BLOCKS = {
+      1: [
+        { id: "1J", name: "Uníssono", semitones: 0 },
+        { id: "4J", name: "4ª Justa", semitones: 5 },
+        { id: "5J", name: "5ª Justa", semitones: 7 },
+        { id: "8J", name: "8ª Justa", semitones: 12 }
+      ],
+      2: [
+        { id: "3m", name: "3ª Menor", semitones: 3 },
+        { id: "3M", name: "3ª Maior", semitones: 4 },
+        { id: "6m", name: "6ª Menor", semitones: 8 },
+        { id: "6M", name: "6ª Maior", semitones: 9 }
+      ],
+      3: [
+        { id: "2m", name: "2ª Menor", semitones: 1 },
+        { id: "2M", name: "2ª Maior", semitones: 2 },
+        { id: "4A", name: "Trítono", semitones: 6 },
+        { id: "7m", name: "7ª Menor", semitones: 10 },
+        { id: "7M", name: "7ª Maior", semitones: 11 }
+      ]
+    };
+
+    var ALL_INTERVALS = [];
+    [1,2,3].forEach(function(k){ ALL_INTERVALS = ALL_INTERVALS.concat(BLOCKS[k]); });
+
+    /* Note names & Y positions for treble clef, from C4 up to C6 */
+    var NOTE_MAP = [
+      { name: "Dó4", midi: 60, y: 200 },
+      { name: "Ré4", midi: 62, y: 190 },
+      { name: "Mi4", midi: 64, y: 180 },
+      { name: "Fá4", midi: 65, y: 170 },
+      { name: "Sol4", midi: 67, y: 160 },
+      { name: "Lá4", midi: 69, y: 150 },
+      { name: "Si4", midi: 71, y: 140 },
+      { name: "Dó5", midi: 72, y: 130 },
+      { name: "Ré5", midi: 74, y: 120 },
+      { name: "Mi5", midi: 76, y: 110 },
+      { name: "Fá5", midi: 77, y: 100 },
+      { name: "Sol5", midi: 79, y: 90 },
+      { name: "Lá5", midi: 81, y: 80 },
+      { name: "Si5", midi: 83, y: 70 },
+      { name: "Dó6", midi: 84, y: 60 }
+    ];
+
+    // accidentals to note y-offsets (sharp=raise pitch=lower y by 5, flat=lower pitch=raise y by 5... but for display on staff we keep note position and just add the symbol)
+    // Actually for visual intervals, we keep the note at the diatonic position and add acc symbol
+
+    var STAFF_TASKS = [
+      { instruction: "Construa a armadura de clave de Lá Maior.", hint: "Lá Maior possui 3 sustenidos: Fá#, Dó#, Sol#. Coloque-os na pauta nas posições tradicionais.", validate: function(a,n){ return a.length===3 && a.every(function(x){return x.sign==="sharp"}) && n.length===0; }},
+      { instruction: "Construa a armadura de clave de Fá Maior.", hint: "Fá Maior tem 1 bemol: Sib.", validate: function(a,n){ return a.length===1 && a[0].sign==="flat" && n.length===0; }},
+      { instruction: "Construa a armadura de clave de Mib Maior.", hint: "Mib Maior tem 3 bemóis: Sib, Mib, Láb.", validate: function(a,n){ return a.length===3 && a.every(function(x){return x.sign==="flat"}) && n.length===0; }},
+      { instruction: "Construa a armadura de clave de Ré Maior.", hint: "Ré Maior tem 2 sustenidos: Fá# e Dó#.", validate: function(a,n){ return a.length===2 && a.every(function(x){return x.sign==="sharp"}) && n.length===0; }},
+      { instruction: "Construa a armadura de clave de Sib Maior.", hint: "Sib Maior tem 2 bemóis: Sib e Mib.", validate: function(a,n){ return a.length===2 && a.every(function(x){return x.sign==="flat"}) && n.length===0; }},
+      { instruction: "Escreva uma 6ª Menor ascendente a partir de Dó (duas notas).", hint: "6ª menor = 8 semitons. Dó → Láb. Insira Dó natural e Lá com bemol.", validate: function(a,n){ return n.length===2 && n.some(function(x){return x.acc==="flat"}); }},
+      { instruction: "Escreva uma 3ª Maior ascendente a partir de Sol (duas notas).", hint: "3ª Maior = 4 semitons. Sol → Si. Duas notas naturais.", validate: function(a,n){ return n.length===2 && n.every(function(x){return x.acc==="natural"}); }},
+      { instruction: "Construa a armadura de Si Maior.", hint: "Si Maior tem 5 sustenidos: Fá#, Dó#, Sol#, Ré#, Lá#.", validate: function(a,n){ return a.length===5 && a.every(function(x){return x.sign==="sharp"}) && n.length===0; }},
+      { instruction: "Construa a armadura de Láb Maior.", hint: "Láb Maior tem 4 bemóis: Sib, Mib, Láb, Réb.", validate: function(a,n){ return a.length===4 && a.every(function(x){return x.sign==="flat"}) && n.length===0; }},
+      { instruction: "Escreva uma 5ª Justa ascendente a partir de Ré (duas notas).", hint: "5ª Justa = 7 semitons. Ré → Lá. Duas notas naturais.", validate: function(a,n){ return n.length===2 && n.every(function(x){return x.acc==="natural"}); }},
+      { instruction: "Escreva uma 4ª Aumentada (trítono) a partir de Fá (duas notas).", hint: "4ª Aumentada = 6 semitons. Fá → Si natural. Duas notas naturais.", validate: function(a,n){ return n.length===2; }},
+      { instruction: "Construa a armadura de Sol Maior.", hint: "Sol Maior tem 1 sustenido: Fá#.", validate: function(a,n){ return a.length===1 && a[0].sign==="sharp" && n.length===0; }}
+    ];
+
+    var QUESTIONS = [
+      { q: "Qual a armadura de clave de Mi Maior?", opts: ["2 sustenidos (Fá#, Dó#)", "4 sustenidos (Fá#, Dó#, Sol#, Ré#)", "3 sustenidos (Fá#, Dó#, Sol#)", "4 bemóis (Sib, Mib, Láb, Réb)"], ans: 1, hint: "Mi Maior está a 4 quintas de Dó. Ordem dos sustenidos: Fá, Dó, Sol, Ré." },
+      { q: "8 semitons a partir de Fá4: qual nota e classificação?", opts: ["Réb5 — 6ª Menor", "Ré5 — 6ª Maior", "Dó#5 — 5ª Aumentada", "Fá5 — 8ª Justa"], ans: 0, hint: "6ª maior de Fá = Ré (9 st). Com 8 st fica meio tom abaixo: Réb = 6ª menor." },
+      { q: "Armadura com Fá#, Dó#, Sol#, Ré#, Lá#, Mi# — qual tonalidade maior?", opts: ["Si Maior", "Fá# Maior", "Dó# Maior", "Mi Maior"], ans: 1, hint: "Um semitom acima do último sustenido (Mi# → Fá#)." },
+      { q: "Intervalo entre Sol3 e Fá4?", opts: ["7ª Maior", "7ª Menor", "8ª Diminuta", "6ª Maior"], ans: 1, hint: "Sol → Fá = 10 semitons. 7ª maior = 11 st (Fá#). Logo, 7ª Menor." },
+      { q: "No Círculo das Quintas, duas quintas acima de Sib Maior resulta em:", opts: ["Dó Maior", "Fá Maior", "Sol Maior", "Mib Maior"], ans: 0, hint: "Sib (2♭) → Fá (1♭) → Dó (0)." },
+      { q: "Qual é a relativa menor de Mib Maior?", opts: ["Fá menor", "Dó menor", "Sib menor", "Sol menor"], ans: 1, hint: "Relativa menor fica 3 semitons abaixo. Mib − 3st = Dó." },
+      { q: "Quantos bemóis tem a armadura de Réb Maior?", opts: ["4 bemóis", "5 bemóis", "3 bemóis", "6 bemóis"], ans: 1, hint: "Réb Maior: Sib, Mib, Láb, Réb, Solb = 5." },
+      { q: "Dó → Sol# forma qual intervalo?", opts: ["5ª Justa", "5ª Aumentada", "6ª Menor", "4ª Aumentada"], ans: 1, hint: "Dó → Sol = 5J (7 st). Sol# = 8 st = 5ª Aumentada." },
+      { q: "Qual a enarmonia de Ré#?", opts: ["Mib", "Mi", "Réb", "Dó##"], ans: 0, hint: "Mesma altura, nome diferente. Ré# = Mib." },
+      { q: "Quantos sustenidos tem a armadura de Si Maior?", opts: ["4 sustenidos", "5 sustenidos", "6 sustenidos", "3 sustenidos"], ans: 1, hint: "Si Maior: Fá#, Dó#, Sol#, Ré#, Lá# = 5." },
+      { q: "Um intervalo de 6 semitons é classificado como:", opts: ["4ª Justa", "4ª Aumentada (Trítono)", "5ª Diminuta", "Tanto b) quanto c)"], ans: 3, hint: "6 st = trítono = 4ª aum. ou 5ª dim. dependendo da grafia." },
+      { q: "Na escala maior, o IV grau é chamado de:", opts: ["Dominante", "Subdominante", "Mediante", "Superdominante"], ans: 1, hint: "I=Tônica, II=Supertônica, III=Mediante, IV=Subdominante." },
+      { q: "Uma tríade maior é formada por:", opts: ["3ª menor + 3ª maior", "3ª maior + 3ª menor", "3ª maior + 3ª maior", "3ª menor + 3ª menor"], ans: 1, hint: "Maior: 3M (4 st) + 3m (3 st) = 5J (7 st)." },
+      { q: "Qual a ordem correta dos bemóis?", opts: ["Si, Mi, Lá, Ré, Sol, Dó, Fá", "Fá, Dó, Sol, Ré, Lá, Mi, Si", "Si, Lá, Mi, Ré, Sol, Dó, Fá", "Fá, Si, Mi, Lá, Ré, Sol, Dó"], ans: 0, hint: "Inverso dos sustenidos. Sustenidos: Fá Dó Sol Ré Lá Mi Si." },
+      { q: "Qual tonalidade maior tem 3 bemóis?", opts: ["Láb Maior", "Mib Maior", "Sib Maior", "Fá Maior"], ans: 1, hint: "1♭=Fá, 2♭=Sib, 3♭=Mib." },
+      { q: "Ré → Sib: qual intervalo?", opts: ["6ª Maior", "6ª Menor", "5ª Diminuta", "7ª Menor"], ans: 1, hint: "Ré → Si = 6M (9 st). Ré → Sib = 8 st = 6ª Menor." },
+      { q: "Qual a relativa menor de Sol Maior?", opts: ["Mi menor", "Lá menor", "Si menor", "Ré menor"], ans: 0, hint: "Sol − 3 semitons = Mi. Mesma armadura (1 sustenido)." },
+      { q: "Qual intervalo tem 11 semitons?", opts: ["7ª Maior", "7ª Menor", "8ª Diminuta", "6ª Aumentada"], ans: 0, hint: "7ª Menor = 10 st, 7ª Maior = 11 st, 8ª Justa = 12 st." },
+      { q: "A escala menor harmônica se diferencia da natural por ter:", opts: ["VII grau elevado em meio tom", "VI grau elevado em meio tom", "II grau abaixado em meio tom", "IV grau elevado em meio tom"], ans: 0, hint: "Menor harmônica: eleva o VII grau para criar a sensível (meio tom abaixo da tônica)." },
+      { q: "Qual a tonalidade com 4 sustenidos?", opts: ["Ré Maior", "Lá Maior", "Mi Maior", "Si Maior"], ans: 2, hint: "1#=Sol, 2#=Ré, 3#=Lá, 4#=Mi." },
+      { q: "Fá → Ré forma qual intervalo?", opts: ["6ª Maior", "6ª Menor", "5ª Justa", "7ª Menor"], ans: 0, hint: "Fá → Ré = 9 semitons = 6ª Maior." },
+      { q: "O VII grau da escala maior é chamado de:", opts: ["Sensível", "Subtônica", "Mediante", "Superdominante"], ans: 0, hint: "Sensível quando está a meio tom da tônica (escala maior e menor harmônica)." },
+      { q: "Uma tríade diminuta é formada por:", opts: ["3ª menor + 3ª menor", "3ª maior + 3ª menor", "3ª menor + 3ª maior", "3ª maior + 3ª maior"], ans: 0, hint: "Diminuta = duas 3ªs menores empilhadas = 3m + 3m." },
+      { q: "Qual a relativa maior de Fá# menor?", opts: ["Lá Maior", "Ré Maior", "Mi Maior", "Si Maior"], ans: 0, hint: "Fá# + 3 semitons = Lá. Fá# menor e Lá Maior têm 3 sustenidos." },
+      { q: "Mi → Dó forma qual intervalo?", opts: ["6ª Maior", "6ª Menor", "5ª Diminuta", "5ª Justa"], ans: 1, hint: "Mi → Dó = 8 semitons. Contando diatonicamente Mi-Fá-Sol-Lá-Si-Dó = 6ª. 8 st = 6ª menor." },
+      { q: "Qual a diferença entre a escala menor melódica ascendente e a natural?", opts: ["VI e VII graus elevados", "Apenas o VII grau elevado", "IV e V graus elevados", "III e VI graus abaixados"], ans: 0, hint: "Melódica ascendente: eleva VI e VII. Descendente: volta a ser natural." }
+    ];
+
+    // Visual interval data for generating random interval images
+    // We pick from a pool of carefully defined intervals that work well visually
+    var VISUAL_INTERVALS = [
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Mi4", y2: 180, acc2: "", answer: "3M", label: "3ª Maior" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Mib4", y2: 180, acc2: "♭", answer: "3m", label: "3ª Menor" },
+      { note1: "Ré4", y1: 190, acc1: "", note2: "Lá4", y2: 150, acc2: "", answer: "5J", label: "5ª Justa" },
+      { note1: "Mi4", y1: 180, acc1: "", note2: "Dó5", y2: 130, acc2: "", answer: "6m", label: "6ª Menor" },
+      { note1: "Fá4", y1: 170, acc1: "", note2: "Si4", y2: 140, acc2: "", answer: "4A", label: "4ª Aum. (Trítono)" },
+      { note1: "Sol4", y1: 160, acc1: "", note2: "Fá5", y2: 100, acc2: "", answer: "7m", label: "7ª Menor" },
+      { note1: "Sol4", y1: 160, acc1: "", note2: "Fá#5", y2: 100, acc2: "♯", answer: "7M", label: "7ª Maior" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Fá4", y2: 170, acc2: "", answer: "4J", label: "4ª Justa" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Sol4", y2: 160, acc2: "", answer: "5J", label: "5ª Justa" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Dó5", y2: 130, acc2: "", answer: "8J", label: "8ª Justa" },
+      { note1: "Ré4", y1: 190, acc1: "", note2: "Mi4", y2: 180, acc2: "", answer: "2M", label: "2ª Maior" },
+      { note1: "Mi4", y1: 180, acc1: "", note2: "Fá4", y2: 170, acc2: "", answer: "2m", label: "2ª Menor" },
+      { note1: "Ré4", y1: 190, acc1: "", note2: "Sib4", y2: 140, acc2: "♭", answer: "6m", label: "6ª Menor" },
+      { note1: "Ré4", y1: 190, acc1: "", note2: "Si4", y2: 140, acc2: "", answer: "6M", label: "6ª Maior" },
+      { note1: "Fá4", y1: 170, acc1: "", note2: "Réb5", y2: 120, acc2: "♭", answer: "6m", label: "6ª Menor" },
+      { note1: "Fá4", y1: 170, acc1: "", note2: "Ré5", y2: 120, acc2: "", answer: "6M", label: "6ª Maior" },
+      { note1: "Sol4", y1: 160, acc1: "", note2: "Dó5", y2: 130, acc2: "", answer: "4J", label: "4ª Justa" },
+      { note1: "Lá4", y1: 150, acc1: "", note2: "Mi5", y2: 110, acc2: "", answer: "5J", label: "5ª Justa" },
+      { note1: "Si4", y1: 140, acc1: "", note2: "Dó5", y2: 130, acc2: "", answer: "2m", label: "2ª Menor" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Lá4", y2: 150, acc2: "", answer: "6M", label: "6ª Maior" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Láb4", y2: 150, acc2: "♭", answer: "6m", label: "6ª Menor" },
+      { note1: "Mi4", y1: 180, acc1: "", note2: "Ré5", y2: 120, acc2: "", answer: "7m", label: "7ª Menor" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Ré4", y2: 190, acc2: "", answer: "2M", label: "2ª Maior" },
+      { note1: "Dó4", y1: 200, acc1: "", note2: "Réb4", y2: 190, acc2: "♭", answer: "2m", label: "2ª Menor" },
+      { note1: "Sol4", y1: 160, acc1: "", note2: "Si4", y2: 140, acc2: "", answer: "3M", label: "3ª Maior" },
+      { note1: "Lá4", y1: 150, acc1: "", note2: "Dó5", y2: 130, acc2: "", answer: "3m", label: "3ª Menor" },
+      { note1: "Fá4", y1: 170, acc1: "", note2: "Lá4", y2: 150, acc2: "", answer: "3M", label: "3ª Maior" },
+      { note1: "Dó5", y1: 130, acc1: "", note2: "Sol5", y2: 90, acc2: "", answer: "5J", label: "5ª Justa" }
+    ];
+
+    /* ===== STATE ===== */
+    var stats = loadStats();
+    var currentTab = "home";
+    var staffArmadura = [], staffNotas = [], staffTool = "nota_natural", staffTaskIdx = 0, staffIdCounter = 0;
+    var quizIdx = 0, quizAnswered = false;
+    var activeBlocks = { 1: true, 2: true, 3: true };
+    var earDirection = "both"; // "both", "asc", "desc"
+    var currentInterval = null, earPlaying = false, earStreak = 0, earFeedbackTimeout = null;
+    var visualIdx = 0, visualAnswered = false;
+
+    /* ===== PERSISTENCE ===== */
+    function loadStats() {
+      try { var s = JSON.parse(localStorage.getItem("emi_stats")); if (s && typeof s.theory === "object") return s; } catch(e) {}
+      return { theory: { total: 0, correct: 0 }, ear: { total: 0, correct: 0 }, bestStreak: 0 };
+    }
+    function saveStats() { localStorage.setItem("emi_stats", JSON.stringify(stats)); }
+    function recordAnswer(module, correct) {
+      stats[module].total++; if (correct) stats[module].correct++;
+      saveStats(); updateHomeStats();
+    }
+
+    /* ===== AUDIO ===== */
+    function getCtx() { if (!window._ac) window._ac = new (window.AudioContext || window.webkitAudioContext)(); return window._ac; }
+    function midiFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+    function playNote(midi, start, dur) {
+      var ctx = getCtx(), g = ctx.createGain();
+      g.connect(ctx.destination);
+      var freq = midiFreq(midi);
+
+      var osc1 = ctx.createOscillator();
+      osc1.type = "sine"; osc1.frequency.value = freq;
+      osc1.connect(g);
+
+      var osc2 = ctx.createOscillator();
+      osc2.type = "triangle"; osc2.frequency.value = freq;
+      var g2 = ctx.createGain(); g2.gain.value = 0.2;
+      osc2.connect(g2); g2.connect(g);
+
+      g.gain.setValueAtTime(0, start); 
+      g.gain.linearRampToValueAtTime(0.7, start + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.2, start + 0.3);
+      g.gain.setValueAtTime(0.2, start + dur - 0.08); 
+      g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+      osc1.start(start); osc1.stop(start + dur);
+      osc2.start(start); osc2.stop(start + dur);
+    }
+
+    /* ===== TOAST ===== */
+    function showToast(msg, type) {
+      var t = document.getElementById("toast"); t.textContent = msg;
+      t.className = "toast " + type + " show";
+      setTimeout(function(){ t.classList.remove("show"); }, 2200);
+    }
+
+    /* ===== TABS ===== */
+    function switchTab(id) {
+      currentTab = id;
+      document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.tab === id); });
+      document.querySelectorAll(".tab-content").forEach(function(s){ s.classList.toggle("visible", s.id === "tab-" + id); });
+      if (id === "reports") updateReports();
+      if (id === "home") updateHomeStats();
+    }
+    window.switchTab = switchTab;
+    document.querySelectorAll(".tab-btn").forEach(function(b){ b.addEventListener("click", function(){ switchTab(b.dataset.tab); }); });
+
+    /* ===== HOME ===== */
+    function updateHomeStats() {
+      var tot = stats.theory.total + stats.ear.total;
+      var cor = stats.theory.correct + stats.ear.correct;
+      document.getElementById("home-total").textContent = tot;
+      document.getElementById("home-correct").textContent = cor;
+      document.getElementById("home-pct").textContent = tot > 0 ? Math.round(cor / tot * 100) + "%" : "—";
+      document.getElementById("home-streak").textContent = stats.bestStreak;
+    }
+    function updateCountdowns() {
+      var now = new Date(), p1 = new Date("2026-06-08T00:00:00-03:00"), p2 = new Date("2026-06-11T00:00:00-03:00");
+      function fmt(t) { var d = t - now; if (d <= 0) return "HOJE ou já passou"; var dd = Math.floor(d/864e5), hh = Math.floor((d%864e5)/36e5); return dd > 0 ? dd+"d "+hh+"h" : hh+"h restantes"; }
+      var c1 = document.getElementById("cd-p1"), c2 = document.getElementById("cd-p2");
+      if (c1) c1.textContent = "⏱ " + fmt(p1); if (c2) c2.textContent = "⏱ " + fmt(p2);
+    }
+
+    /* ===== STAFF SVG HELPERS ===== */
+    var SL = [100, 120, 140, 160, 180]; // staff lines y-positions (wider spacing, more room)
+    var YG = []; for (var yy = 20; yy <= 240; yy += 10) YG.push(yy);
+
+    function drawStaffSVG(svgEl, armadura, notas, opts) {
+      opts = opts || {};
+      var w = opts.width || 620, h = opts.height || 300;
+      svgEl.setAttribute("viewBox", "0 0 " + w + " " + h);
+      var p = [];
+
+      // bg
+      if (opts.bg !== false) {
+        // subtle staff area tint
+      }
+
+      // staff lines
+      var x1 = opts.x1 || 30, x2 = opts.x2 || (w - 20);
+      SL.forEach(function(y) {
+        p.push('<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="#aaa" stroke-width="1"/>');
+      });
+
+      // treble clef — using a proper size and centered on the staff
+      // The 𝄞 character: we position it so the curl wraps around the G line (line 4 = y=160)
+      p.push('<text x="'+( (opts.clefX||35) )+'" y="'+ ((opts.clefY||175)) +'" font-size="'+(opts.clefSize||105)+'" font-family="\'Bravura\',\'Noto Music\',serif" fill="#555" style="pointer-events:none" dominant-baseline="auto">𝄞</text>');
+
+      // armadura
+      if (armadura) {
+        armadura.forEach(function(acc, i) {
+          var ax = (opts.armX || 95) + i * 18;
+          var sym = acc.sign === "sharp" ? "♯" : "♭";
+          var fs = acc.sign === "sharp" ? 26 : 30;
+          var dy = acc.sign === "sharp" ? 8 : 8;
+          p.push('<text x="'+ax+'" y="'+(acc.y+dy)+'" font-size="'+fs+'" fill="#666" font-family="serif" font-weight="bold" style="pointer-events:none" text-anchor="middle">'+sym+'</text>');
+        });
+      }
+
+      // notas
+      if (notas) {
+        var nsx = opts.noteStartX || Math.max(160, 105 + (armadura ? armadura.length : 0) * 18);
+        notas.forEach(function(note, i) {
+          var nx = nsx + i * 50;
+          var g = [];
+
+          // ledger lines above (up from first staff line at SL[0]=100)
+          for (var ly = SL[0] - 20; ly >= 20; ly -= 20) {
+            if (note.y <= ly) g.push('<line x1="'+(nx-16)+'" y1="'+ly+'" x2="'+(nx+16)+'" y2="'+ly+'" stroke="#aaa" stroke-width="1"/>');
+          }
+          // ledger lines below (down from last staff line at SL[4]=180)
+          for (var ly2 = SL[4] + 20; ly2 <= 240; ly2 += 20) {
+            if (note.y >= ly2) g.push('<line x1="'+(nx-16)+'" y1="'+ly2+'" x2="'+(nx+16)+'" y2="'+ly2+'" stroke="#aaa" stroke-width="1"/>');
+          }
+
+          // ledger line on the note if it sits exactly on one
+          if (note.y === SL[0] - 20 || note.y === SL[4] + 20 || note.y === 200 || note.y === 60) {
+            g.push('<line x1="'+(nx-16)+'" y1="'+note.y+'" x2="'+(nx+16)+'" y2="'+note.y+'" stroke="#aaa" stroke-width="1"/>');
+          }
+
+          // accidental
+          if (note.acc === "sharp" || note.acc === "♯") {
+            g.push('<text x="'+(nx-20)+'" y="'+(note.y+8)+'" font-size="22" fill="#444" font-family="serif" font-weight="bold" style="pointer-events:none">♯</text>');
+          } else if (note.acc === "flat" || note.acc === "♭") {
+            g.push('<text x="'+(nx-19)+'" y="'+(note.y+7)+'" font-size="26" fill="#444" font-family="serif" font-weight="bold" style="pointer-events:none">♭</text>');
+          }
+
+          // note head
+          g.push('<ellipse cx="'+nx+'" cy="'+note.y+'" rx="10" ry="7" fill="#333" transform="rotate(-10,'+nx+','+note.y+')"/>');
+
+          // stem
+          if (note.y >= 140) {
+            g.push('<line x1="'+(nx+9)+'" y1="'+note.y+'" x2="'+(nx+9)+'" y2="'+(note.y-55)+'" stroke="#333" stroke-width="1.5"/>');
+          } else {
+            g.push('<line x1="'+(nx-9)+'" y1="'+note.y+'" x2="'+(nx-9)+'" y2="'+(note.y+55)+'" stroke="#333" stroke-width="1.5"/>');
+          }
+
+          p.push('<g style="pointer-events:none">' + g.join("") + '</g>');
+        });
+      }
+
+      svgEl.innerHTML = p.join("");
+    }
+
+    /* ===== STAFF EDITOR ===== */
+    function renderStaff() {
+      var svg = document.getElementById("staff-svg");
+      drawStaffSVG(svg, staffArmadura, staffNotas);
+    }
+
+    function loadStaffTask() {
+      var task = STAFF_TASKS[staffTaskIdx];
+      document.getElementById("staff-counter").textContent = "tarefa " + (staffTaskIdx + 1) + " de " + STAFF_TASKS.length;
+      document.getElementById("staff-question").textContent = task.instruction;
+      document.getElementById("staff-hint").textContent = task.hint;
+      document.getElementById("staff-hint").classList.remove("visible");
+      staffArmadura = []; staffNotas = []; staffIdCounter = 0;
+      renderStaff();
+    }
+
+    // Hover guide
+    var svgArea = document.getElementById("staff-svg-area");
+    var guideEl = document.getElementById("staff-guide");
+    svgArea.addEventListener("mousemove", function(e) {
+      var svgEl = document.getElementById("staff-svg");
+      var r = svgEl.getBoundingClientRect();
+      var sy = 300 / r.height;
+      var yClick = (e.clientY - r.top) * sy;
+      var closestY = YG[0], minD = 9999;
+      YG.forEach(function(gy) { var d = Math.abs(yClick - gy); if (d < minD) { minD = d; closestY = gy; } });
+      if (minD <= 15) {
+        guideEl.style.display = "block";
+        guideEl.style.top = (closestY / sy) + r.top - svgArea.getBoundingClientRect().top + "px";
+      } else {
+        guideEl.style.display = "none";
+      }
+    });
+    svgArea.addEventListener("mouseleave", function() { guideEl.style.display = "none"; });
+
+    svgArea.addEventListener("click", function(e) {
+      var svgEl = document.getElementById("staff-svg");
+      var r = svgEl.getBoundingClientRect();
+      var sy = 300 / r.height;
+      var yClick = (e.clientY - r.top) * sy;
+      var closestY = YG[0], minD = 9999;
+      YG.forEach(function(gy) { var d = Math.abs(yClick - gy); if (d < minD) { minD = d; closestY = gy; } });
+      if (minD > 15) return;
+      staffIdCounter++;
+      if (staffTool.indexOf("arm_") === 0) {
+        staffArmadura.push({ sign: staffTool.split("_")[1], y: closestY, id: staffIdCounter });
+      } else if (staffTool.indexOf("nota_") === 0) {
+        staffNotas.push({ y: closestY, acc: staffTool.split("_")[1], id: staffIdCounter });
+      }
+      renderStaff();
+    });
+
+    document.querySelectorAll(".staff-toolbar .tool-btn[data-tool]").forEach(function(b) {
+      b.addEventListener("click", function() {
+        document.querySelectorAll(".staff-toolbar .tool-btn[data-tool]").forEach(function(x){ x.classList.remove("active"); });
+        b.classList.add("active"); staffTool = b.dataset.tool;
+      });
+    });
+    document.getElementById("staff-undo").addEventListener("click", function() {
+      var la = staffArmadura.length ? staffArmadura[staffArmadura.length-1] : null;
+      var ln = staffNotas.length ? staffNotas[staffNotas.length-1] : null;
+      if (!la && !ln) return;
+      if (la && (!ln || la.id > ln.id)) staffArmadura.pop(); else staffNotas.pop();
+      renderStaff();
+    });
+    document.getElementById("staff-clear").addEventListener("click", function() {
+      staffArmadura = []; staffNotas = [];
+      document.getElementById("staff-hint").classList.remove("visible");
+      renderStaff();
+    });
+    document.getElementById("staff-hint-btn").addEventListener("click", function() {
+      document.getElementById("staff-hint").classList.toggle("visible");
+    });
+    document.getElementById("staff-validate").addEventListener("click", function() {
+      var task = STAFF_TASKS[staffTaskIdx];
+      var ok = task.validate(staffArmadura, staffNotas);
+      recordAnswer("theory", ok);
+      if (ok) {
+        showToast("✓ Correto!", "ok");
+        setTimeout(function() { staffTaskIdx = (staffTaskIdx + 1) % STAFF_TASKS.length; loadStaffTask(); }, 1500);
+      } else {
+        showToast("✗ Incorreto — confira a dica.", "err");
+        document.getElementById("staff-editor").classList.add("shake");
+        setTimeout(function(){ document.getElementById("staff-editor").classList.remove("shake"); }, 500);
+      }
+    });
+
+    /* ===== VISUAL INTERVAL QUIZ ===== */
+    function shuffleArray(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var tmp = a[i]; a[i] = a[j]; a[j] = tmp; }
+      return a;
+    }
+
+    function renderVisualInterval() {
+      var area = document.getElementById("visual-interval-area");
+      var vi = VISUAL_INTERVALS[visualIdx % VISUAL_INTERVALS.length];
+      visualAnswered = false;
+
+      // Build SVG
+      var svgHtml = '<svg id="vi-svg" width="100%" height="200" viewBox="0 0 340 200"></svg>';
+
+      // Build options: correct + 3 distractors
+      var correctAns = vi.answer;
+      var distractors = ALL_INTERVALS.filter(function(x) { return x.id !== correctAns; });
+      distractors = shuffleArray(distractors).slice(0, 3);
+      var options = shuffleArray([{ id: correctAns, name: vi.label }].concat(distractors.map(function(d){ return { id: d.id, name: d.name }; })));
+
+      var html = '<div class="quiz-box">';
+      html += '<div class="quiz-counter"><span>INTERVALO VISUAL #' + ((visualIdx % VISUAL_INTERVALS.length) + 1) + '</span><button class="btn btn-sm btn-warn" id="vi-hint-btn">dica</button></div>';
+      html += '<div class="quiz-question">Qual é o intervalo formado?</div>';
+      html += '<div class="quiz-img">' + svgHtml + '</div>';
+      html += '<div class="quiz-hint" id="vi-hint">As notas são ' + vi.note1 + ' e ' + vi.note2 + '</div>';
+      html += '<div class="quiz-options">';
+      options.forEach(function(opt, i) {
+        html += '<button class="quiz-opt vi-opt" data-id="' + opt.id + '">' + opt.id + ' — ' + opt.name + '</button>';
+      });
+      html += '</div>';
+      html += '<div class="quiz-next" id="vi-next"><button class="btn" id="vi-next-btn">próximo →</button></div>';
+      html += '</div>';
+
+      area.innerHTML = html;
+
+      document.getElementById("vi-hint-btn").addEventListener("click", function() { document.getElementById("vi-hint").classList.toggle("visible"); });
+
+      // Draw the staff with the two notes
+      var viSvg = document.getElementById("vi-svg");
+      var note1 = { y: vi.y1, acc: vi.acc1 || "natural" };
+      var note2 = { y: vi.y2, acc: vi.acc2 || "natural" };
+      drawStaffSVG(viSvg, null, [note1, note2], {
+        width: 340, height: 260,
+        x1: 20, x2: 320,
+        clefX: 25, clefY: 175, clefSize: 105,
+        noteStartX: 130,
+        armX: 80
+      });
+
+      // Bind
+      document.querySelectorAll(".vi-opt").forEach(function(b) {
+        b.addEventListener("click", function() {
+          if (visualAnswered) return;
+          visualAnswered = true;
+          var chosen = b.dataset.id;
+          var correct = chosen === correctAns;
+          recordAnswer("theory", correct);
+
+          document.querySelectorAll(".vi-opt").forEach(function(o) {
+            o.disabled = true;
+            if (o.dataset.id === correctAns) o.classList.add("correct");
+            if (o.dataset.id === chosen && !correct) o.classList.add("wrong");
+          });
+          document.getElementById("vi-next").classList.add("visible");
+        });
+      });
+
+      document.getElementById("vi-next-btn").addEventListener("click", function() {
+        visualIdx = Math.floor(Math.random() * VISUAL_INTERVALS.length);
+        renderVisualInterval();
+      });
+    }
+
+    /* ===== THEORY QUIZ ===== */
+    function renderQuiz() {
+      var q = QUESTIONS[quizIdx];
+      var area = document.getElementById("quiz-area");
+      quizAnswered = false;
+
+      // Some questions get a visual staff image to mix things up
+      var hasImage = q.img; // we'll add img property to some questions below in post-init
+
+      var html = '<div class="quiz-box">';
+      html += '<div class="quiz-counter"><span>QUESTÃO ' + (quizIdx+1) + ' / ' + QUESTIONS.length + '</span>';
+      html += '<button class="btn btn-sm btn-warn" id="quiz-hint-btn">dica</button></div>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      if (q.imgFn) {
+        html += '<div class="quiz-img"><svg id="q-img-svg" viewBox="0 0 400 260"></svg></div>';
+      }
+      html += '<div class="quiz-hint" id="quiz-hint">' + q.hint + '</div>';
+      html += '<div class="quiz-options">';
+      q.opts.forEach(function(opt, i) { html += '<button class="quiz-opt" data-idx="' + i + '">' + opt + '</button>'; });
+      html += '</div>';
+      html += '<div class="quiz-next" id="quiz-next"><button class="btn" id="quiz-next-btn">' + (quizIdx < QUESTIONS.length - 1 ? 'próxima →' : 'recomeçar ↻') + '</button></div>';
+      html += '</div>';
+      area.innerHTML = html;
+
+      // Draw image if needed
+      if (q.imgFn) {
+        q.imgFn(document.getElementById("q-img-svg"));
+      }
+
+      document.getElementById("quiz-hint-btn").addEventListener("click", function() { document.getElementById("quiz-hint").classList.toggle("visible"); });
+      document.querySelectorAll("#quiz-area .quiz-opt").forEach(function(b) {
+        b.addEventListener("click", function() {
+          if (quizAnswered) return;
+          quizAnswered = true;
+          var chosen = parseInt(b.dataset.idx), correct = chosen === q.ans;
+          recordAnswer("theory", correct);
+          document.querySelectorAll("#quiz-area .quiz-opt").forEach(function(o) {
+            o.disabled = true; var idx = parseInt(o.dataset.idx);
+            if (idx === q.ans) o.classList.add("correct");
+            if (idx === chosen && !correct) o.classList.add("wrong");
+          });
+          document.getElementById("quiz-next").classList.add("visible");
+          if (!correct) document.getElementById("quiz-hint").classList.add("visible");
+        });
+      });
+      document.getElementById("quiz-next-btn").addEventListener("click", function() {
+        quizIdx = (quizIdx + 1) % QUESTIONS.length; renderQuiz();
+      });
+    }
+
+    // Add staff images to some theory questions
+    // Question about Sol3-Fá4 interval (index 3)
+    QUESTIONS[3].imgFn = function(svg) {
+      // Sol4 (y=160) to Fá5 (y=100) — representing Sol3-Fá4 conceptually
+      drawStaffSVG(svg, null, [{ y: 160, acc: "natural" }, { y: 100, acc: "natural" }], {
+        width: 400, height: 260, x1: 20, x2: 380, clefX: 25, clefY: 175, clefSize: 105, noteStartX: 140
+      });
+    };
+    // Dó → Sol# (index 7)
+    QUESTIONS[7].imgFn = function(svg) {
+      drawStaffSVG(svg, null, [{ y: 200, acc: "natural" }, { y: 160, acc: "♯" }], {
+        width: 400, height: 260, x1: 20, x2: 380, clefX: 25, clefY: 175, clefSize: 105, noteStartX: 140
+      });
+    };
+    // Ré → Sib (index 15)
+    QUESTIONS[15].imgFn = function(svg) {
+      drawStaffSVG(svg, null, [{ y: 190, acc: "natural" }, { y: 140, acc: "♭" }], {
+        width: 400, height: 260, x1: 20, x2: 380, clefX: 25, clefY: 175, clefSize: 105, noteStartX: 140
+      });
+    };
+    // Fá → Ré (index 20)
+    QUESTIONS[20].imgFn = function(svg) {
+      drawStaffSVG(svg, null, [{ y: 170, acc: "natural" }, { y: 120, acc: "natural" }], {
+        width: 400, height: 260, x1: 20, x2: 380, clefX: 25, clefY: 175, clefSize: 105, noteStartX: 140
+      });
+    };
+    // Mi → Dó (index 24)
+    QUESTIONS[24].imgFn = function(svg) {
+      drawStaffSVG(svg, null, [{ y: 180, acc: "natural" }, { y: 130, acc: "natural" }], {
+        width: 400, height: 260, x1: 20, x2: 380, clefX: 25, clefY: 175, clefSize: 105, noteStartX: 140
+      });
+    };
+
+    /* ===== EAR TRAINING ===== */
+    function getActiveOptions() {
+      var opts = [];
+      [1,2,3].forEach(function(k) { if (activeBlocks[k]) opts = opts.concat(BLOCKS[k]); });
+      return opts;
+    }
+
+    function renderIntervalGrid() {
+      var grid = document.getElementById("interval-grid");
+      var opts = getActiveOptions();
+      if (opts.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--warn);font-family:var(--mono);font-size:13px;padding:24px;border:1px solid var(--warn-dim)">ative pelo menos um bloco</div>';
+        return;
+      }
+      var html = "";
+      opts.forEach(function(o) {
+        html += '<button class="interval-btn" data-id="' + o.id + '"' + (!currentInterval ? ' disabled' : '') + '>';
+        html += '<span class="id">' + o.id + '</span><span class="name">' + o.name + '</span></button>';
+      });
+      grid.innerHTML = html;
+      document.querySelectorAll(".interval-btn").forEach(function(b) {
+        b.addEventListener("click", function() { handleEarGuess(b.dataset.id); });
+      });
+    }
+
+    function generateInterval() {
+      var opts = getActiveOptions(); if (opts.length === 0) return;
+      var pick = opts[Math.floor(Math.random() * opts.length)];
+      var base = Math.floor(Math.random() * 13) + 60;
+      var asc;
+      if (earDirection === "asc") asc = true;
+      else if (earDirection === "desc") asc = false;
+      else asc = Math.random() > 0.5;
+
+      var target = asc ? base + pick.semitones : base - pick.semitones;
+      currentInterval = { id: pick.id, name: pick.name, semitones: pick.semitones, base: base, target: target, asc: asc };
+
+      var dirEl = document.getElementById("ear-direction");
+      dirEl.textContent = asc ? "↑ ascendente" : "↓ descendente";
+      dirEl.classList.add("visible");
+      document.getElementById("ear-label").textContent = "ouvir novamente";
+      clearEarFeedback(); renderIntervalGrid();
+    }
+
+    function playInterval() {
+      if (!currentInterval) { generateInterval(); return; }
+      var ctx = getCtx(); ctx.resume(); earPlaying = true;
+      document.getElementById("ear-play").classList.add("playing");
+      var t = ctx.currentTime + 0.05;
+      playNote(currentInterval.base, t, 0.65);
+      playNote(currentInterval.target, t + 0.75, 0.65);
+      setTimeout(function() { earPlaying = false; document.getElementById("ear-play").classList.remove("playing"); }, 1500);
+    }
+
+    function clearEarFeedback() { document.getElementById("ear-feedback").innerHTML = ""; if (earFeedbackTimeout) clearTimeout(earFeedbackTimeout); }
+
+    function handleEarGuess(id) {
+      if (!currentInterval || earPlaying) return;
+      var correct = id === currentInterval.id;
+      recordAnswer("ear", correct);
+      var fb = document.getElementById("ear-feedback");
+      if (correct) {
+        earStreak++;
+        if (earStreak > stats.bestStreak) { stats.bestStreak = earStreak; saveStats(); }
+        fb.innerHTML = '<div style="color:var(--ok);font-family:var(--mono);font-size:14px;padding:10px;border:1px solid var(--ok-dim);background:var(--ok-dim)">✓ certo!</div>';
+      } else {
+        earStreak = 0;
+        fb.innerHTML = '<div style="color:var(--err);font-family:var(--mono);font-size:14px;padding:10px;border:1px solid var(--err-dim);background:var(--err-dim)">✗ era: ' + currentInterval.name + ' (' + currentInterval.id + ')</div>';
+      }
+      document.getElementById("ear-streak").textContent = earStreak;
+      document.querySelectorAll(".interval-btn").forEach(function(b) { b.disabled = true; });
+      earFeedbackTimeout = setTimeout(function() { generateInterval(); setTimeout(playInterval, 200); }, correct ? 1200 : 2200);
+    }
+
+    document.querySelectorAll(".block-toggle").forEach(function(b) {
+      b.addEventListener("click", function() {
+        var blk = parseInt(b.dataset.block);
+        activeBlocks[blk] = !activeBlocks[blk]; b.classList.toggle("active", activeBlocks[blk]);
+        currentInterval = null;
+        document.getElementById("ear-label").textContent = "clique pra começar";
+        document.getElementById("ear-direction").classList.remove("visible");
+        clearEarFeedback(); renderIntervalGrid();
+      });
+    });
+
+    // Direction toggles
+    document.querySelectorAll(".dir-toggle").forEach(function(b) {
+      b.addEventListener("click", function() {
+        earDirection = b.dataset.dir;
+        document.querySelectorAll(".dir-toggle").forEach(function(x){ x.classList.toggle("active", x.dataset.dir === earDirection); });
+        currentInterval = null;
+        document.getElementById("ear-label").textContent = "clique pra começar";
+        document.getElementById("ear-direction").classList.remove("visible");
+        clearEarFeedback(); renderIntervalGrid();
+      });
+    });
+
+    document.getElementById("ear-play").addEventListener("click", function() {
+      if (earPlaying) return;
+      if (!currentInterval) { generateInterval(); setTimeout(playInterval, 150); }
+      else playInterval();
+    });
+
+    /* ===== REPORTS ===== */
+    function updateReports() {
+      function pct(c, t) { return t > 0 ? Math.round(c / t * 100) : 0; }
+      var tp = pct(stats.theory.correct, stats.theory.total), ep = pct(stats.ear.correct, stats.ear.total);
+      document.getElementById("rep-theory-pct").textContent = stats.theory.total > 0 ? tp + "%" : "—";
+      document.getElementById("rep-theory-detail").textContent = stats.theory.correct + " / " + stats.theory.total + " acertos";
+      document.getElementById("rep-theory-bar").style.width = tp + "%";
+      document.getElementById("rep-ear-pct").textContent = stats.ear.total > 0 ? ep + "%" : "—";
+      document.getElementById("rep-ear-detail").textContent = stats.ear.correct + " / " + stats.ear.total + " acertos";
+      document.getElementById("rep-ear-bar").style.width = ep + "%";
+      document.getElementById("rep-streak").textContent = stats.bestStreak;
+    }
+
+    document.getElementById("reset-stats").addEventListener("click", function() {
+      if (!confirm("Resetar todo o progresso?")) return;
+      stats = { theory: { total: 0, correct: 0 }, ear: { total: 0, correct: 0 }, bestStreak: 0 };
+      saveStats(); updateReports(); updateHomeStats();
+      showToast("progresso resetado", "err");
+    });
+
+    /* ===== INIT ===== */
+    loadStaffTask(); renderStaff(); renderQuiz();
+    visualIdx = Math.floor(Math.random() * VISUAL_INTERVALS.length);
+    renderVisualInterval();
+    renderIntervalGrid(); updateHomeStats(); updateCountdowns();
+
+  })();
+  </script>
+</body>
+</html>
