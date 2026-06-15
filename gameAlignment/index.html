@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitetura Cognitiva de Interação — Diagnóstico de Alinhamento</title>
+    <meta name="description" content="Mapeamento cognitivo da sua relação com jogos. Descubra se sua mente busca execução mecânica, dedução social ou estruturação lógica.">
+    <meta property="og:title" content="Arquitetura Cognitiva de Interação">
+    <meta property="og:description" content="Um diagnóstico focado não no que você consome, mas no porquê sua mente sente satisfação ao interagir.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.afonso.io/gameAlignment/">
+    <link rel="canonical" href="https://www.afonso.io/gameAlignment/">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .brutalist-border { border: 3px solid #ffffff; }
+        .brutalist-btn {
+            border: 3px solid #ffffff;
+            background: #000000;
+            color: #ffffff;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.1s;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .brutalist-btn:hover:not(:disabled) {
+            background: #ffffff;
+            color: #000000;
+        }
+        .brutalist-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        .brutalist-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+        .slider-container { width: 100%; position: relative; padding: 1rem 0; }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #222;
+            border: 1px solid #fff;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 48px;
+            width: 24px;
+            background: #fff;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -21px;
+            border: 3px solid #000;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.1); }
+
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #222;
+            border: 1px solid #fff;
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 48px;
+            width: 24px;
+            background: #fff;
+            cursor: pointer;
+            border: 3px solid #000;
+            border-radius: 0;
+        }
+
+        .progress-bar-container { width: 100%; height: 6px; background-color: #222; margin-top: 1rem; }
+        .progress-bar { height: 100%; background-color: #fff; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .game-img { filter: grayscale(100%) contrast(1.1); transition: filter 0.3s ease; }
+        .game-card:hover .game-img { filter: grayscale(0%) contrast(1); }
+        .game-card { transition: transform 0.2s; display: block; text-decoration: none; color: inherit; }
+        .game-card:hover { transform: translateY(-4px); }
+
+        .slider-label {
+            font-family: monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #fff;
+            opacity: 0.7;
+            transition: opacity 0.15s ease;
+            text-align: center;
+            min-height: 1.2em;
+            margin-top: 0.75rem;
+        }
+
+        .tooltip-container { position: relative; display: flex; align-items: center; justify-content: center; cursor: help; background-color: #000; }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: #fff;
+            color: #000;
+            text-align: left;
+            padding: 10px;
+            position: absolute;
+            z-index: 50;
+            bottom: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+            border: 2px solid #000;
+            font-size: 0.75rem;
+            font-family: monospace;
+            text-transform: none;
+            font-weight: normal;
+            box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.3);
+            pointer-events: none;
+        }
+        .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Print rules */
+        @media print {
+            @page { margin: 10mm; }
+            body {
+                background-color: #fff !important;
+                color: #000 !important;
+                font-size: 11pt;
+            }
+            #app { gap: 10px !important; margin-top: 0 !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+            .brutalist-border { border: 2px solid #000 !important; }
+
+            h3 { font-size: 18pt !important; margin-bottom: 8px !important; }
+            p { font-size: 10pt !important; margin-bottom: 12px !important; line-height: 1.3 !important; }
+            .text-4xl { font-size: 20pt !important; }
+            .text-5xl { font-size: 24pt !important; }
+            .text-2xl { font-size: 14pt !important; }
+            .text-sm { font-size: 9pt !important; }
+            .text-xs { font-size: 8pt !important; }
+
+            .mb-16, .mb-12, .mb-8 { margin-bottom: 12px !important; }
+            .p-3 { padding: 6px !important; }
+            .p-4 { padding: 8px !important; }
+            .gap-12 { gap: 16px !important; }
+
+            svg text { fill: #000 !important; }
+            svg circle { stroke: #000 !important; stroke-width: 1.5px !important; }
+
+            .grid-cols-2.md\:grid-cols-4 {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+            }
+            .game-card { padding: 4px !important; border-width: 1px !important; background-color: #fff !important; color: #000 !important; }
+            .game-img {
+                filter: grayscale(0%) !important;
+                height: 45px !important;
+                margin-bottom: 4px !important;
+            }
+
+            .print-break-inside-avoid {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 md:px-8">
+
+    <div id="app" class="w-full max-w-4xl mx-auto flex flex-col gap-6 relative"></div>
+
+    <script>
+        // =====================================================================
+        // SURVEY ITEMS
+        // Framework: Micro (execução motora), Meso (leitura social),
+        // Macro (planejamento sistêmico)
+        //
+        // Cada dimensão possui 8 itens: 5 diretos + 3 reversos (ratio ~63:37)
+        // Escala Likert 1-5. Itens reversos pontuados como (6 - resposta).
+        // =====================================================================
+        const surveyItems = [
+            // MICRO — Execução motora, reflexos, precisão, memória muscular
+            { id: "mic1", dim: "micro", text: "Quando jogo, gosto da sensação de que meus dedos estão se movendo sozinhos, no puro reflexo.", direct: true },
+            { id: "mic2", dim: "micro", text: "Minha maior satisfação é vencer um desafio porque fui fisicamente mais rápido e ágil que o obstáculo.", direct: true },
+            { id: "mic3", dim: "micro", text: "Se o personagem demora um milissegundo a mais para pular depois que aperto o botão, perco a vontade de jogar.", direct: true },
+            { id: "mic4", dim: "micro", text: "Prefiro atividades onde posso progredir sem precisar treinar a mesma ação repetidamente.", direct: false },
+            { id: "mic5", dim: "micro", text: "Prefiro momentos onde posso apenas desligar a mente e reagir instantaneamente ao que aparece na tela.", direct: true },
+            { id: "mic6", dim: "micro", text: "Jogos que exigem treino constante de coordenação motora me cansam mais do que me motivam.", direct: false },
+            { id: "mic7", dim: "micro", text: "O domínio físico do controle é o que me faz sentir que estou realmente jogando bem.", direct: true },
+            { id: "mic8", dim: "micro", text: "Sinto que uma vitória não é legítima se aconteceu por sorte e não pela minha precisão mecânica.", direct: false },
+
+            // MESO — Dedução social, leitura psicológica, adaptação interpessoal
+            { id: "mes1", dim: "meso", text: "A melhor parte de jogar contra alguém é perceber que eu consegui entrar na cabeça da pessoa.", direct: true },
+            { id: "mes2", dim: "meso", text: "Gosto da tensão de tentar descobrir se o outro jogador está blefando ou falando a verdade.", direct: true },
+            { id: "mes3", dim: "meso", text: "Prefiro desafios previsíveis e controláveis do que lidar com a imprevisibilidade de outros jogadores.", direct: false },
+            { id: "mes4", dim: "meso", text: "Minhas vitórias mais memoráveis aconteceram porque consegui enganar alguém, e não porque fui mais rápido.", direct: true },
+            { id: "mes5", dim: "meso", text: "Ler o padrão de comportamento de quem está jogando comigo é a minha principal tática.", direct: true },
+            { id: "mes6", dim: "meso", text: "Atividades focadas em traição, desconfiança ou manipulação social me deixam mais estressado do que entretido.", direct: false },
+            { id: "mes7", dim: "meso", text: "O fator humano, com todas as suas falhas e surpresas, é a única coisa que impede a repetição monótona.", direct: true },
+            { id: "mes8", dim: "meso", text: "Jogos onde o adversário é uma inteligência artificial não conseguem manter meu interesse por muito tempo.", direct: false },
+
+            // MACRO — Planejamento de longo prazo, otimização, sistemas lógicos
+            { id: "mac1", dim: "macro", text: "Perco horas organizando inventários, menus ou planejando meu espaço antes mesmo da ação começar.", direct: true },
+            { id: "mac2", dim: "macro", text: "Gosto da sensação de criar um sistema complexo que acaba funcionando sozinho e gerando resultados contínuos.", direct: true },
+            { id: "mac3", dim: "macro", text: "Prefiro aprender jogando intuitivamente a estudar os sistemas antes de começar.", direct: false },
+            { id: "mac4", dim: "macro", text: "Sinto muita frustração quando um plano perfeito que criei falha por causa de um evento totalmente imprevisível.", direct: true },
+            { id: "mac5", dim: "macro", text: "Para mim, o sucesso é uma consequência lógica e matemática de decisões inteligentes que tomei lá no início.", direct: true },
+            { id: "mac6", dim: "macro", text: "Prefiro improvisar soluções no calor do momento a ter que planejar meus passos com muita antecedência.", direct: false },
+            { id: "mac7", dim: "macro", text: "Ler regras longas, montar planilhas ou pesquisar dados estatísticos faz parte da minha diversão.", direct: true },
+            { id: "mac8", dim: "macro", text: "Meu desafio favorito é encontrar o caminho mais eficiente para gerenciar meus recursos sem desperdiçar nada.", direct: true }
+        ];
+
+        // =====================================================================
+        // SLIDER LABELS — Feedback textual minimalista (sem emojis)
+        // =====================================================================
+        const sliderLabels = {
+            1: "Discordo totalmente",
+            2: "Discordo",
+            3: "Neutro",
+            4: "Concordo",
+            5: "Concordo totalmente"
+        };
+
+        // =====================================================================
+        // GAME DATABASE
+        // Cada jogo possui pesos dimensionais [micro, meso, macro] de 0 a 1.
+        // A seleção é feita por similaridade cosseno com o perfil do usuário.
+        // Apenas URLs Steam confiáveis para imagens (header.jpg).
+        // =====================================================================
+        const gameDatabase = [
+            // Pure Micro — execução, reflexo, precisão
+            { title: "Celeste", appId: 504230, micro: 0.95, meso: 0.05, macro: 0.15 },
+            { title: "Geometry Dash", appId: 322170, micro: 0.98, meso: 0.02, macro: 0.10 },
+            { title: "Sekiro", appId: 814380, micro: 0.90, meso: 0.15, macro: 0.30 },
+            { title: "Super Meat Boy", appId: 40800, micro: 0.97, meso: 0.02, macro: 0.05 },
+            { title: "Cuphead", appId: 268910, micro: 0.92, meso: 0.05, macro: 0.10 },
+            { title: "Furi", appId: 423230, micro: 0.93, meso: 0.10, macro: 0.08 },
+            { title: "Trackmania", appId: 2225070, micro: 0.95, meso: 0.10, macro: 0.15 },
+            { title: "Getting Over It", appId: 240720, micro: 0.96, meso: 0.02, macro: 0.03 },
+            { title: "Nidhogg 2", appId: 535260, micro: 0.85, meso: 0.40, macro: 0.05 },
+            { title: "ULTRAKILL", appId: 1229490, micro: 0.95, meso: 0.05, macro: 0.20 },
+
+            // Pure Meso — dedução social, leitura psicológica
+            { title: "Among Us", appId: 945360, micro: 0.05, meso: 0.95, macro: 0.20 },
+            { title: "Lethal Company", appId: 1966720, micro: 0.15, meso: 0.85, macro: 0.20 },
+            { title: "Phasmophobia", appId: 739630, micro: 0.10, meso: 0.80, macro: 0.25 },
+            { title: "Project Zomboid", appId: 108600, micro: 0.15, meso: 0.70, macro: 0.60 },
+            { title: "Town of Salem 2", appId: 2147990, micro: 0.02, meso: 0.95, macro: 0.15 },
+            { title: "Rust", appId: 252490, micro: 0.35, meso: 0.85, macro: 0.55 },
+            { title: "Dead by Daylight", appId: 381210, micro: 0.30, meso: 0.80, macro: 0.15 },
+            { title: "The Forest", appId: 242760, micro: 0.20, meso: 0.75, macro: 0.50 },
+            { title: "SCP: Secret Laboratory", appId: 700330, micro: 0.15, meso: 0.90, macro: 0.10 },
+            { title: "Deceit", appId: 466240, micro: 0.10, meso: 0.92, macro: 0.08 },
+
+            // Pure Macro — planejamento, otimização, sistemas
+            { title: "Factorio", appId: 427520, micro: 0.05, meso: 0.05, macro: 0.98 },
+            { title: "Cities: Skylines", appId: 255710, micro: 0.02, meso: 0.05, macro: 0.95 },
+            { title: "Civilization VI", appId: 289070, micro: 0.05, meso: 0.30, macro: 0.92 },
+            { title: "Stardew Valley", appId: 413150, micro: 0.10, meso: 0.15, macro: 0.85 },
+            { title: "RimWorld", appId: 294100, micro: 0.05, meso: 0.15, macro: 0.95 },
+            { title: "Satisfactory", appId: 526870, micro: 0.08, meso: 0.05, macro: 0.95 },
+            { title: "Frostpunk", appId: 323190, micro: 0.05, meso: 0.10, macro: 0.90 },
+            { title: "Dwarf Fortress", appId: 975370, micro: 0.02, meso: 0.10, macro: 0.98 },
+            { title: "Oxygen Not Included", appId: 457140, micro: 0.03, meso: 0.05, macro: 0.96 },
+            { title: "Anno 1800", appId: 916440, micro: 0.05, meso: 0.10, macro: 0.92 },
+
+            // Meso+Micro — Combate competitivo (leitura + execução)
+            { title: "Street Fighter 6", appId: 1364780, micro: 0.88, meso: 0.80, macro: 0.15 },
+            { title: "Rocket League", appId: 252950, micro: 0.90, meso: 0.70, macro: 0.20 },
+            { title: "Tekken 8", appId: 1778820, micro: 0.85, meso: 0.82, macro: 0.15 },
+            { title: "Mortal Kombat 1", appId: 1971870, micro: 0.85, meso: 0.75, macro: 0.12 },
+            { title: "Brawlhalla", appId: 341150, micro: 0.82, meso: 0.75, macro: 0.10 },
+            { title: "Hunt: Showdown 1896", appId: 594650, micro: 0.75, meso: 0.80, macro: 0.35 },
+            { title: "Guilty Gear -Strive-", appId: 1384160, micro: 0.88, meso: 0.78, macro: 0.12 },
+            { title: "For Honor", appId: 304390, micro: 0.80, meso: 0.75, macro: 0.20 },
+            { title: "Chivalry 2", appId: 1824220, micro: 0.78, meso: 0.72, macro: 0.15 },
+
+            // Macro+Micro — Sistemas + execução (roguelikes, metroidvanias)
+            { title: "Elden Ring", appId: 1245620, micro: 0.80, meso: 0.25, macro: 0.75 },
+            { title: "Hollow Knight", appId: 367520, micro: 0.82, meso: 0.10, macro: 0.70 },
+            { title: "Neon White", appId: 1533420, micro: 0.92, meso: 0.05, macro: 0.65 },
+            { title: "Ghostrunner", appId: 1139900, micro: 0.93, meso: 0.05, macro: 0.55 },
+            { title: "Hades", appId: 1145360, micro: 0.80, meso: 0.15, macro: 0.70 },
+            { title: "Dead Cells", appId: 588650, micro: 0.85, meso: 0.05, macro: 0.72 },
+            { title: "Katana ZERO", appId: 460950, micro: 0.90, meso: 0.10, macro: 0.50 },
+            { title: "Returnal", appId: 1649240, micro: 0.85, meso: 0.10, macro: 0.68 },
+            { title: "Spelunky 2", appId: 418530, micro: 0.80, meso: 0.05, macro: 0.75 },
+            { title: "Noita", appId: 881100, micro: 0.70, meso: 0.05, macro: 0.85 },
+
+            // Macro+Meso — Estratégia + adaptação social (deckbuilders, auto-battlers)
+            { title: "Balatro", appId: 2379780, micro: 0.03, meso: 0.50, macro: 0.90 },
+            { title: "Slay the Spire", appId: 646570, micro: 0.05, meso: 0.40, macro: 0.90 },
+            { title: "Inscryption", appId: 1092790, micro: 0.05, meso: 0.65, macro: 0.80 },
+            { title: "Marvel Snap", appId: 1997040, micro: 0.05, meso: 0.60, macro: 0.80 },
+            { title: "Monster Train", appId: 1102190, micro: 0.05, meso: 0.35, macro: 0.88 },
+            { title: "Darkest Dungeon", appId: 262060, micro: 0.10, meso: 0.45, macro: 0.88 },
+            { title: "Into the Breach", appId: 590380, micro: 0.05, meso: 0.30, macro: 0.92 },
+            { title: "Poker Quest", appId: 1184820, micro: 0.03, meso: 0.70, macro: 0.75 },
+
+            // All-rounder — demanda alta em todas as dimensões
+            { title: "Counter-Strike 2", appId: 730, micro: 0.88, meso: 0.82, macro: 0.70 },
+            { title: "Apex Legends", appId: 1172470, micro: 0.90, meso: 0.75, macro: 0.65 },
+            { title: "Dota 2", appId: 570, micro: 0.70, meso: 0.85, macro: 0.90 },
+            { title: "Overwatch 2", appId: 2357570, micro: 0.85, meso: 0.75, macro: 0.65 },
+            { title: "Rainbow Six Siege", appId: 359550, micro: 0.80, meso: 0.85, macro: 0.75 },
+            { title: "Age of Empires II", appId: 813780, micro: 0.65, meso: 0.60, macro: 0.90 },
+            { title: "Escape from Tarkov", appId: 2853050, micro: 0.80, meso: 0.80, macro: 0.85 },
+            { title: "PUBG", appId: 578080, micro: 0.82, meso: 0.75, macro: 0.60 },
+            { title: "Arma Reforger", appId: 1874880, micro: 0.65, meso: 0.70, macro: 0.80 },
+            { title: "Hell Let Loose", appId: 686810, micro: 0.70, meso: 0.75, macro: 0.78 }
+        ];
+
+        // =====================================================================
+        // PROFILES — Título + descrição por arquétipo
+        // =====================================================================
+        const profiles = {
+            pure_micro: {
+                title: "O Executor",
+                description: "Sua mente brilha no estado de fluxo. Você não busca resolver quebra-cabeças complexos de longo prazo ou decifrar as intenções alheias; sua arena é o tempo de reação. Você sente satisfação genuína quando o controle deixa de ser um pedaço de plástico e se torna uma extensão do seu corpo. Seu engajamento vem do domínio físico, da memória muscular e de superar a barreira entre o pensamento e a ação. O erro não o frustra se a falha for mecânica, pois você sabe que a repetição leva à perfeição cirúrgica."
+            },
+            pure_meso: {
+                title: "O Mentalista",
+                description: "Você não interage com as regras; você interage com as pessoas. O ambiente virtual é apenas uma ferramenta para o verdadeiro duelo, que ocorre inteiramente na camada psicológica. Seu cérebro busca recompensa na imprevisibilidade do fator humano, no blefe perfeito e na satisfação de antecipar o pânico ou a confiança do adversário. Sistemas rígidos te entediam; você quer o caos gerado pela emoção alheia. Identificar padrões de comportamento e manipular a informação ao seu redor é onde você encontra sua verdadeira zona de conforto."
+            },
+            pure_macro: {
+                title: "O Arquiteto",
+                description: "Para você, o ambiente é uma equação gigantesca aguardando ser resolvida. A ação imediata é barulho secundário frente à beleza de um sistema econômico ou estrutural funcionando em perfeita harmonia. Você resolve seus desafios antes mesmo da ação começar, pois o seu foco está no planejamento, na matemática oculta e na otimização impiedosa de rotas e recursos. Caos imprevisível te frustra; você busca ambientes onde a inteligência metódica e a paciência geram resultados irrefutáveis."
+            },
+            meso_micro: {
+                title: "O Combatente",
+                description: "Você prospera no fogo cruzado do confronto direto e visceral. Não basta ter reflexos rápidos; é essencial ler a intenção do adversário em frações de segundo. Seu cérebro funde a memória muscular com a psicologia investigativa instantânea. Você estuda os hábitos de quem está enfrentando e aplica respostas físicas com precisão cirúrgica. É a clássica dança da arena: condicionar a mente do outro ao erro enquanto suas mãos executam o movimento impecável."
+            },
+            macro_micro: {
+                title: "O Virtuoso",
+                description: "É a união rara do raciocínio arquitetônico com as mãos de um executor letal. Você busca identificar a rota matematicamente perfeita, a estrutura mais otimizada, o atalho oculto... e então aplica sua destreza física para executá-lo sem uma única margem de falha. Este perfil é comum em pessoas que gostam de ambientes sistêmicos com um caminho ótimo claro, onde o obstáculo é apenas a limitação do próprio corpo em acompanhar o pensamento veloz."
+            },
+            macro_meso: {
+                title: "O Mestre do Caos",
+                description: "Você entende que sistemas falham e pessoas são imprevisíveis — e usa a lógica para domar tudo isso. Seu domínio é o gerenciamento de riscos dinâmico. Lidar com cartas aleatórias, escolhas de oponentes invisíveis ou eventos randômicos não te assusta, pelo contrário: te fascina. Você constrói planos probabilísticos flexíveis, criando vantagens matemáticas onde os outros veem apenas sorte. A execução motora não importa; sua arma é a análise rápida frente ao desconhecido."
+            },
+            all_rounder: {
+                title: "Dinâmica Complexa",
+                description: "Uma distribuição ampla de interesses, refletindo um engajamento com ecossistemas complexos. Para se sentir desafiado, você precisa de obras que exijam esforço em múltiplas dimensões. A falta de reflexos compromete, a incapacidade de ler a situação atrapalha, e a desorganização te afunda. Você consome ambientes densos onde a tática de longo prazo, a leitura em tempo real e a destreza precisam atuar em simultâneo sob enorme pressão."
+            }
+        };
+
+        // =====================================================================
+        // STATE
+        // =====================================================================
+        let currentIndex = 0;
+        let responses = {};
+        let shuffledItems = [];
+
+        // =====================================================================
+        // SCORING — Likert 1-5, reversos invertidos via (6 - resposta)
+        // =====================================================================
+        function calculateScores() {
+            let scores = { micro: 0, meso: 0, macro: 0 };
+            let maxScores = { micro: 0, meso: 0, macro: 0 };
+
+            shuffledItems.forEach((item, index) => {
+                const answer = responses[index];
+                if (answer === undefined) return;
+                let itemScore = item.direct ? answer : (6 - answer);
+                scores[item.dim] += itemScore;
+                maxScores[item.dim] += 5;
+            });
+
+            return {
+                micro: maxScores.micro > 0 ? (scores.micro / maxScores.micro) * 100 : 0,
+                meso: maxScores.meso > 0 ? (scores.meso / maxScores.meso) * 100 : 0,
+                macro: maxScores.macro > 0 ? (scores.macro / maxScores.macro) * 100 : 0
+            };
+        }
+
+        // =====================================================================
+        // PROFILE CLASSIFICATION
+        // Uses standard deviation of normalized scores to determine dominance.
+        // - Low std + all above median → all_rounder
+        // - Mid std + top two close → hybrid
+        // - High std or clear top → pure
+        // =====================================================================
+        function determineProfile(percentages) {
+            const vals = [
+                { type: 'micro', val: percentages.micro },
+                { type: 'meso', val: percentages.meso },
+                { type: 'macro', val: percentages.macro }
+            ];
+
+            const mean = (vals[0].val + vals[1].val + vals[2].val) / 3;
+            const variance = vals.reduce((acc, v) => acc + Math.pow(v.val - mean, 2), 0) / 3;
+            const stdDev = Math.sqrt(variance);
+
+            const sorted = [...vals].sort((a, b) => b.val - a.val);
+            const top = sorted[0];
+            const sec = sorted[1];
+            const third = sorted[2];
+
+            const gapTopSec = top.val - sec.val;
+            const gapTopThird = top.val - third.val;
+
+            // All-rounder: low spread (std < 10) and all dimensions engaged (min > 40%)
+            if (stdDev < 10 && third.val > 40) {
+                return 'all_rounder';
+            }
+
+            // Pure profile: clear single dominance (top is >12 points above second)
+            if (gapTopSec > 12) {
+                return `pure_${top.type}`;
+            }
+
+            // Hybrid: top two are close, both clearly above third
+            if (gapTopSec <= 12 && gapTopThird > 15) {
+                const pair = [top.type, sec.type].sort().join('_');
+                const hybridMap = {
+                    'meso_micro': 'meso_micro',
+                    'macro_micro': 'macro_micro',
+                    'macro_meso': 'macro_meso'
+                };
+                return hybridMap[pair] || `pure_${top.type}`;
+            }
+
+            // Fallback: if top is clearly dominant even with moderate spread
+            if (gapTopSec > 8) {
+                return `pure_${top.type}`;
+            }
+
+            // Close spread but not all_rounder (third too low)
+            const pair = [top.type, sec.type].sort().join('_');
+            const hybridMap = {
+                'meso_micro': 'meso_micro',
+                'macro_micro': 'macro_micro',
+                'macro_meso': 'macro_meso'
+            };
+            return hybridMap[pair] || 'all_rounder';
+        }
+
+        // =====================================================================
+        // DYNAMIC GAME SELECTION
+        // Cosine similarity between user profile vector and each game's
+        // dimensional weight vector. Selects top 8 most aligned games.
+        // =====================================================================
+        function selectGames(percentages) {
+            const userVec = [percentages.micro / 100, percentages.meso / 100, percentages.macro / 100];
+            const userMag = Math.sqrt(userVec[0]**2 + userVec[1]**2 + userVec[2]**2);
+
+            if (userMag === 0) return gameDatabase.slice(0, 8);
+
+            const scored = gameDatabase.map(game => {
+                const gameVec = [game.micro, game.meso, game.macro];
+                const gameMag = Math.sqrt(gameVec[0]**2 + gameVec[1]**2 + gameVec[2]**2);
+                const dot = userVec[0]*gameVec[0] + userVec[1]*gameVec[1] + userVec[2]*gameVec[2];
+                const cosSim = gameMag > 0 ? dot / (userMag * gameMag) : 0;
+
+                // Magnitude bonus: prefer games that are intense in the
+                // user's strong dimensions (not just directionally aligned)
+                const intensityBonus = dot / 3;
+
+                return { ...game, score: cosSim * 0.7 + intensityBonus * 0.3 };
+            });
+
+            scored.sort((a, b) => b.score - a.score);
+            return scored.slice(0, 8);
+        }
+
+        // =====================================================================
+        // VENN POSITION — Barycentric coordinates
+        // Maps [micro%, meso%, macro%] to 2D position within the Venn triangle.
+        // =====================================================================
+        function calculateVennPosition(percentages) {
+            const total = percentages.micro + percentages.meso + percentages.macro;
+            if (total === 0) return { cx: 150, cy: 130 };
+
+            const wMicro = percentages.micro / total;
+            const wMeso = percentages.meso / total;
+            const wMacro = percentages.macro / total;
+
+            // Triangle vertices (matching the SVG circle centers)
+            const microPos = { x: 110, y: 110 };
+            const mesoPos = { x: 190, y: 110 };
+            const macroPos = { x: 150, y: 180 };
+
+            return {
+                cx: Math.round(wMicro * microPos.x + wMeso * mesoPos.x + wMacro * macroPos.x),
+                cy: Math.round(wMicro * microPos.y + wMeso * mesoPos.y + wMacro * macroPos.y)
+            };
+        }
+
+        // =====================================================================
+        // RENDER: Initial Screen
+        // =====================================================================
+        function renderInitialScreen() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="fade-in w-full mt-10 md:mt-20 px-4 max-w-3xl">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tighter uppercase leading-none">Arquitetura Cognitiva de Interação</h1>
+                    <p class="text-lg md:text-xl mb-12 leading-relaxed text-gray-300">
+                        Um mapeamento focado não no que você consome, mas no porquê sua mente sente satisfação ao interagir. Avaliaremos sua inclinação instintiva entre reflexos físicos, dedução social e estruturação lógica.
+                        <br><br>
+                        Deslize o marcador para expressar sua realidade íntima diante de cada afirmação.
+                    </p>
+                    <button id="btn-start" onclick="startSurvey()" class="brutalist-btn px-10 py-5 text-2xl font-bold uppercase tracking-wide">
+                        Iniciar Diagnóstico
+                    </button>
+                </div>
+            `;
+        }
+
+        // =====================================================================
+        // RENDER: Survey
+        // =====================================================================
+        function startSurvey() {
+            shuffledItems = [...surveyItems].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            responses = {};
+            renderSurveyBase();
+        }
+
+        function renderSurveyBase() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="fade-in w-full mt-8 px-4" id="survey-wrapper">
+                    <div class="flex justify-between items-center text-sm uppercase tracking-widest font-bold text-gray-400 mb-2">
+                        <span id="question-counter"></span>
+                    </div>
+
+                    <div class="progress-bar-container mb-12">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+
+                    <h2 class="text-3xl md:text-4xl font-bold mb-16 leading-snug min-h-[160px]" id="question-text"></h2>
+
+                    <div class="slider-container mb-4">
+                        <div class="flex justify-between text-xs md:text-sm font-bold text-gray-400 uppercase mb-4 px-1">
+                            <span class="w-1/3 text-left">Discordo Totalmente</span>
+                            <span class="w-1/3 text-center opacity-50">Neutro</span>
+                            <span class="w-1/3 text-right">Concordo Totalmente</span>
+                        </div>
+                        <input type="range" min="1" max="5" step="1" value="3"
+                               id="response-slider"
+                               aria-label="Nível de concordância com a afirmação"
+                               oninput="updateSliderValue(this.value)">
+                    </div>
+                    <div class="slider-label" id="slider-feedback">Neutro</div>
+
+                    <div class="flex justify-between items-center mt-8 pt-8 border-t-2 border-gray-800">
+                        <button id="btn-back" onclick="prevItem()" class="brutalist-btn px-6 py-4 text-sm font-bold tracking-wide disabled:opacity-30">
+                            &larr; Voltar
+                        </button>
+                        <button id="btn-next" onclick="nextItem()" class="brutalist-btn px-10 py-4 text-xl font-bold tracking-wide">
+                            Avançar &rarr;
+                        </button>
+                    </div>
+                </div>
+            `;
+            updateQuestionData();
+        }
+
+        function updateQuestionData() {
+            const item = shuffledItems[currentIndex];
+            // Progress: show 100% when on the last question
+            const progress = ((currentIndex + 1) / shuffledItems.length) * 100;
+
+            document.getElementById('question-counter').innerText = "Afirmação " + (currentIndex + 1) + " de " + shuffledItems.length;
+            document.getElementById('progress-bar').style.width = progress + "%";
+
+            const textEl = document.getElementById('question-text');
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.innerText = item.text;
+                textEl.style.opacity = 1;
+                textEl.style.transition = "opacity 0.2s ease-out";
+            }, 100);
+
+            const currentVal = responses[currentIndex] !== undefined ? responses[currentIndex] : 3;
+            responses[currentIndex] = currentVal;
+            document.getElementById('response-slider').value = currentVal;
+            document.getElementById('slider-feedback').textContent = sliderLabels[currentVal];
+
+            document.getElementById('btn-back').disabled = (currentIndex === 0);
+            document.getElementById('btn-next').innerText = (currentIndex === shuffledItems.length - 1) ? 'Ver Diagnóstico' : 'Avançar \u2192';
+        }
+
+        function updateSliderValue(val) {
+            const intVal = parseInt(val, 10);
+            responses[currentIndex] = intVal;
+            document.getElementById('slider-feedback').textContent = sliderLabels[intVal];
+        }
+
+        function prevItem() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateQuestionData();
+            }
+        }
+
+        function nextItem() {
+            currentIndex++;
+            if (currentIndex < shuffledItems.length) {
+                updateQuestionData();
+            } else {
+                renderResults();
+            }
+        }
+
+        // =====================================================================
+        // RENDER: Results
+        // =====================================================================
+        function renderResults() {
+            const percentages = calculateScores();
+            const pMicro = Math.round(percentages.micro);
+            const pMeso = Math.round(percentages.meso);
+            const pMacro = Math.round(percentages.macro);
+
+            const profileKey = determineProfile(percentages);
+            const profile = profiles[profileKey];
+            const pos = calculateVennPosition(percentages);
+
+            const selectedGames = selectGames(percentages);
+
+            const fallbackImg = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gSW5kaXNwb27DrXZlbDwvdGV4dD48L3N2Zz4=";
+
+            let gamesHTML = '';
+            selectedGames.forEach(game => {
+                const steamUrl = `https://store.steampowered.com/app/${game.appId}/`;
+                const imgUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${game.appId}/header.jpg`;
+                gamesHTML += `
+                    <a href="${steamUrl}" target="_blank" rel="noopener" class="brutalist-border p-2 game-card bg-black flex flex-col justify-between">
+                        <img src="${imgUrl}" alt="${game.title}" class="w-full h-24 md:h-32 object-cover game-img mb-3" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImg}'">
+                        <div class="text-sm font-bold uppercase px-1 pb-1 tracking-tight truncate">${game.title}</div>
+                    </a>
+                `;
+            });
+
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="fade-in w-full mt-8 px-4" id="report-content">
+
+                    <div class="flex justify-between items-center mb-8 border-b-2 border-gray-800 pb-4">
+                        <span class="text-sm uppercase tracking-widest font-bold text-gray-400">Diagnóstico Cognitivo</span>
+                        <button onclick="window.print()" class="brutalist-btn px-4 py-2 text-xs no-print" aria-label="Imprimir diagnóstico como PDF">Salvar PDF</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 items-start print-break-inside-avoid">
+                        <div>
+                            <h3 class="text-4xl md:text-5xl font-bold uppercase tracking-tight mb-6">${profile.title}</h3>
+                            <p class="text-lg md:text-xl leading-relaxed text-gray-300 mb-8 border-l-4 border-white pl-4">${profile.description}</p>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="brutalist-border p-3 text-center">
+                                    <div class="text-xs uppercase text-gray-400 mb-2 font-bold">Execução</div>
+                                    <div class="text-2xl font-bold">${pMicro}%</div>
+                                </div>
+                                <div class="brutalist-border p-3 text-center">
+                                    <div class="text-xs uppercase text-gray-400 mb-2 font-bold">Adaptação</div>
+                                    <div class="text-2xl font-bold">${pMeso}%</div>
+                                </div>
+                                <div class="brutalist-border p-3 text-center">
+                                    <div class="text-xs uppercase text-gray-400 mb-2 font-bold">Sistemas</div>
+                                    <div class="text-2xl font-bold">${pMacro}%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full max-w-[320px] mx-auto aspect-square flex justify-center items-center p-4">
+
+                            <!-- Tooltips -->
+                            <div class="absolute top-[8%] left-[28%] z-10 no-print transform -translate-x-1/2">
+                                <div class="tooltip-container text-xs rounded-full border border-white w-6 h-6 font-bold">i
+                                    <span class="tooltip-text">Foco na execução mecânica, reflexos e precisão. Exemplo: Jogos de plataforma difíceis ou FPS puro.</span>
+                                </div>
+                            </div>
+
+                            <div class="absolute top-[8%] right-[28%] z-10 no-print transform translate-x-1/2">
+                                <div class="tooltip-container text-xs rounded-full border border-white w-6 h-6 font-bold">i
+                                    <span class="tooltip-text">Foco na dedução social, psicologia e probabilidade humana. Exemplo: Jogos de blefe ou dedução.</span>
+                                </div>
+                            </div>
+
+                            <div class="absolute bottom-[10%] left-[50%] z-10 no-print transform -translate-x-1/2">
+                                <div class="tooltip-container text-xs rounded-full border border-white w-6 h-6 font-bold">i
+                                    <span class="tooltip-text">Foco em planejamento a longo prazo, otimização e sistemas lógicos. Exemplo: Jogos de estratégia.</span>
+                                </div>
+                            </div>
+
+                            <!-- SVG Venn Diagram -->
+                            <svg viewBox="0 0 300 300" class="w-full h-full overflow-visible" role="img" aria-label="Diagrama de Venn mostrando posição do perfil entre Micro, Meso e Macro">
+                                <circle cx="110" cy="110" r="85" fill="rgba(255,255,255,0.03)" stroke="#fff" stroke-width="2"/>
+                                <text x="70" y="55" fill="#fff" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">MICRO</text>
+
+                                <circle cx="190" cy="110" r="85" fill="rgba(255,255,255,0.03)" stroke="#fff" stroke-width="2"/>
+                                <text x="230" y="55" fill="#fff" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">MESO</text>
+
+                                <circle cx="150" cy="180" r="85" fill="rgba(255,255,255,0.03)" stroke="#fff" stroke-width="2"/>
+                                <text x="150" y="270" fill="#fff" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">MACRO</text>
+
+                                <!-- Dynamic Position Marker -->
+                                <circle cx="${pos.cx}" cy="${pos.cy}" r="6" fill="#fff"/>
+                                <text x="${pos.cx}" y="${pos.cy - 12}" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle" class="uppercase">Você</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="mb-8 print-break-inside-avoid mt-4">
+                        <span class="text-sm uppercase tracking-widest font-bold text-gray-400">Cartografia Sugerida (Ecossistemas que recompensam seu perfil)</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 print-break-inside-avoid">
+                        ${gamesHTML}
+                    </div>
+
+                    <div class="border-t-2 border-gray-800 pt-8 mt-12 flex justify-center no-print">
+                        <button id="btn-restart" onclick="startSurvey()" class="brutalist-btn px-12 py-4 text-lg font-bold uppercase tracking-wide">
+                            Executar Nova Análise
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // =====================================================================
+        // INIT
+        // =====================================================================
+        document.addEventListener('DOMContentLoaded', renderInitialScreen);
+    </script>
+</body>
+</html>
