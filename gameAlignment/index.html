@@ -142,7 +142,7 @@
 
         /* Print rules */
         @media print {
-            @page { margin: 10mm; }
+            @page { margin: 10mm; size: A4; }
             body {
                 background-color: #fff !important;
                 color: #000 !important;
@@ -258,20 +258,24 @@
             { title: "Furi", appId: 423230, micro: 0.93, meso: 0.10, macro: 0.08 },
             { title: "Trackmania", appId: 2225070, micro: 0.95, meso: 0.10, macro: 0.15 },
             { title: "Getting Over It", appId: 240720, micro: 0.96, meso: 0.02, macro: 0.03 },
-            { title: "Nidhogg 2", appId: 535260, micro: 0.85, meso: 0.40, macro: 0.05 },
+            { title: "Nidhogg 2", appId: 535560, micro: 0.85, meso: 0.40, macro: 0.05 },
             { title: "ULTRAKILL", appId: 1229490, micro: 0.95, meso: 0.05, macro: 0.20 },
+            { title: "Hotline Miami", appId: 219150, micro: 0.93, meso: 0.03, macro: 0.08 },
+            { title: "Thumper", appId: 356400, micro: 0.96, meso: 0.01, macro: 0.05 },
 
             // Pure Meso — dedução social, leitura psicológica
             { title: "Among Us", appId: 945360, micro: 0.05, meso: 0.95, macro: 0.20 },
             { title: "Lethal Company", appId: 1966720, micro: 0.15, meso: 0.85, macro: 0.20 },
             { title: "Phasmophobia", appId: 739630, micro: 0.10, meso: 0.80, macro: 0.25 },
             { title: "Project Zomboid", appId: 108600, micro: 0.15, meso: 0.70, macro: 0.60 },
-            { title: "Town of Salem 2", appId: 2147990, micro: 0.02, meso: 0.95, macro: 0.15 },
+            { title: "Town of Salem 2", appId: 1407940, micro: 0.02, meso: 0.95, macro: 0.15 },
             { title: "Rust", appId: 252490, micro: 0.35, meso: 0.85, macro: 0.55 },
             { title: "Dead by Daylight", appId: 381210, micro: 0.30, meso: 0.80, macro: 0.15 },
             { title: "The Forest", appId: 242760, micro: 0.20, meso: 0.75, macro: 0.50 },
             { title: "SCP: Secret Laboratory", appId: 700330, micro: 0.15, meso: 0.90, macro: 0.10 },
             { title: "Deceit", appId: 466240, micro: 0.10, meso: 0.92, macro: 0.08 },
+            { title: "Barotrauma", appId: 602960, micro: 0.15, meso: 0.88, macro: 0.30 },
+            { title: "Unfortunate Spacemen", appId: 408900, micro: 0.10, meso: 0.90, macro: 0.05 },
 
             // Pure Macro — planejamento, otimização, sistemas
             { title: "Factorio", appId: 427520, micro: 0.05, meso: 0.05, macro: 0.98 },
@@ -284,6 +288,9 @@
             { title: "Dwarf Fortress", appId: 975370, micro: 0.02, meso: 0.10, macro: 0.98 },
             { title: "Oxygen Not Included", appId: 457140, micro: 0.03, meso: 0.05, macro: 0.96 },
             { title: "Anno 1800", appId: 916440, micro: 0.05, meso: 0.10, macro: 0.92 },
+            { title: "Shapez", appId: 1318690, micro: 0.02, meso: 0.02, macro: 0.97 },
+            { title: "Dyson Sphere Program", appId: 1366540, micro: 0.03, meso: 0.03, macro: 0.96 },
+            { title: "Kerbal Space Program", appId: 220200, micro: 0.10, meso: 0.03, macro: 0.93 },
 
             // Meso+Micro — Combate competitivo (leitura + execução)
             { title: "Street Fighter 6", appId: 1364780, micro: 0.88, meso: 0.80, macro: 0.15 },
@@ -295,6 +302,7 @@
             { title: "Guilty Gear -Strive-", appId: 1384160, micro: 0.88, meso: 0.78, macro: 0.12 },
             { title: "For Honor", appId: 304390, micro: 0.80, meso: 0.75, macro: 0.20 },
             { title: "Chivalry 2", appId: 1824220, micro: 0.78, meso: 0.72, macro: 0.15 },
+            { title: "Rivals of Aether", appId: 383980, micro: 0.87, meso: 0.76, macro: 0.08 },
 
             // Macro+Micro — Sistemas + execução (roguelikes, metroidvanias)
             { title: "Elden Ring", appId: 1245620, micro: 0.80, meso: 0.25, macro: 0.75 },
@@ -307,6 +315,8 @@
             { title: "Returnal", appId: 1649240, micro: 0.85, meso: 0.10, macro: 0.68 },
             { title: "Spelunky 2", appId: 418530, micro: 0.80, meso: 0.05, macro: 0.75 },
             { title: "Noita", appId: 881100, micro: 0.70, meso: 0.05, macro: 0.85 },
+            { title: "Risk of Rain 2", appId: 632360, micro: 0.78, meso: 0.08, macro: 0.75 },
+            { title: "Curse of the Dead Gods", appId: 1123770, micro: 0.82, meso: 0.05, macro: 0.65 },
 
             // Macro+Meso — Estratégia + adaptação social (deckbuilders, auto-battlers)
             { title: "Balatro", appId: 2379780, micro: 0.03, meso: 0.50, macro: 0.90 },
@@ -317,6 +327,8 @@
             { title: "Darkest Dungeon", appId: 262060, micro: 0.10, meso: 0.45, macro: 0.88 },
             { title: "Into the Breach", appId: 590380, micro: 0.05, meso: 0.30, macro: 0.92 },
             { title: "Poker Quest", appId: 1184820, micro: 0.03, meso: 0.70, macro: 0.75 },
+            { title: "Griftlands", appId: 601840, micro: 0.05, meso: 0.72, macro: 0.78 },
+            { title: "Roguebook", appId: 1076200, micro: 0.05, meso: 0.45, macro: 0.82 },
 
             // All-rounder — demanda alta em todas as dimensões
             { title: "Counter-Strike 2", appId: 730, micro: 0.88, meso: 0.82, macro: 0.70 },
@@ -325,10 +337,12 @@
             { title: "Overwatch 2", appId: 2357570, micro: 0.85, meso: 0.75, macro: 0.65 },
             { title: "Rainbow Six Siege", appId: 359550, micro: 0.80, meso: 0.85, macro: 0.75 },
             { title: "Age of Empires II", appId: 813780, micro: 0.65, meso: 0.60, macro: 0.90 },
-            { title: "Escape from Tarkov", appId: 2853050, micro: 0.80, meso: 0.80, macro: 0.85 },
+            { title: "Escape from Tarkov", appId: 3932890, micro: 0.80, meso: 0.80, macro: 0.85 },
             { title: "PUBG", appId: 578080, micro: 0.82, meso: 0.75, macro: 0.60 },
             { title: "Arma Reforger", appId: 1874880, micro: 0.65, meso: 0.70, macro: 0.80 },
-            { title: "Hell Let Loose", appId: 686810, micro: 0.70, meso: 0.75, macro: 0.78 }
+            { title: "Hell Let Loose", appId: 686810, micro: 0.70, meso: 0.75, macro: 0.78 },
+            { title: "Squad", appId: 393380, micro: 0.68, meso: 0.78, macro: 0.82 },
+            { title: "Starcraft II", appId: 2357860, micro: 0.82, meso: 0.70, macro: 0.88 }
         ];
 
         // =====================================================================
@@ -458,8 +472,9 @@
 
         // =====================================================================
         // DYNAMIC GAME SELECTION
-        // Cosine similarity between user profile vector and each game's
-        // dimensional weight vector. Selects top 8 most aligned games.
+        // Weighted Euclidean distance between user profile and each game,
+        // emphasizing the user's dominant dimensions. Includes diversity
+        // penalty to avoid clusters of near-identical games.
         // =====================================================================
         function selectGames(percentages) {
             const userVec = [percentages.micro / 100, percentages.meso / 100, percentages.macro / 100];
@@ -467,39 +482,96 @@
 
             if (userMag === 0) return gameDatabase.slice(0, 8);
 
+            // Weight dimensions by user's own emphasis (dominant dims matter more)
+            const dimWeights = userVec.map(v => 0.5 + v * 1.5);
+
             const scored = gameDatabase.map(game => {
                 const gameVec = [game.micro, game.meso, game.macro];
-                const gameMag = Math.sqrt(gameVec[0]**2 + gameVec[1]**2 + gameVec[2]**2);
-                const dot = userVec[0]*gameVec[0] + userVec[1]*gameVec[1] + userVec[2]*gameVec[2];
-                const cosSim = gameMag > 0 ? dot / (userMag * gameMag) : 0;
 
-                // Magnitude bonus: prefer games that are intense in the
-                // user's strong dimensions (not just directionally aligned)
-                const intensityBonus = dot / 3;
+                // Weighted Euclidean distance (lower = closer match)
+                const dist = Math.sqrt(
+                    dimWeights[0] * Math.pow(userVec[0] - gameVec[0], 2) +
+                    dimWeights[1] * Math.pow(userVec[1] - gameVec[1], 2) +
+                    dimWeights[2] * Math.pow(userVec[2] - gameVec[2], 2)
+                );
 
-                return { ...game, score: cosSim * 0.7 + intensityBonus * 0.3 };
+                // Convert distance to similarity score (invert)
+                const similarity = 1 / (1 + dist * 3);
+
+                return { ...game, score: similarity, vec: gameVec };
             });
 
             scored.sort((a, b) => b.score - a.score);
-            return scored.slice(0, 8);
+
+            // Greedy diversity selection: pick top games but penalize
+            // candidates too similar to already-selected ones
+            const selected = [];
+            const candidates = [...scored];
+
+            while (selected.length < 8 && candidates.length > 0) {
+                // Pick the best remaining candidate
+                let bestIdx = 0;
+                let bestScore = -Infinity;
+
+                for (let i = 0; i < candidates.length; i++) {
+                    let diversityPenalty = 0;
+                    for (const sel of selected) {
+                        const vecDist = Math.sqrt(
+                            Math.pow(candidates[i].vec[0] - sel.vec[0], 2) +
+                            Math.pow(candidates[i].vec[1] - sel.vec[1], 2) +
+                            Math.pow(candidates[i].vec[2] - sel.vec[2], 2)
+                        );
+                        // Penalize if too close to an already selected game
+                        if (vecDist < 0.15) diversityPenalty += 0.3;
+                        else if (vecDist < 0.25) diversityPenalty += 0.1;
+                    }
+                    const adjustedScore = candidates[i].score - diversityPenalty;
+                    if (adjustedScore > bestScore) {
+                        bestScore = adjustedScore;
+                        bestIdx = i;
+                    }
+                }
+
+                selected.push(candidates[bestIdx]);
+                candidates.splice(bestIdx, 1);
+            }
+
+            return selected;
         }
 
         // =====================================================================
-        // VENN POSITION — Barycentric coordinates
+        // VENN POSITION — Contrast-amplified barycentric coordinates
         // Maps [micro%, meso%, macro%] to 2D position within the Venn triangle.
+        // Applies power-law contrast to amplify differences between dimensions.
         // =====================================================================
         function calculateVennPosition(percentages) {
             const total = percentages.micro + percentages.meso + percentages.macro;
-            if (total === 0) return { cx: 150, cy: 130 };
+            if (total === 0) return { cx: 150, cy: 133 };
 
-            const wMicro = percentages.micro / total;
-            const wMeso = percentages.meso / total;
-            const wMacro = percentages.macro / total;
+            // Normalize to [0,1]
+            let wMicro = percentages.micro / total;
+            let wMeso = percentages.meso / total;
+            let wMacro = percentages.macro / total;
 
-            // Triangle vertices (matching the SVG circle centers)
-            const microPos = { x: 110, y: 110 };
-            const mesoPos = { x: 190, y: 110 };
-            const macroPos = { x: 150, y: 180 };
+            // Apply power-law contrast amplification (exponent > 1 pushes
+            // dominant dims further toward their vertex)
+            const contrast = 2.5;
+            wMicro = Math.pow(wMicro, contrast);
+            wMeso = Math.pow(wMeso, contrast);
+            wMacro = Math.pow(wMacro, contrast);
+
+            // Re-normalize after contrast
+            const cTotal = wMicro + wMeso + wMacro;
+            if (cTotal === 0) return { cx: 150, cy: 133 };
+            wMicro /= cTotal;
+            wMeso /= cTotal;
+            wMacro /= cTotal;
+
+            // Extended triangle vertices (wider than circle centers for more
+            // visible movement)
+            const microPos = { x: 80, y: 75 };
+            const mesoPos = { x: 220, y: 75 };
+            const macroPos = { x: 150, y: 210 };
 
             return {
                 cx: Math.round(wMicro * microPos.x + wMeso * mesoPos.x + wMacro * macroPos.x),
@@ -513,16 +585,25 @@
         function renderInitialScreen() {
             const app = document.getElementById('app');
             app.innerHTML = `
-                <div class="fade-in w-full mt-10 md:mt-20 px-4 max-w-3xl">
-                    <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tighter uppercase leading-none">Arquitetura Cognitiva de Interação</h1>
-                    <p class="text-lg md:text-xl mb-12 leading-relaxed text-gray-300">
-                        Um mapeamento focado não no que você consome, mas no porquê sua mente sente satisfação ao interagir. Avaliaremos sua inclinação instintiva entre reflexos físicos, dedução social e estruturação lógica.
-                        <br><br>
-                        Deslize o marcador para expressar sua realidade íntima diante de cada afirmação.
-                    </p>
-                    <button id="btn-start" onclick="startSurvey()" class="brutalist-btn px-10 py-5 text-2xl font-bold uppercase tracking-wide">
-                        Iniciar Diagnóstico
-                    </button>
+                <div class="fade-in w-full mt-16 md:mt-28 px-4 max-w-3xl">
+                    <div class="text-xs uppercase tracking-[0.3em] font-bold text-gray-500 mb-8">Diagnóstico de Alinhamento</div>
+                    <h1 class="text-5xl md:text-7xl font-bold mb-10 tracking-tighter uppercase leading-[0.9]">O que te faz<br>querer jogar?</h1>
+                    <div class="border-l-4 border-white pl-6 mb-14">
+                        <p class="text-lg md:text-xl leading-relaxed text-gray-300 mb-4">
+                            Este diagnóstico identifica como sua mente processa satisfação ao interagir com jogos. Não mede o que você joga — mede por que você joga.
+                        </p>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            24 afirmações. Sem respostas certas. Deslize o marcador para expressar seu grau de concordância com cada uma.
+                        </p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4 items-start">
+                        <button id="btn-start" onclick="startSurvey()" class="brutalist-btn px-10 py-5 text-xl font-bold uppercase tracking-wide">
+                            Iniciar
+                        </button>
+                        <div class="text-xs text-gray-600 pt-2 sm:pt-4 max-w-[200px] leading-relaxed">
+                            Aproximadamente 4 minutos.
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -659,7 +740,7 @@
 
                     <div class="flex justify-between items-center mb-8 border-b-2 border-gray-800 pb-4">
                         <span class="text-sm uppercase tracking-widest font-bold text-gray-400">Diagnóstico Cognitivo</span>
-                        <button onclick="window.print()" class="brutalist-btn px-4 py-2 text-xs no-print" aria-label="Imprimir diagnóstico como PDF">Salvar PDF</button>
+                        <button onclick="printReport()" class="brutalist-btn px-4 py-2 text-xs no-print" aria-label="Imprimir diagnóstico como PDF">Salvar PDF</button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 items-start print-break-inside-avoid">
@@ -737,6 +818,32 @@
                     </div>
                 </div>
             `;
+        }
+
+        // =====================================================================
+        // PRINT — Clean PDF output without browser headers/footers
+        // =====================================================================
+        function printReport() {
+            // Inject temporary style to suppress browser chrome
+            const printStyle = document.createElement('style');
+            printStyle.id = 'print-override';
+            printStyle.textContent = `
+                @page {
+                    margin: 10mm;
+                    size: A4;
+                }
+                @media print {
+                    /* Remove browser-injected headers, footers, URLs */
+                    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                }
+            `;
+            document.head.appendChild(printStyle);
+            window.print();
+            // Clean up after print dialog closes
+            setTimeout(() => {
+                const el = document.getElementById('print-override');
+                if (el) el.remove();
+            }, 1000);
         }
 
         // =====================================================================

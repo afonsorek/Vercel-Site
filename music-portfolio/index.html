@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afonso Rekbaim — Sound Design & Music Production</title>
+    <meta name="description" content="Sound design and music production portfolio of Afonso Rekbaim. Chiptune, DnB, synthwave, and experimental composition for games and interactive media.">
+    <meta property="og:title" content="Afonso Rekbaim — Sound Design & Music Production">
+    <meta property="og:description" content="Sound design and music production for games and interactive media. Listen to selected works.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.afonso.io/music-portfolio/">
+    <link rel="canonical" href="https://www.afonso.io/music-portfolio/">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface-2: #1a1a1a;
+            --border: #2a2a2a;
+            --border-accent: #3a3a3a;
+            --text: #e8e8e8;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #ffffff;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== LAYOUT ===== */
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .panel-left {
+            width: 50%;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 2.5rem 3rem 4rem;
+            border-right: 1px solid var(--border);
+        }
+
+        .panel-right {
+            width: 50%;
+            padding: 4rem 4rem 6rem 3rem;
+            overflow-y: auto;
+        }
+
+        /* ===== PLAYER (LEFT PANEL) ===== */
+        .player-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .player-header .label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .player-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .player-header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Now Playing */
+        .now-playing {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .now-playing .track-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .now-playing .track-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .now-playing .track-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .now-playing .track-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .now-playing .track-meta .meta-val {
+            color: var(--text-secondary);
+        }
+
+        .track-description-box {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            line-height: 1.5;
+        }
+
+        /* Waveform */
+        .waveform-container {
+            height: 48px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: var(--border-accent);
+            border-radius: 1px;
+            transition: background 0.2s, height 0.15s;
+            flex-shrink: 0;
+        }
+
+        .waveform-container.is-playing .wave-bar {
+            background: var(--text-secondary);
+        }
+
+        .waveform-container.is-playing .wave-bar.active {
+            background: var(--accent);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .controls button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+
+        .controls button:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        .btn-skip {
+            width: 40px;
+            height: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn-play {
+            width: 56px;
+            height: 56px;
+            font-size: 1.1rem;
+        }
+
+        /* Playlist */
+        .playlist {
+            list-style: none;
+        }
+
+        .playlist li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.12s ease;
+            font-size: 0.8rem;
+        }
+
+        .playlist li:first-child {
+            border-top: 1px solid var(--border);
+        }
+
+        .playlist li:hover {
+            background: var(--surface);
+        }
+
+        .playlist li.active {
+            background: var(--surface-2);
+        }
+
+        .playlist .pl-index {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            width: 1.5rem;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .playlist .pl-title {
+            flex: 1;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .playlist .pl-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: transparent;
+            margin-left: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .playlist li.active .pl-indicator {
+            background: var(--accent);
+        }
+
+        .playlist li.playing .pl-indicator {
+            background: var(--accent);
+            animation: pulse-dot 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .btn-show-more {
+            display: block;
+            width: 100%;
+            padding: 0.65rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-show-more:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        /* ===== RIGHT PANEL — BIO ===== */
+        .section-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .bio-name {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 0.35rem;
+        }
+
+        .bio-role {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .bio-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .bio-text strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-block .info-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .info-block ul {
+            list-style: none;
+        }
+
+        .info-block li {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding: 0.3rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-block li:last-child {
+            border-bottom: none;
+        }
+
+        /* Highlights */
+        .highlights {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-card {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+        }
+
+        .highlight-card .h-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.35rem;
+        }
+
+        .highlight-card .h-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Contact */
+        .contact-row {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .contact-link {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.15s;
+        }
+
+        .contact-link:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        /* Footer link */
+        .footer-link {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-link a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .footer-link a:hover {
+            color: var(--text);
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 900px) {
+            .page-container {
+                flex-direction: column;
+            }
+            .panel-left {
+                width: 100%;
+                position: relative;
+                height: auto;
+                padding: 2rem 1.5rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .panel-right {
+                width: 100%;
+                padding: 2rem 1.5rem 4rem;
+            }
+            .bio-name { font-size: 1.75rem; }
+            .highlights { flex-direction: column; }
+            .info-grid { grid-template-columns: 1fr; }
+            .contact-row { flex-direction: column; }
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            body { background: #fff; color: #000; }
+            .panel-left { border-right: 1px solid #ccc; }
+            .controls, .btn-show-more, .waveform-container { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+
+        <!-- LEFT PANEL — Player -->
+        <div class="panel-left">
+            <div class="player-header">
+                <div class="label">Portfolio</div>
+                <h1>Selected Works</h1>
+                <div class="subtitle">Original compositions for games, interactive media, and personal experiments.</div>
+            </div>
+
+            <div class="now-playing" id="now-playing">
+                <div class="track-label">Now Playing</div>
+                <div class="track-title" id="np-title">—</div>
+                <div class="track-meta">
+                    <span>BPM <span class="meta-val" id="np-bpm">—</span></span>
+                    <span>Time <span class="meta-val" id="np-time">—</span></span>
+                    <span>Key <span class="meta-val" id="np-key">—</span></span>
+                </div>
+                <div class="track-description-box" id="np-desc"></div>
+            </div>
+
+            <div class="waveform-container" id="waveform"></div>
+
+            <div class="controls">
+                <button class="btn-skip" id="btn-prev" aria-label="Previous track">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                </button>
+                <button class="btn-play" id="btn-play" aria-label="Play or pause">
+                    <svg id="icon-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21"/></svg>
+                    <svg id="icon-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button class="btn-skip" id="btn-next" aria-label="Next track">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                </button>
+            </div>
+
+            <ul class="playlist" id="playlist"></ul>
+            <button class="btn-show-more" id="btn-show-more">Show all tracks</button>
+        </div>
+
+        <!-- RIGHT PANEL — Bio -->
+        <div class="panel-right">
+            <div class="section-label">About</div>
+            <h2 class="bio-name">Afonso Rekbaim</h2>
+            <p class="bio-role">Musical Producer & Sound Designer</p>
+
+            <p class="bio-text">
+                I started producing in <strong>2021</strong> using <strong>Ableton Live</strong> as my main DAW. My focus is on experimental sound design and sounds that mix nostalgia with personal taste. I've composed for over <strong>20 games</strong>, with <strong>5 award-winning titles</strong> recognized by Apple at the WWDC Swift Student Challenge.
+            </p>
+            <p class="bio-text">
+                My work spans chiptune, drum and bass, synthwave, lo-fi, dubstep, and microtonal composition. I'm drawn to the intersection of retro aesthetics and contemporary sound synthesis — building textures that feel familiar yet strange.
+            </p>
+
+            <div class="divider"></div>
+
+            <div class="highlights">
+                <div class="highlight-card">
+                    <div class="h-number">20+</div>
+                    <div class="h-label">Games scored</div>
+                </div>
+                <div class="highlight-card">
+                    <div class="h-number">5</div>
+                    <div class="h-label">Apple WWDC Awards</div>
+                </div>
+                <div class="highlight-card">
+                    <div class="h-number">2021</div>
+                    <div class="h-label">Producing since</div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-label">Specialization</div>
+            <div class="info-grid">
+                <div class="info-block">
+                    <div class="info-label">Areas of Interest</div>
+                    <ul>
+                        <li>Sound design for games and interactive media</li>
+                        <li>Sound synthesis (FM, granular, subtractive)</li>
+                        <li>Experimental and microtonal composition</li>
+                        <li>Chiptune, DnB, Acoustic, Dubstep, Synthwave</li>
+                    </ul>
+                </div>
+                <div class="info-block">
+                    <div class="info-label">Tools</div>
+                    <ul>
+                        <li>Ableton Live Suite</li>
+                        <li>Reaper, Pro Tools</li>
+                        <li>Serum, Vital, Operator</li>
+                        <li>Trackers, custom iOS controllers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-label">Contact</div>
+            <div class="contact-row">
+                <a href="mailto:afonsorrekbaim@gmail.com" class="contact-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email
+                </a>
+                <a href="https://linkedin.com/in/afonsorek" target="_blank" rel="noopener" class="contact-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                </a>
+                <a href="/music/" class="contact-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/><path d="M8 17V5l12-2v12"/></svg>
+                    Full Music Page
+                </a>
+            </div>
+
+            <div class="footer-link">
+                <a href="/">&larr; Back to main portfolio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================================
+        // PLAYLIST DATA — mirrors music/index.html
+        // Audio paths are relative to the project root via ../music/
+        // =====================================================================
+        const playlist = [
+            {
+                title: ">.< ",
+                file: "../Audio/>.< .mp3",
+                bpm: "120", time: "4/4", key: "G Min",
+                desc: "Still developing, but it's become my personal favourite. An evolving piece that keeps pulling me back in."
+            },
+            {
+                title: "Very BASSic tune",
+                file: "../music/src/sounds/chipbass.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "An aggressive bass experiment. The kind of track that might damage speakers — and that's the point."
+            },
+            {
+                title: "I am dumb but not so much",
+                file: "../music/src/sounds/nowIalmostunderstand.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Battle theme for a game villain who's goofy but dangerous. Balances excitement with a hint of worry."
+            },
+            {
+                title: "Waiting for you",
+                file: "../music/src/sounds/waitingforyou.wav",
+                bpm: "138", time: "3/4", key: "A Min",
+                desc: "Menu theme for Ravenous Rhythm, a dark-themed rhythm game. Built to set the mood before the action starts."
+            },
+            {
+                title: "Falling on a steady pace",
+                file: "../music/src/sounds/staircase.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "A chiptune study in perpetual motion — designed to feel like it never stops descending."
+            },
+            {
+                title: "Bubble Café",
+                file: "../music/src/sounds/bubble-café.wav",
+                bpm: "165", time: "4/4", key: "F# Min",
+                desc: "Coffee area theme for a Frutiger Aero 8-bit game, built at the 2024 Global Game Jam."
+            },
+            {
+                title: "Very Cheap Tune :P",
+                file: "../music/src/sounds/cheaptune.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Escalating chiptune with heavy texture, inspired by 90's chipsets and tracker software."
+            },
+            {
+                title: "Synthwave 80's",
+                file: "../music/src/sounds/synthwave.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Full synthwave aesthetic exploring gated reverbs and the sounds of the 80's. Might get lyrics someday."
+            },
+            {
+                title: "50% of a Dubstep",
+                file: "../music/src/sounds/Dubstep-estudo.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "First attempt at wobble basses. The drop works; the buildup is admittedly lazy."
+            },
+            {
+                title: "Baarh",
+                file: "../music/src/sounds/dnb-medieval-final.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Medieval meets DnB. Created for an autorunner game at GGJ26, built to sustain high energy."
+            },
+            {
+                title: "PS2000",
+                file: "../music/src/sounds/ambiental-microtonal.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Made with iMicro, a custom microtonal controller for iOS. An ambient exploration of non-standard tuning."
+            },
+            {
+                title: "Let it rainnn",
+                file: "../music/src/sounds/lofionarainyday.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Lo-fi drenched in rain. A chill experiment mixing texture and atmosphere."
+            },
+            {
+                title: "Nomarl",
+                file: "../music/src/sounds/normaluntilnotnormal.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Trailer music for Ravenous Rhythm. Everything seems fine — until it isn't."
+            },
+            {
+                title: "Nightwave",
+                file: "../music/src/sounds/nightwave.wav",
+                bpm: "120", time: "4/4", key: "G Maj",
+                desc: "Aggressive synthwave inspired by Furi and Carpenter Brut. Dark, driven, relentless."
+            }
+        ];
+
+        // =====================================================================
+        // STATE
+        // =====================================================================
+        let currentTrack = 0;
+        let isPlaying = false;
+        let showAll = false;
+        const audio = new Audio();
+        const VISIBLE_COUNT = 5;
+
+        // =====================================================================
+        // DOM REFS
+        // =====================================================================
+        const npTitle = document.getElementById('np-title');
+        const npBpm = document.getElementById('np-bpm');
+        const npTime = document.getElementById('np-time');
+        const npKey = document.getElementById('np-key');
+        const npDesc = document.getElementById('np-desc');
+        const waveformEl = document.getElementById('waveform');
+        const playlistEl = document.getElementById('playlist');
+        const btnPlay = document.getElementById('btn-play');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnShowMore = document.getElementById('btn-show-more');
+
+        // =====================================================================
+        // WAVEFORM — Static bars with subtle animation
+        // =====================================================================
+        function initWaveform() {
+            const count = 120;
+            for (let i = 0; i < count; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'wave-bar';
+                const h = 8 + Math.random() * 30;
+                bar.style.height = h + 'px';
+                bar.dataset.baseH = h;
+                waveformEl.appendChild(bar);
+            }
+        }
+
+        let waveAnimId = null;
+        function animateWave() {
+            if (!isPlaying) return;
+            const bars = waveformEl.querySelectorAll('.wave-bar');
+            const t = Date.now() * 0.003;
+            bars.forEach((bar, i) => {
+                const base = parseFloat(bar.dataset.baseH);
+                const wave = Math.sin(t + i * 0.15) * 8 + Math.cos(t * 1.5 + i * 0.1) * 4;
+                bar.style.height = Math.max(4, base + wave) + 'px';
+                bar.classList.toggle('active', (i + Math.floor(t * 3)) % 7 === 0);
+            });
+            waveAnimId = requestAnimationFrame(animateWave);
+        }
+
+        function stopWaveAnim() {
+            if (waveAnimId) cancelAnimationFrame(waveAnimId);
+            waveformEl.querySelectorAll('.wave-bar').forEach(bar => {
+                bar.classList.remove('active');
+            });
+        }
+
+        // =====================================================================
+        // RENDER PLAYLIST
+        // =====================================================================
+        function renderPlaylist() {
+            const limit = showAll ? playlist.length : VISIBLE_COUNT;
+            playlistEl.innerHTML = '';
+            for (let i = 0; i < limit; i++) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="pl-index">${String(i + 1).padStart(2, '0')}</span>
+                    <span class="pl-title">${playlist[i].title}</span>
+                    <span class="pl-indicator"></span>
+                `;
+                if (i === currentTrack) {
+                    li.classList.add('active');
+                    if (isPlaying) li.classList.add('playing');
+                }
+                li.addEventListener('click', () => selectTrack(i));
+                playlistEl.appendChild(li);
+            }
+            btnShowMore.style.display = playlist.length <= VISIBLE_COUNT ? 'none' : 'block';
+            btnShowMore.textContent = showAll ? 'Show less' : 'Show all tracks';
+        }
+
+        // =====================================================================
+        // TRACK LOADING
+        // =====================================================================
+        function loadTrack(index) {
+            const track = playlist[index];
+            npTitle.textContent = track.title;
+            npBpm.textContent = track.bpm;
+            npTime.textContent = track.time;
+            npKey.textContent = track.key;
+            npDesc.textContent = track.desc;
+            audio.src = track.file;
+        }
+
+        function selectTrack(index) {
+            currentTrack = index;
+            loadTrack(index);
+            if (showAll === false && index >= VISIBLE_COUNT) {
+                showAll = true;
+            }
+            audio.play().then(() => {
+                isPlaying = true;
+                updatePlayState();
+            }).catch(() => {});
+            renderPlaylist();
+        }
+
+        // =====================================================================
+        // PLAY STATE
+        // =====================================================================
+        function updatePlayState() {
+            iconPlay.style.display = isPlaying ? 'none' : 'block';
+            iconPause.style.display = isPlaying ? 'block' : 'none';
+            waveformEl.classList.toggle('is-playing', isPlaying);
+            if (isPlaying) {
+                animateWave();
+            } else {
+                stopWaveAnim();
+            }
+            renderPlaylist();
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    updatePlayState();
+                }).catch(() => {});
+                isPlaying = true;
+            }
+            updatePlayState();
+        }
+
+        function nextTrack() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            loadTrack(currentTrack);
+            if (isPlaying) audio.play().catch(() => {});
+            renderPlaylist();
+        }
+
+        function prevTrack() {
+            currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrack);
+            if (isPlaying) audio.play().catch(() => {});
+            renderPlaylist();
+        }
+
+        // =====================================================================
+        // EVENTS
+        // =====================================================================
+        btnPlay.addEventListener('click', togglePlay);
+        btnNext.addEventListener('click', nextTrack);
+        btnPrev.addEventListener('click', prevTrack);
+        audio.addEventListener('ended', nextTrack);
+        btnShowMore.addEventListener('click', () => {
+            showAll = !showAll;
+            renderPlaylist();
+        });
+
+        // =====================================================================
+        // INIT
+        // =====================================================================
+        initWaveform();
+        loadTrack(0);
+        renderPlaylist();
+    </script>
+</body>
+</html>
