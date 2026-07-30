@@ -77,18 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   exportBtn.addEventListener('click', () => {
-    if (!resultIframe.contentDocument) return;
-    const iframeBody = resultIframe.contentDocument.body;
-
-    const opt = {
-      margin:       10,
-      filename:     'comparacao-site.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    window.html2pdf().set(opt).from(iframeBody).save();
+    if (!resultIframe.contentWindow) return;
+    
+    // A biblioteca html2pdf/html2canvas bloqueia a captura de CSS externo por segurança (CORS).
+    // Usar o print nativo do navegador garante que o PDF saia exatamente igual à tela, com toda a formatação!
+    resultIframe.contentWindow.focus();
+    resultIframe.contentWindow.print();
   });
 
   function showError(msg) {
