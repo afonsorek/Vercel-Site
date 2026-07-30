@@ -1,3 +1,6 @@
+import HtmlDiffModule from 'https://esm.sh/htmldiff-js@1.0.5';
+const HtmlDiff = HtmlDiffModule.default || HtmlDiffModule;
+
 document.addEventListener('DOMContentLoaded', () => {
   const url1Input = document.getElementById('url1Input');
   const url2Input = document.getElementById('url2Input');
@@ -35,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Diff
-      const diffResult = window.HtmlDiff.execute(data.html1, data.html2);
+      const diffResult = HtmlDiff.execute(data.html1, data.html2);
 
       const injectedCss = `
         <style>
