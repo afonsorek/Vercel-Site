@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const diffResult = HtmlDiff.execute(data.html1, data.html2);
 
       const injectedCss = `
-        <base href="${url2}">
         <style>
           del { background-color: rgba(239, 68, 68, 0.4) !important; text-decoration: line-through !important; color: inherit !important; }
           ins { background-color: rgba(34, 197, 94, 0.4) !important; text-decoration: none !important; color: inherit !important; }
@@ -49,9 +48,20 @@ document.addEventListener('DOMContentLoaded', () => {
         </style>
       `;
 
-      const finalHtml = diffResult.includes("</head>")
-        ? diffResult.replace("</head>", `${injectedCss}</head>`)
-        : injectedCss + diffResult;
+      let finalHtml = diffResult;
+      
+      const headRegex = /<head[^>]*>/i;
+      if (headRegex.test(finalHtml)) {
+        finalHtml = finalHtml.replace(headRegex, `$&<base href="${url2}">`);
+      } else {
+        finalHtml = `<base href="${url2}">` + finalHtml;
+      }
+
+      if (finalHtml.includes("</head>")) {
+        finalHtml = finalHtml.replace("</head>", `${injectedCss}</head>`);
+      } else {
+        finalHtml = finalHtml + injectedCss;
+      }
 
       currentDiffHtml = finalHtml;
       
