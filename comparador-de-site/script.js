@@ -41,9 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const diffResult = HtmlDiff.execute(data.html1, data.html2);
 
       const injectedCss = `
+        <base href="${url2}">
         <style>
           del { background-color: rgba(239, 68, 68, 0.4) !important; text-decoration: line-through !important; color: inherit !important; }
           ins { background-color: rgba(34, 197, 94, 0.4) !important; text-decoration: none !important; color: inherit !important; }
+          body { background-color: #ffffff !important; min-height: 100vh; }
         </style>
       `;
 
@@ -72,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       margin:       10,
       filename:     'comparacao-site.pdf',
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
