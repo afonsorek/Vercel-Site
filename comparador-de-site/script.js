@@ -64,8 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       currentDiffHtml = finalHtml;
-      
-      resultIframe.srcdoc = currentDiffHtml;
+      if (finalHtml.includes("You need to enable JavaScript") || finalHtml.includes("<div id=\"root\"></div>") && finalHtml.length < 5000) {
+        resultIframe.srcdoc = `
+          <div style="font-family: sans-serif; display: flex; height: 100vh; align-items: center; justify-content: center; text-align: center; color: #ef4444; background: #fee2e2;">
+            <h2>O site está pivado.</h2>
+            <p style="margin-top: 10px;">Este site é renderizado no lado do cliente (Client-Side Rendering).<br>O comparador visual só suporta sites estáticos ou Server-Side Rendering (SSR).</p>
+          </div>
+        `;
+      } else {
+        resultIframe.srcdoc = currentDiffHtml;
+      }
+
       resultContainer.style.display = 'flex';
       exportBtn.style.display = 'inline-flex';
 
