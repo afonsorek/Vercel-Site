@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador de Site | Afonso Rekbaim</title>
+    <meta name="description" content="Compare as diferenças visuais entre o HTML de duas páginas diferentes.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Comparador de Site</h1>
+            <p class="subtitle">Analise e exporte as diferenças visuais entre duas páginas</p>
+        </header>
+
+        <div class="controls">
+            <div class="inputs">
+                <div class="input-group">
+                    <label class="label">Site Original (Remoções)</label>
+                    <input id="url1Input" class="input" placeholder="https://exemplo.com/antigo" />
+                </div>
+                <div class="input-group">
+                    <label class="label">Site Novo (Adições)</label>
+                    <input id="url2Input" class="input" placeholder="https://exemplo.com/novo" />
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button id="compareBtn" class="button button-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3 9 15"/><path d="M21 16v5h-5"/><path d="M21 21 15 15"/><path d="M3 21h5v-5"/><path d="M3 21l12-12"/><path d="M3 8V3h5"/><path d="M3 3l6 6"/></svg> 
+                    <span id="compareBtnText">Comparar</span>
+                </button>
+                
+                <button id="exportBtn" class="button button-secondary" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    Exportar PDF
+                </button>
+            </div>
+            
+            <div id="errorBox" class="error" style="display: none;"></div>
+        </div>
+
+        <div id="resultContainer" class="result-container" style="display: none;">
+            <iframe id="resultIframe" class="iframe" title="Resultado da Comparação"></iframe>
+        </div>
+    </div>
+
+    <!-- Bibliotecas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/htmldiff-js@1.0.5/dist/htmldiff.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
