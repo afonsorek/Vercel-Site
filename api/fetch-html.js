@@ -22,7 +22,8 @@ export default async function handler(req, res) {
         throw new Error(`Falha ao carregar a página (Status: ${response.status})`);
       }
       
-      const text = await response.text();
+      let text = await response.text();
+      text = text.replace(/<meta\s+(?:[^>]*\s+)?http-equiv=["']?content-security-policy(-report-only)?["']?[^>]*>/gi, '');
       return { html: text, error: null };
     } catch (err) {
       return { html: null, error: err.message };
