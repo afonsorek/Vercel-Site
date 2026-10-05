@@ -138,7 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Optional: Auto-save text edits locally so the user can freely edit the memory
-  const savedText = localStorage.getItem('oficina_text');
+  const STORAGE_KEY = 'oficina_labcom_text';
+  const savedText = localStorage.getItem(STORAGE_KEY);
   if (savedText) {
     editableText.innerHTML = savedText;
   }
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(saveTimeout);
     saveHint.textContent = 'salvando...';
     saveTimeout = setTimeout(() => {
-      localStorage.setItem('oficina_text', editableText.innerHTML);
+      localStorage.setItem(STORAGE_KEY, editableText.innerHTML);
       saveHint.textContent = 'salvo';
       setTimeout(() => {
         saveHint.textContent = '';
