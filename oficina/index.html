@@ -1,430 +1,95 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>OFICINA — Registro Temporal de uma Intervenção Artística | Afonso Rekbaim</title>
-  <meta name="description" content="Registro temporal, acústico e textual de uma intervenção artística no espaço Oficina. Um arquivo efêmero em preto e branco." />
+  <title>Oficina — Registro Temporal</title>
+  <meta name="description" content="Registro temporal de uma intervenção artística." />
   <meta name="author" content="Afonso Rekbaim" />
   <link rel="canonical" href="https://www.afonso.io/oficina/" />
-  
-  <meta property="og:title" content="OFICINA — Registro Temporal de uma Intervenção Artística" />
-  <meta property="og:description" content="Arquivo temporal e acústico de uma intervenção artística efêmera." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.afonso.io/oficina/" />
 
-  <!-- Google Fonts: Cormorant Garamond & Inter -->
+  <!-- Typography: Newsreader (humanized literary serif) & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
   
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Grain overlay for humanized, tactile monochrome atmosphere -->
-  <div class="grain-overlay" aria-hidden="true"></div>
 
-  <!-- Main Container -->
-  <div class="site-wrapper">
-
-    <!-- Top Navigation / Archival Bar -->
-    <header class="top-bar">
-      <div class="nav-left">
-        <a href="../" class="back-link" title="Voltar para afonso.io">
-          <span class="arrow" aria-hidden="true">←</span>
-          <span class="link-label">afonso.io</span>
-        </a>
-        <span class="divider-dot" aria-hidden="true">/</span>
-        <span class="archive-tag">ARQUIVO TEMPORAL Nº 01</span>
-      </div>
-
-      <div class="nav-right">
-        <div class="live-status" id="playbackStatus">
-          <span class="status-pulse" id="statusPulse"></span>
-          <span class="status-text" id="statusText">SILÊNCIO</span>
-        </div>
-        
-        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema preto e branco">
-          <span class="theme-dot"></span>
-          <span class="theme-label" id="themeLabel">CÂMARA ESCURA</span>
-        </button>
-      </div>
+  <main class="container">
+    
+    <!-- Top discreet back link -->
+    <header class="header">
+      <a href="../" class="back-link">← afonso.io</a>
+      <span class="header-date">registro temporal</span>
     </header>
 
-    <!-- Hero / Title Section -->
-    <section class="hero-section">
-      <div class="hero-meta-top">
-        <span class="meta-tag">[ REGISTRO DE OCUPAÇÃO EFÊMERA ]</span>
-        <span class="meta-coords">23°33'01.8"S · 46°38'02.4"W</span>
-      </div>
+    <!-- 1. Título -->
+    <section class="title-section">
+      <h1 class="title">Oficina</h1>
+      <p class="subtitle">Intervenção artística efêmera</p>
+    </section>
 
-      <h1 class="main-title">OFICINA</h1>
+    <!-- 2. Player de Áudio -->
+    <section class="player" aria-label="Player de áudio da intervenção">
+      <audio id="audio" preload="metadata" src="../Audio/ambience.wav"></audio>
       
-      <p class="main-subtitle">
-        Memória temporal e acústica de uma intervenção artística
-      </p>
+      <div class="player-top">
+        <button id="playBtn" class="play-button" type="button" aria-label="Tocar áudio">
+          <!-- Play Icon -->
+          <svg id="playIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <polygon points="6,4 20,12 6,20"></polygon>
+          </svg>
+          <!-- Pause Icon -->
+          <svg id="pauseIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: none;">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
 
-      <div class="metadata-grid">
-        <div class="meta-col">
-          <span class="meta-label">ESPAÇO</span>
-          <span class="meta-val">Galpão Oficina</span>
+        <div class="player-info">
+          <span class="track-label">Registro sonoro da oficina</span>
+          <div class="time-display">
+            <span id="currentTime">00:00</span>
+            <span class="time-sep">/</span>
+            <span id="durationTime">--:--</span>
+          </div>
         </div>
-        <div class="meta-col">
-          <span class="meta-label">TEMPORALIDADE</span>
-          <span class="meta-val">Outono · Crepúsculo</span>
-        </div>
-        <div class="meta-col">
-          <span class="meta-label">MEIO</span>
-          <span class="meta-val">Som, matérica & ar</span>
-        </div>
-        <div class="meta-col">
-          <span class="meta-label">CONDUTOR</span>
-          <span class="meta-val">Afonso Rekbaim</span>
+      </div>
+
+      <!-- Scrubber Bar (Touch & Mobile friendly) -->
+      <div class="progress-wrap" id="progressWrap" role="slider" aria-label="Linha do tempo do áudio" tabindex="0">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-thumb" id="progressThumb"></div>
         </div>
       </div>
     </section>
 
-    <!-- Interactive Audio Player Section ("O Registro Acústico") -->
-    <section class="player-section" id="registro-sonoro">
-      <div class="player-container">
-        <!-- Player Header -->
-        <div class="player-top">
-          <div class="player-identity">
-            <span class="device-label">DISPOSITIVO DE ESCUTA ACÚSTICA</span>
-            <div class="track-info">
-              <span class="track-number" id="currentTrackNum">FAIXA I</span>
-              <span class="track-title" id="currentTrackTitle">Ressonância da Matéria & Espaço</span>
-            </div>
-          </div>
-
-          <div class="track-controls-alt">
-            <!-- Track select dropdown -->
-            <label for="trackSelect" class="sr-only">Selecionar Registro Sonoro</label>
-            <select id="trackSelect" class="track-dropdown" aria-label="Selecionar Faixa">
-              <option value="../Audio/ambience.wav">Faixa I: Ressonância da Matéria (Ambiente)</option>
-              <option value="../Audio/experimental.wav">Faixa II: Fricção e Interrupção (Experimental)</option>
-              <option value="generator">Sintetizador: Ressonância Espacial Contínua</option>
-              <option value="custom">+ Carregar Registro Próprio (.wav / .mp3)...</option>
-            </select>
-            <input type="file" id="audioFileInput" accept="audio/*" class="sr-only" aria-label="Upload de áudio próprio" />
-          </div>
-        </div>
-
-        <!-- Oscilloscope Waveform Canvas -->
-        <div class="waveform-box">
-          <canvas id="waveformCanvas" width="900" height="96"></canvas>
-          <div class="waveform-timeline" id="timelineProgress"></div>
-        </div>
-
-        <!-- Scrubber & Time Bar -->
-        <div class="scrubber-bar">
-          <span class="time-readout" id="currentTime">00:00</span>
-          
-          <div class="slider-wrapper" id="progressContainer" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0" aria-label="Progresso do áudio">
-            <div class="slider-track">
-              <div class="slider-fill" id="progressFill"></div>
-              <div class="slider-handle" id="progressHandle"></div>
-              <!-- Temporal Marker Dots -->
-              <button class="marker-dot" style="left: 0%" data-seek="0" title="00:00 - A Ocupação do Vácuo"></button>
-              <button class="marker-dot" style="left: 28%" data-seek="75" title="01:15 - A Fricção do Gesto"></button>
-              <button class="marker-dot" style="left: 58%" data-seek="160" title="02:40 - A Ressonância da Matéria"></button>
-              <button class="marker-dot" style="left: 88%" data-seek="250" title="04:10 - O Retorno ao Silêncio"></button>
-            </div>
-          </div>
-
-          <span class="time-readout duration" id="durationTime">--:--</span>
-        </div>
-
-        <!-- Player Controls Bar -->
-        <div class="player-controls">
-          <div class="controls-left">
-            <button id="btnLoop" class="ctrl-btn" type="button" title="Repetição Contínua (Instalação em Loop)" aria-label="Repetição contínua">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 2l4 4-4 4"/>
-                <path d="M3 11v-1a4 4 0 0 1 4-4h14"/>
-                <path d="M7 22l-4-4 4-4"/>
-                <path d="M21 13v1a4 4 0 0 1-4 4H3"/>
-              </svg>
-              <span class="btn-text">LOOP</span>
-            </button>
-
-            <button id="btnSpeed" class="ctrl-btn" type="button" title="Velocidade de Escuta" aria-label="Velocidade de reprodução">
-              <span id="speedValue">1.0×</span>
-            </button>
-          </div>
-
-          <!-- Main Play/Pause Button -->
-          <div class="controls-center">
-            <button id="btnRewind" class="ctrl-btn skip-btn" type="button" title="Recuar 10 segundos" aria-label="Recuar 10 segundos">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M11 19l-9-7 9-7v14zM22 19l-9-7 9-7v14z"/>
-              </svg>
-              <span class="sr-only">Recuar 10s</span>
-            </button>
-
-            <button id="btnPlay" class="play-btn" type="button" aria-label="Reproduzir áudio da intervenção">
-              <svg id="iconPlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="6,3 20,12 6,21"></polygon>
-              </svg>
-              <svg id="iconPause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
-                <rect x="5" y="4" width="4" height="16"></rect>
-                <rect x="15" y="4" width="4" height="16"></rect>
-              </svg>
-            </button>
-
-            <button id="btnForward" class="ctrl-btn skip-btn" type="button" title="Avançar 10 segundos" aria-label="Avançar 10 segundos">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M13 5l9 7-9 7V5zM2 5l9 7-9 7V5z"/>
-              </svg>
-              <span class="sr-only">Avançar 10s</span>
-            </button>
-          </div>
-
-          <!-- Volume Controls -->
-          <div class="controls-right">
-            <button id="btnMute" class="ctrl-btn" type="button" aria-label="Silenciar áudio">
-              <svg id="iconVol" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-            </button>
-            <input type="range" id="volumeSlider" min="0" max="1" step="0.02" value="0.85" class="volume-slider" aria-label="Volume" />
-          </div>
-        </div>
-
-        <audio id="audioElement" preload="metadata" src="../Audio/ambience.wav"></audio>
-      </div>
-    </section>
-
-    <!-- Text & Reflection Section ("O Espaço para Texto") -->
-    <section class="narrative-section">
-      <!-- Section Navigation / Tab Bar -->
-      <div class="narrative-tabs" role="tablist">
-        <button class="tab-btn active" id="tabMemorial" role="tab" aria-selected="true" data-tab="memorial">
-          MEMORIAL DA INTERVENÇÃO
-        </button>
-        <button class="tab-btn" id="tabCaderno" role="tab" aria-selected="false" data-tab="caderno">
-          CADERNO DE CAMPO & ANOTAÇÕES (<span id="notesCount">0</span>)
-        </button>
-        <button class="tab-btn" id="tabEditor" role="tab" aria-selected="false" data-tab="editor">
-          EDITAR REGISTRO
-        </button>
+    <!-- 3. Espaço para Texto -->
+    <article class="text-section" id="textSpace">
+      <div class="text-content" id="editableText" contenteditable="true" spellcheck="false" title="Clique para editar o texto se desejar">
+        <p>
+          A oficina permaneceu em silêncio durante dias antes do primeiro toque. O espaço guardava a poeira das ferramentas, o cheiro de ferro oxidado e o eco contido das paredes de concreto.
+        </p>
+        <p>
+          A intervenção aconteceu no intervalo entre a tarde e a noite. Um som contínuo, de baixa frequência, foi projetado contra as vigas do teto, fazendo o ar vibrar como se o próprio galpão respirasse.
+        </p>
+        <p>
+          Não restou nenhum objeto no chão após o término da ação. Toda a presença foi consumida pelo tempo, restando apenas esta memória sonora gravada e as palavras que aqui permanecem.
+        </p>
       </div>
 
-      <!-- Tab 1: Memorial da Intervenção (Default View) -->
-      <article class="tab-content active" id="viewMemorial">
-        <header class="narrative-header">
-          <span class="folio-stamp">PROPOSIÇÃO Nº 01 — O PESO DO AR</span>
-          <h2 class="narrative-title">O que o silêncio guarda antes da intervenção</h2>
-          <p class="narrative-lead">
-            Uma investigação sobre a matéria invisível do som, a poeira sedimentada sobre as bancadas da oficina e o instante fugaz em que o espaço se torna testemunha de si mesmo.
-          </p>
-        </header>
+      <footer class="text-footer">
+        <span class="meta-item">São Paulo · Espaço Oficina</span>
+        <span class="meta-item save-hint" id="saveHint"></span>
+      </footer>
+    </article>
 
-        <!-- Poetic Body Text with Time Anchors -->
-        <div class="prose-content">
-          
-          <div class="temporal-fragment" data-time="0" id="frag-0">
-            <div class="fragment-anchor">
-              <button class="seek-stamp" data-seek="0" title="Ouvir a partir deste instante">
-                <span class="stamp-bracket">[</span>
-                <span class="stamp-time">00:00</span>
-                <span class="stamp-bracket">]</span>
-                <span class="stamp-cue">INÍCIO</span>
-              </button>
-            </div>
-            <div class="fragment-body">
-              <h3 class="fragment-heading">I. A Ocupação do Vácuo</h3>
-              <p>
-                A oficina não é um recinto inerte. Quando as ferramentas silenciam e as portas de ferro se fecham ao fim da tarde, o ar ganha densidade mineral. Há uma memória guardada no óleo seco das engrenagens, no carvalho marcado por lâminas antigas e na reverberação que ricocheteia pelas vigas oxidadas.
-              </p>
-              <p>
-                A intervenção começa antes de qualquer emissão sonora perceptível: ela reside no ato de adentrar a penumbra, suspender o passo e esperar que o ouvido se desacostume do ruído externo da cidade. Ouvir a sala é, antes de tudo, permitir que o espaço nos escute.
-              </p>
-            </div>
-          </div>
+  </main>
 
-          <!-- Pull Quote -->
-          <blockquote class="pull-quote">
-            <p>
-              “O som não ocupa o espaço como quem preenche um vaso vazio; ele revela as suas fraturas, o seu eco e a espessura do tempo que ali repousa.”
-            </p>
-            <cite>— Notas de Campo, Instalação na Oficina</cite>
-          </blockquote>
-
-          <div class="temporal-fragment" data-time="75" id="frag-75">
-            <div class="fragment-anchor">
-              <button class="seek-stamp" data-seek="75" title="Ouvir a partir deste instante">
-                <span class="stamp-bracket">[</span>
-                <span class="stamp-time">01:15</span>
-                <span class="stamp-bracket">]</span>
-                <span class="stamp-cue">FRICÇÃO</span>
-              </button>
-            </div>
-            <div class="fragment-body">
-              <h3 class="fragment-heading">II. A Fricção e a Ruptura</h3>
-              <p>
-                O primeiro estímulo sonoro não busca a harmonia convencional, mas a vibração dos corpos materiais. Uma frequência grave atravessa o assoalho; pequenas partículas de limalha de ferro dançam na superfície metálica da mesa de corte. 
-              </p>
-              <p>
-                O espaço reage com atraso, devolvendo uma cauda de reverberação que se prolonga pelas paredes caiadas. Não há aqui um espetáculo para ser contemplado à distância: o corpo de quem escuta é o próprio ressonador. Cada reflexão acústica mapeia a distância exata entre as paredes opostas.
-              </p>
-            </div>
-          </div>
-
-          <div class="temporal-fragment" data-time="160" id="frag-160">
-            <div class="fragment-anchor">
-              <button class="seek-stamp" data-seek="160" title="Ouvir a partir deste instante">
-                <span class="stamp-bracket">[</span>
-                <span class="stamp-time">02:40</span>
-                <span class="stamp-bracket">]</span>
-                <span class="stamp-cue">RESSONÂNCIA</span>
-              </button>
-            </div>
-            <div class="fragment-body">
-              <h3 class="fragment-heading">III. O Vórtice e a Dissolução</h3>
-              <p>
-                Ao atingir seu ápice, os harmônicos convergem para uma textura contínua onde já não se distingue a fonte geradora do ambiente gerado. O zumbido da fiação elétrica, o vento que assobia por entre as telhas de fibrocimento e a intervenção digitalizada fundem-se em um mesmo organismo vivo.
-              </p>
-              <p>
-                O tempo parece dilatar-se. O segundo deixa de ser uma medida aritmética para tornar-se uma espessura física. A intervenção existe apenas enquanto se desfaz.
-              </p>
-            </div>
-          </div>
-
-          <div class="temporal-fragment" data-time="250" id="frag-250">
-            <div class="fragment-anchor">
-              <button class="seek-stamp" data-seek="250" title="Ouvir a partir deste instante">
-                <span class="stamp-bracket">[</span>
-                <span class="stamp-time">04:10</span>
-                <span class="stamp-bracket">]</span>
-                <span class="stamp-cue">DESVANECER</span>
-              </button>
-            </div>
-            <div class="fragment-body">
-              <h3 class="fragment-heading">IV. O Resíduo e a Ausência</h3>
-              <p>
-                Quando o último harmônico decai para além do limiar da audição humana, a oficina não regressa ao silêncio prévio. Resta uma perturbação residual — o resíduo do gesto que esteve ali. O registro gravado neste site é a única âncora material de algo que estava destinado a evaporar.
-              </p>
-              <p class="final-word">
-                Gravar não é congelar o passado, mas permitir que o instante continue ressoando em quem agora o escuta.
-              </p>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Archival Sign-off -->
-        <footer class="prose-footer">
-          <div class="stamp-seal">
-            <div class="seal-circle">OFICINA</div>
-            <div class="seal-text">
-              <span>DOCUMENTO DE ARQUIVO EFÊMERO</span>
-              <span>SÃO PAULO · REGISTRO AUTORAL</span>
-            </div>
-          </div>
-          <div class="sign-off">
-            <span class="signature">Afonso Rekbaim</span>
-            <span class="sign-date">Intervenção Sonora & Espacial</span>
-          </div>
-        </footer>
-      </article>
-
-      <!-- Tab 2: Caderno de Campo & Anotações (Interactive Guestbook/Personal Notes) -->
-      <section class="tab-content" id="viewCaderno" style="display: none;">
-        <div class="caderno-intro">
-          <h2 class="caderno-title">Caderno de Campo do Visitante</h2>
-          <p class="caderno-desc">
-            Registre suas próprias percepções sobre esta intervenção. Suas notas são preservadas localmente neste navegador, tornando este arquivo pessoal e permanente para sua memória.
-          </p>
-        </div>
-
-        <form id="noteForm" class="note-form">
-          <div class="form-row">
-            <div class="input-wrapper">
-              <label for="noteAuthor" class="form-label">SEU NOME / PSEUDÔNIMO</label>
-              <input type="text" id="noteAuthor" class="form-input" placeholder="Ex: Visitante ou Observador" required />
-            </div>
-            <div class="input-wrapper">
-              <label for="noteTimestamp" class="form-label">INSTANTE DE ESCUTA</label>
-              <input type="text" id="noteTimestamp" class="form-input" placeholder="Ex: 01:45" />
-            </div>
-          </div>
-
-          <div class="input-wrapper">
-            <label for="noteContent" class="form-label">ANOTAÇÃO / SENSAÇÃO TEMPORAL</label>
-            <textarea id="noteContent" class="form-textarea" rows="4" placeholder="Escreva o que a matéria e o silêncio despertaram..." required></textarea>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="submit-btn">
-              <span>ANOTAR NO REGISTRO</span>
-              <span class="arrow-submit" aria-hidden="true">→</span>
-            </button>
-            <button type="button" id="btnClearNotes" class="btn-text-ghost">Limpar anotações</button>
-          </div>
-        </form>
-
-        <!-- Saved Notes List -->
-        <div class="notes-display">
-          <div class="notes-header">
-            <span class="notes-heading">NOTAS COLETADAS (<span id="notesTotal">0</span>)</span>
-            <button id="btnExportNotes" class="btn-text-ghost" title="Exportar todas as notas em arquivo .txt">Baixar arquivo de texto (.txt)</button>
-          </div>
-          <div id="notesContainer" class="notes-list">
-            <!-- Populated via script.js -->
-            <p class="empty-notes-hint">Nenhuma anotação pessoal registrada ainda. Escreva acima para imortalizar seu instante.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Tab 3: Editar Registro (Allows inline editing of the memorial text) -->
-      <section class="tab-content" id="viewEditor" style="display: none;">
-        <div class="caderno-intro">
-          <h2 class="caderno-title">Editor do Registro Textual</h2>
-          <p class="caderno-desc">
-            Personalize diretamente as palavras deste memorial. Edite o texto abaixo e salve as alterações para que este documento reflita a sua intervenção artística exata.
-          </p>
-        </div>
-
-        <div class="editor-box">
-          <label for="customTextarea" class="form-label">CONTEÚDO DO MEMORIAL (SUPORTA PARÁGRAFOS)</label>
-          <textarea id="customTextarea" class="form-textarea editor-textarea" rows="18" spellcheck="false"></textarea>
-          
-          <div class="editor-actions">
-            <button type="button" id="btnSaveCustomText" class="submit-btn">
-              <span>SALVAR ALTERAÇÕES NO ARQUIVO</span>
-            </button>
-            <button type="button" id="btnResetCustomText" class="btn-text-ghost">
-              Restaurar texto original
-            </button>
-          </div>
-        </div>
-      </section>
-
-    </section>
-
-    <!-- Minimalist Footer -->
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-left">
-          <span class="footer-symbol">◎</span>
-          <span class="footer-credit">OFICINA — Intervenção Sonora & Espacial</span>
-        </div>
-        <div class="footer-center">
-          <span class="footer-quote">“O tempo dissolve a matéria, a escuta retém a presença.”</span>
-        </div>
-        <div class="footer-right">
-          <a href="../" class="footer-back-link">afonso.io</a>
-          <span class="footer-year">2026</span>
-        </div>
-      </div>
-    </footer>
-
-  </div>
-
-  <!-- Main JavaScript Logic -->
   <script src="script.js"></script>
 </body>
 </html>
