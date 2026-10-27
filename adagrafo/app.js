@@ -29,10 +29,16 @@
     searchSet: null,
     previewNode: null,
     adj: new Map(),
-    sim: null,
     width: 0,
     height: 0,
     dpr: 1,
+    nodeColorMode: "balance", // "balance" | "ratio" | "default"
+    weightsEnabled: true,
+    weightIntensity: 1.0,
+    showWeightsOnEdges: true,
+    rankingCalcMode: "weighted", // "weighted" | "raw"
+    minNet: -10,
+    maxNet: 10,
   };
 
   const COLORS = {
@@ -166,6 +172,24 @@
     const nodes = [...nodeById.values()];
     nodes.forEach((n) => {
       n.r = 7 + Math.sqrt(n.recvPos + n.recvNeg) * 1.7;
+      n.net = n.recvPos - n.recvNeg;
+      n.total = n.recvPos + n.recvNeg;
+      n.ratio = n.total > 0 ? n.recvPos / n.total : 0.5;
+    });
+
+    const netScores = nodes.map((n) => n.net);
+    const minNet = netScores.length ? Math.min(...netScores) : -10;
+    const maxNet = netScores.length ? Math.max(...netScores) : 10;
+    S.minNet = minNet;
+    S.maxNet = maxNet;
+
+    // Atribuir pesos iniciais em cada menção baseado na reputação do avaliador
+    mentions.forEach((m) => {
+      const auth = nodeById.get(m.src);
+      const s = auth ? auth.net : 0;
+      const range = maxNet > minNet ? maxNet - minNet : 1;
+      const normNet = Math.max(0, Math.min(1, (s - minNet) / range));
+      m.weight = Math.max(0.1, Math.min(4.0, Math.round((1.0 + (normNet - 0.5) * 2.0) * 10) / 10));
     });
 
     // Links não direcionais para o layout (independem dos filtros)
@@ -197,6 +221,12 @@
     }
     const edges = [...map.values()];
 
+    edges.forEach((e) => {
+      e.rawCount = e.items.length;
+      e.weightedCount = Math.round(e.items.reduce((acc, m) => acc + (m.weight ?? 1.0), 0) * 10) / 10;
+      e.effectiveCount = S.weightsEnabled ? e.weightedCount : e.rawCount;
+    });
+
     // Agrupar por par para calcular curvaturas (ida e volta separadas)
     const pairs = new Map();
     for (const e of edges) {
@@ -219,14 +249,15 @@
       }
     }
 
-    const observedMax = edges.reduce((m, e) => Math.max(m, e.items.length), 1);
+    const observedMax = edges.reduce((m, e) => Math.max(m, e.effectiveCount), 1);
     S.maxCount = observedMax;
     edges.forEach((e) => {
-      e.t = S.maxCount > 1 ? (e.items.length - 1) / (S.maxCount - 1) : 1;
-      // Estilo pré-calculado: evita montar strings de cor a cada quadro
-      e.w = 0.9 + 2.2 * e.t;
+      e.t = S.maxCount > 1 ? (e.effectiveCount - 1) / (S.maxCount - 1) : 1;
+      // Estilo pré-calculado: espessura proporcional ao peso e intensidade
+      const weightRatio = S.weightsEnabled ? Math.max(0.7, Math.min(1.8, e.weightedCount / (e.rawCount || 1))) : 1;
+      e.w = (0.9 + 2.2 * Math.max(0, Math.min(1, e.t))) * weightRatio;
       e.color = edgeColor(e.type, e.t);
-      e.key = `${e.type}${e.items.length}`;
+      e.key = `${e.type}${e.rawCount}_${S.weightsEnabled ? e.weightedCount : ''}`;
     });
     edges.sort((a, b) => a.items.length - b.items.length);
     S.edges = edges;
@@ -310,33 +341,117 @@
     requestRender();
   }
 
-  // Sprites pré-renderizados das esferas (gradiente + brilho), em vários tamanhos
-  // para não criar gradientes/sombras a cada quadro e evitar serrilhado ao reduzir.
-  function makeSprite(highlighted, r) {
+  // ---------- Reputação e Pesos ----------
+  function getAuthorReputation(authorId) {
+    const n = S.nodeById.get(authorId);
+    if (!n) return { net: 0, ratio: 0.5, weight: 1.0, level: "mid" };
+
+    if (!S.weightsEnabled || S.weightIntensity === 0) {
+      return { net: n.net, ratio: n.ratio, weight: 1.0, level: "mid" };
+    }
+
+    const minNet = S.minNet ?? -10;
+    const maxNet = S.maxNet ?? 10;
+    const range = maxNet > minNet ? maxNet - minNet : 1;
+    const normNet = Math.max(0, Math.min(1, (n.net - minNet) / range));
+
+    const rawWeight = 1.0 + S.weightIntensity * (normNet - 0.5) * 2.0;
+    const weight = Math.max(0.1, Math.min(4.0, Math.round(rawWeight * 10) / 10));
+    const level = weight >= 1.3 ? "high" : weight <= 0.7 ? "low" : "mid";
+    return { net: n.net, ratio: n.ratio, weight, level };
+  }
+
+  function recalculateWeights() {
+    if (!S.mentions.length) return;
+    for (const m of S.mentions) {
+      m.weight = getAuthorReputation(m.src).weight;
+    }
+    aggregateEdges();
+  }
+
+  // ---------- Paletas e Sprites dos Nós ----------
+  const THEMES = {
+    default: {
+      hl: { c0: "#e4e5ff", c1: "#8f92ff", c2: "#3d3fb0", glow: "rgba(139,140,248,0.9)" },
+      normal: { c0: "#c9cbff", c1: "#7376e6", c2: "#2d2f86" },
+      ring: "rgba(255,255,255,0.18)",
+    },
+    pos_high: {
+      hl: { c0: "#ecfdf5", c1: "#34d399", c2: "#065f46", glow: "rgba(52,211,153,0.95)" },
+      normal: { c0: "#d1fae5", c1: "#10b981", c2: "#047857" },
+      ring: "rgba(52,211,153,0.45)",
+    },
+    pos_mid: {
+      hl: { c0: "#f0fdfa", c1: "#5eead4", c2: "#115e59", glow: "rgba(45,212,191,0.9)" },
+      normal: { c0: "#ccfbf1", c1: "#2dd4bf", c2: "#0f766e" },
+      ring: "rgba(45,212,191,0.35)",
+    },
+    neutral: {
+      hl: { c0: "#e0e7ff", c1: "#818cf8", c2: "#312e81", glow: "rgba(129,140,248,0.9)" },
+      normal: { c0: "#c7d2fe", c1: "#6366f1", c2: "#3730a3" },
+      ring: "rgba(129,140,248,0.25)",
+    },
+    neg_mid: {
+      hl: { c0: "#fff1f2", c1: "#fb7185", c2: "#881337", glow: "rgba(251,113,133,0.95)" },
+      normal: { c0: "#ffe4e6", c1: "#f43f5e", c2: "#9f1239" },
+      ring: "rgba(251,113,133,0.35)",
+    },
+    neg_high: {
+      hl: { c0: "#ffe4e6", c1: "#e11d48", c2: "#4c0519", glow: "rgba(225,29,72,1.0)" },
+      normal: { c0: "#fecdd3", c1: "#be123c", c2: "#4c0519" },
+      ring: "rgba(225,29,72,0.55)",
+    },
+  };
+
+  function getNodeTier(n) {
+    if (S.nodeColorMode === "default") return "default";
+    if (S.nodeColorMode === "ratio") {
+      const r = n.ratio ?? 0.5;
+      if (r >= 0.75) return "pos_high";
+      if (r >= 0.55) return "pos_mid";
+      if (r >= 0.45) return "neutral";
+      if (r >= 0.25) return "neg_mid";
+      return "neg_high";
+    }
+    // "balance" (Saldo de avaliações)
+    const net = n.net ?? 0;
+    if (net >= 4) return "pos_high";
+    if (net >= 1) return "pos_mid";
+    if (net === 0) return "neutral";
+    if (net >= -4) return "neg_mid";
+    return "neg_high";
+  }
+
+  function makeThemeSprite(colors, highlighted, r) {
     const pad = highlighted ? r * 2 : 2;
     const c = document.createElement("canvas");
     c.width = c.height = Math.ceil((r + pad) * 2);
     const g = c.getContext("2d");
     const o = c.width / 2;
-    if (highlighted) {
-      g.shadowColor = "rgba(139,140,248,0.9)";
+    if (highlighted && colors.glow) {
+      g.shadowColor = colors.glow;
       g.shadowBlur = r * 1.5;
     }
     const grad = g.createRadialGradient(o - r * 0.35, o - r * 0.4, r * 0.1, o, o, r);
-    grad.addColorStop(0, highlighted ? "#e4e5ff" : "#c9cbff");
-    grad.addColorStop(0.45, highlighted ? "#8f92ff" : "#7376e6");
-    grad.addColorStop(1, highlighted ? "#3d3fb0" : "#2d2f86");
+    grad.addColorStop(0, colors.c0);
+    grad.addColorStop(0.45, colors.c1);
+    grad.addColorStop(1, colors.c2);
     g.beginPath();
     g.arc(o, o, r, 0, Math.PI * 2);
     g.fillStyle = grad;
     g.fill();
     return { img: c, r, k: o / r };
   }
+
   const SPRITE_SIZES = [8, 16, 32, 64, 128, 256];
-  const SPRITES = {
-    normal: SPRITE_SIZES.map((r) => makeSprite(false, r)),
-    hl: SPRITE_SIZES.map((r) => makeSprite(true, r)),
-  };
+  const SPRITES = {};
+  for (const [key, theme] of Object.entries(THEMES)) {
+    SPRITES[key] = {
+      normal: SPRITE_SIZES.map((r) => makeThemeSprite(theme.normal, false, r)),
+      hl: SPRITE_SIZES.map((r) => makeThemeSprite(theme.hl, true, r)),
+    };
+  }
+
   const spriteFor = (set, screenR) => set.find((s) => s.r >= screenR) || set[set.length - 1];
 
   const DIM_COLOR = { pos: edgeColor("pos", 0.5, 0.09), neg: edgeColor("neg", 0.5, 0.09) };
@@ -447,8 +562,8 @@
     dimB.forEach(paintBucket);
     actB.forEach(paintBucket);
 
-    // Se estiver em foco, desenha badges com contagem (+ / -) no centro de cada aresta
-    if (isFocused && activeEdges.length) {
+    // Se estiver em foco, ou se a opção de exibir pesos nas setas estiver ativa:
+    if ((isFocused || S.showWeightsOnEdges) && activeEdges.length) {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       const fsBadge = Math.max(9, 10.5 / T.k);
@@ -458,8 +573,11 @@
         const g = e.g;
         const mx = 0.25 * g.sx + 0.5 * g.cx + 0.25 * g.ex;
         const my = 0.25 * g.sy + 0.5 * g.cy + 0.25 * g.ey;
-        const badgeText = `${e.type === "pos" ? "+" : "−"}${e.items.length}`;
-        const badgeW = (16 + String(e.items.length).length * 7.5) / T.k;
+        const countStr = S.weightsEnabled && S.showWeightsOnEdges
+          ? `${e.weightedCount.toFixed(1)}★`
+          : `${e.rawCount}`;
+        const badgeText = `${e.type === "pos" ? "+" : "−"}${countStr}`;
+        const badgeW = (16 + badgeText.length * 7.5) / T.k;
         const badgeH = 15.5 / T.k;
         const rx = mx - badgeW / 2, ry = my - badgeH / 2, r = badgeH / 2;
 
@@ -500,7 +618,10 @@
       const isFocal = n === S.focusNode;
       const faded = dimming && !isNeighbor;
       const hl = n === S.hoverNode || n === focus || isFocal;
-      const sp = spriteFor(hl ? SPRITES.hl : SPRITES.normal, n.r * scale);
+
+      const tier = getNodeTier(n);
+      const themeSet = SPRITES[tier] || SPRITES.default;
+      const sp = spriteFor(hl ? themeSet.hl : themeSet.normal, n.r * scale);
       const d = n.r * sp.k;
 
       // No modo foco: nós desconectados ficam com opacidade quase invisível (0.025)
@@ -598,21 +719,30 @@
   // ---------- Tooltip ----------
   function mentionList(items, type) {
     return `<ul class="tt-list">${items
-      .map(
-        (m) => `<li class="${type}">
-          <div class="tt-meta"><span class="tt-attr">${esc(m.attr)}</span>${m.choice ? `<span class="tt-choice">· ${esc(m.choice)}</span>` : ""}</div>
+      .map((m) => {
+        const rep = getAuthorReputation(m.src);
+        const weightTag = S.weightsEnabled
+          ? `<span class="tt-author-rep ${rep.level}" title="Peso de avaliação de quem avaliou (Baseado na reputação: saldo ${rep.net > 0 ? '+' : ''}${rep.net})">Peso: ${rep.weight.toFixed(1)}x</span>`
+          : "";
+        return `<li class="${type}">
+          <div class="tt-meta">
+            <span class="tt-attr">${esc(m.attr)}</span>
+            ${m.choice ? `<span class="tt-choice">· ${esc(m.choice)}</span>` : ""}
+            ${weightTag}
+          </div>
           ${m.comment ? `<p class="tt-comment">“${esc(m.comment)}”</p>` : `<p class="tt-comment empty">Sem comentário</p>`}
-        </li>`
-      )
+        </li>`;
+      })
       .join("")}</ul>`;
   }
 
   function edgeSection(e) {
     const label = e.type === "pos" ? "Positiva" : "Negativa";
     const n = e.items.length;
+    const weightInfo = S.weightsEnabled ? ` · Peso Total: <b>${e.weightedCount.toFixed(1)}★</b>` : "";
     return `<div class="tt-section">
       <div class="tt-route">${esc(e.source.name)}<span class="arrow ${e.type}">→</span>${esc(e.target.name)}</div>
-      <span class="badge ${e.type}">${label} · ${n} ${n === 1 ? "menção" : "menções"}</span>
+      <span class="badge ${e.type}">${label} · ${n} ${n === 1 ? "menção" : "menções"}${weightInfo}</span>
       ${mentionList(e.items, e.type)}
     </div>`;
   }
@@ -626,8 +756,16 @@
   }
 
   function nodeTooltipHTML(n) {
+    const rep = getAuthorReputation(n.id);
+    const repInfo = S.weightsEnabled
+      ? `<div class="muted" style="font-size:11.5px;margin-top:3px;">Peso como avaliador: <b style="color:#c5c7ff;">${rep.weight.toFixed(1)}x</b> (${rep.level === 'high' ? 'Alta reputação' : rep.level === 'low' ? 'Baixa reputação' : 'Reputação média'})</div>`
+      : "";
+    const netSign = n.net > 0 ? `+${n.net}` : `${n.net}`;
+    const netColor = n.net > 0 ? "var(--pos)" : n.net < 0 ? "var(--neg)" : "var(--muted)";
+
     return `<div class="tt-node-name">${esc(n.name)}</div>
-      <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")}</div>
+      <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
+      ${repInfo}
       <div class="tt-grid">
         <span></span><span class="h">Recebidas</span><span class="h">Dadas</span>
         <span style="color:var(--pos)">● Positivas</span><b>${n.recvPos}</b><b>${n.givePos}</b>
@@ -1147,6 +1285,7 @@
   function computeRankingData(profile = "all", typeFilter = "all", search = "") {
     const q = norm(search);
     const candidateStats = new Map();
+    const useWeights = S.rankingCalcMode === "weighted" && S.weightsEnabled;
 
     for (const n of S.nodes) {
       candidateStats.set(n.id, {
@@ -1164,14 +1303,17 @@
       if (profile !== "all" && m.attr !== profile) continue;
       const stat = candidateStats.get(m.tgt);
       if (!stat) continue;
-      if (m.type === "pos") stat.pos++;
-      else if (m.type === "neg") stat.neg++;
+      const w = useWeights ? (m.weight ?? 1.0) : 1.0;
+      if (m.type === "pos") stat.pos += w;
+      else if (m.type === "neg") stat.neg += w;
     }
 
     // Calcular saldos e taxas
     let list = Array.from(candidateStats.values());
     list.forEach((st) => {
-      st.net = st.pos - st.neg;
+      st.pos = useWeights ? Math.round(st.pos * 10) / 10 : Math.round(st.pos);
+      st.neg = useWeights ? Math.round(st.neg * 10) / 10 : Math.round(st.neg);
+      st.net = useWeights ? Math.round((st.pos - st.neg) * 10) / 10 : st.pos - st.neg;
       st.total = st.pos + st.neg;
       st.ratio = st.total > 0 ? Math.round((st.pos / st.total) * 100) : 0;
     });
@@ -1211,9 +1353,11 @@
     const profile = rmProfileSelect ? rmProfileSelect.value : "all";
     const search = rmSearchInput ? rmSearchInput.value : "";
     const data = computeRankingData(profile, rmTypeFilter, search);
+    const useWeights = S.rankingCalcMode === "weighted" && S.weightsEnabled;
 
     if (rmSummary) {
-      rmSummary.textContent = `${data.length} candidatos listados ${profile !== "all" ? `no perfil "${profile}"` : "no geral"}`;
+      const modeText = useWeights ? "ponderado por reputação do avaliador" : "contagem bruta";
+      rmSummary.textContent = `${data.length} candidatos listados (${modeText})${profile !== "all" ? ` no perfil "${profile}"` : " no geral"}`;
     }
 
     if (!data.length) {
@@ -1221,6 +1365,7 @@
       return;
     }
 
+    const star = useWeights ? "★" : "";
     rmTbody.innerHTML = data
       .map((item, idx) => {
         const rank = idx + 1;
@@ -1232,7 +1377,9 @@
           `#${rank}`;
 
         const netClass = item.net > 0 ? "pos" : item.net < 0 ? "neg" : "zero";
-        const netSign = item.net > 0 ? `+${item.net}` : `${item.net}`;
+        const netSign = item.net > 0 ? `+${item.net}${star}` : `${item.net}${star}`;
+        const posText = `+${item.pos}${star}`;
+        const negText = `−${item.neg}${star}`;
 
         return `
           <tr class="rm-tr${isFocused ? " active-focus" : ""}" data-id="${esc(item.node.id)}">
@@ -1241,8 +1388,8 @@
               <strong>${esc(item.node.name)}</strong>
               <small>${esc(item.node.id !== item.node.name ? item.node.id : "")}</small>
             </td>
-            <td class="td-num"><span class="pill-pos">+${item.pos}</span></td>
-            <td class="td-num"><span class="pill-neg">−${item.neg}</span></td>
+            <td class="td-num"><span class="pill-pos">${posText}</span></td>
+            <td class="td-num"><span class="pill-neg">${negText}</span></td>
             <td class="td-num"><span class="pill-net ${netClass}">${netSign}</span></td>
             <td class="td-bar">
               <div class="ratio-bar-wrap">
@@ -1259,6 +1406,74 @@
         `;
       })
       .join("");
+  }
+
+  // Controles de Configurações do Grafo (Modo de cor, pesos, slider)
+  const nodeColorModeBtns = document.querySelectorAll("#node-color-mode .seg-btn");
+  nodeColorModeBtns.forEach((btn) => {
+    btn.onclick = () => {
+      const mode = btn.dataset.mode;
+      S.nodeColorMode = mode;
+      nodeColorModeBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const legend = $("color-scale-legend");
+      if (legend) legend.style.display = mode === "default" ? "none" : "flex";
+      requestRender();
+    };
+  });
+
+  const weightsToggle = $("weights-toggle");
+  const weightSlider = $("weight-intensity-slider");
+  const weightVal = $("weight-intensity-val");
+  const showWeightsEdges = $("show-weights-on-edges");
+  const weightsControls = $("weights-controls");
+
+  if (weightsToggle) {
+    weightsToggle.onchange = () => {
+      S.weightsEnabled = weightsToggle.checked;
+      if (weightsControls) weightsControls.style.opacity = S.weightsEnabled ? "1" : "0.4";
+      if (weightsControls) weightsControls.style.pointerEvents = S.weightsEnabled ? "auto" : "none";
+      recalculateWeights();
+      renderStats();
+      renderRanking();
+      requestRender();
+    };
+  }
+
+  if (weightSlider) {
+    weightSlider.oninput = () => {
+      const v = parseFloat(weightSlider.value);
+      S.weightIntensity = v;
+      if (weightVal) weightVal.textContent = `${v.toFixed(1)}x`;
+      recalculateWeights();
+      renderRanking();
+      requestRender();
+    };
+  }
+
+  if (showWeightsEdges) {
+    showWeightsEdges.onchange = () => {
+      S.showWeightsOnEdges = showWeightsEdges.checked;
+      requestRender();
+    };
+  }
+
+  // Toggles de modo de cálculo de ranking (Com pesos vs Bruto)
+  const rmCalcWeighted = $("rm-calc-weighted");
+  const rmCalcRaw = $("rm-calc-raw");
+  if (rmCalcWeighted && rmCalcRaw) {
+    rmCalcWeighted.onclick = () => {
+      S.rankingCalcMode = "weighted";
+      rmCalcWeighted.classList.add("active");
+      rmCalcRaw.classList.remove("active");
+      renderRanking();
+    };
+    rmCalcRaw.onclick = () => {
+      S.rankingCalcMode = "raw";
+      rmCalcRaw.classList.add("active");
+      rmCalcWeighted.classList.remove("active");
+      renderRanking();
+    };
   }
 
   if ($("btn-open-ranking")) $("btn-open-ranking").onclick = openRankingModal;

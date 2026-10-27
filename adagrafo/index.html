@@ -79,6 +79,62 @@
         <div id="cat-chips" class="chips"></div>
       </div>
 
+      <!-- Configurações do Grafo & Pesos -->
+      <section class="field config-field">
+        <span class="field-label">⚙️ Configurações & Pesos</span>
+
+        <!-- Cores dos Círculos (Pessoas) -->
+        <div class="config-box">
+          <div class="config-row-head">
+            <span class="config-title">🎨 Cor dos Círculos (Pessoas)</span>
+          </div>
+          <div class="segmented-control" id="node-color-mode" role="radiogroup" aria-label="Critério de cor dos círculos">
+            <button class="seg-btn active" data-mode="balance" type="button" title="Verde (Positivo), Roxo (Neutro), Vermelho (Negativo)">Saldo (+/−)</button>
+            <button class="seg-btn" data-mode="ratio" type="button" title="Baseado na taxa percentual de aprovação">% Positiva</button>
+            <button class="seg-btn" data-mode="default" type="button" title="Padrão Índigo ADA">Padrão</button>
+          </div>
+          <div class="color-scale-bar" id="color-scale-legend">
+            <span class="c-tag neg">− Saldo Negativo</span>
+            <div class="c-bar"></div>
+            <span class="c-tag pos">+ Saldo Positivo</span>
+          </div>
+        </div>
+
+        <!-- Pesos por Reputação do Avaliador -->
+        <div class="config-box">
+          <div class="config-switch-row">
+            <div>
+              <span class="config-title">⚖️ Ponderação por Reputação</span>
+              <p class="config-desc">Avaliações de pessoas bem avaliadas têm peso maior</p>
+            </div>
+            <label class="switch" title="Ativar ou desativar pesos ponderados">
+              <input id="weights-toggle" type="checkbox" checked />
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div id="weights-controls" class="weights-controls">
+            <div class="slider-row">
+              <div class="slider-header">
+                <span class="slider-title">Intensidade do Peso</span>
+                <b id="weight-intensity-val" class="slider-val">1.0x</b>
+              </div>
+              <input id="weight-intensity-slider" type="range" min="0" max="2.5" step="0.1" value="1.0" aria-label="Intensidade do Peso" />
+              <div class="slider-ticks">
+                <span>0x (Igual)</span>
+                <span>1.0x (Padrão)</span>
+                <span>2.5x (Forte)</span>
+              </div>
+            </div>
+
+            <label class="checkbox-label" title="Exibir número do peso ponderado no centro das setas do grafo">
+              <input id="show-weights-on-edges" type="checkbox" checked />
+              <span>Exibir pesos nas setas do grafo</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
       <p class="help muted">Clique em um candidato para agrupar e focar nas relações · passe o mouse para ler comentários · arraste para mover.</p>
     </aside>
 
@@ -142,6 +198,14 @@
               <button id="rm-type-all" class="toggle active" type="button">Todas</button>
               <button id="rm-type-pos" class="toggle pos" type="button">+ Positivas</button>
               <button id="rm-type-neg" class="toggle neg" type="button">− Negativas</button>
+            </div>
+          </div>
+
+          <div class="rm-filter-group">
+            <label class="rm-label">Cálculo de Ranking</label>
+            <div class="toggle-row rm-calc-toggles">
+              <button id="rm-calc-weighted" class="toggle active" type="button" title="Ponderar menções pela reputação do autor">⚖️ Com Pesos</button>
+              <button id="rm-calc-raw" class="toggle" type="button" title="Contagem bruta de menções sem pesos">🔢 Contagem Bruta</button>
             </div>
           </div>
 
