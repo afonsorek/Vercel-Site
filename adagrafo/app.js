@@ -1041,23 +1041,9 @@
     const netSign = n.net > 0 ? `+${n.net}` : `${n.net}`;
     const netColor = n.net > 0 ? "var(--pos)" : n.net < 0 ? "var(--neg)" : "var(--muted)";
 
-    const words = (n.name || "").trim().split(/\s+/).filter(Boolean);
-    const initials = words.length > 1
-      ? (words[0][0] + words[words.length - 1][0]).toUpperCase()
-      : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
-
-    const avatarHtml = n.photo
-      ? `<div class="tt-avatar-wrap"><img src="${n.photo}" alt="${esc(n.name)}" class="tt-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'tt-avatar-fallback\\'>${initials}</div>';" /></div>`
-      : `<div class="tt-avatar-wrap"><div class="tt-avatar-fallback">${initials}</div></div>`;
-
-    return `<div class="tt-header">
-        ${avatarHtml}
-        <div class="tt-header-text">
-          <div class="tt-node-name">${esc(n.name)}</div>
-          <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
-          ${repInfo}
-        </div>
-      </div>
+    return `<div class="tt-node-name">${esc(n.name)}</div>
+      <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
+      ${repInfo}
       <div class="tt-grid">
         <span></span><span class="h">Recebidas</span><span class="h">Dadas</span>
         <span style="color:var(--pos)">● Positivas</span><b>${n.recvPos}</b><b>${n.givePos}</b>
@@ -1474,20 +1460,12 @@
     const shown = searchHits.slice(0, SEARCH_LIMIT);
     searchList.innerHTML = shown.length
       ? shown
-          .map((n, i) => {
-            const words = (n.name || "").trim().split(/\s+/).filter(Boolean);
-            const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
-            const thumb = n.photo
-              ? `<div class="sr-avatar-wrap"><img src="${n.photo}" class="sr-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\\'sr-avatar-fallback\\'>${initials}</span>';" /></div>`
-              : `<div class="sr-avatar-wrap"><span class="sr-avatar-fallback">${initials}</span></div>`;
-            return `<li role="option" id="sr-${i}" data-i="${i}" class="sr-item${i === 0 ? " active" : ""}" aria-selected="${i === 0}">
-              <div style="display:flex;align-items:center;gap:9px;min-width:0;overflow:hidden;">
-                ${thumb}
-                <span class="sr-name">${highlightName(n.name, tokens)}</span>
-              </div>
+          .map(
+            (n, i) => `<li role="option" id="sr-${i}" data-i="${i}" class="sr-item${i === 0 ? " active" : ""}" aria-selected="${i === 0}">
+              <span class="sr-name">${highlightName(n.name, tokens)}</span>
               <span class="sr-counts" title="Menções recebidas"><span class="pos">+${n.recvPos}</span><span class="neg">−${n.recvNeg}</span></span>
-            </li>`;
-          })
+            </li>`
+          )
           .join("") + (searchHits.length > SEARCH_LIMIT ? `<li class="sr-note">+${searchHits.length - SEARCH_LIMIT} — refine a busca</li>` : "")
       : `<li class="sr-note">Nenhum candidato encontrado</li>`;
     $("search-count").textContent = `${searchHits.length} ${searchHits.length === 1 ? "resultado" : "resultados"}`;
