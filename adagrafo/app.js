@@ -569,7 +569,18 @@
     const dx = b.x - a.x, dy = b.y - a.y;
     const dist = Math.hypot(dx, dy) || 1;
     const nx = -dy / dist, ny = dx / dist;
-    const off = e.curve * Math.min(Math.max(dist * 0.14, 10), 42);
+
+    // Em modo foco: setas mais retas, elegantes e sem sobreposição
+    const isFocusEdge = S.focusNode && (s === S.focusNode || t === S.focusNode);
+    let off;
+    if (isFocusEdge) {
+      // Quando e.curve === 0 (seta única), fica reta (off = 0)
+      // Quando há ida e volta, dá uma leve separação lateral controlada (6px a 12px)
+      off = e.curve === 0 ? 0 : Math.sign(e.curve) * (7 + Math.abs(e.curve) * 3);
+    } else {
+      off = e.curve * Math.min(Math.max(dist * 0.14, 10), 42);
+    }
+
     const cx = (s.x + t.x) / 2 + nx * off * 2;
     const cy = (s.y + t.y) / 2 + ny * off * 2;
 
