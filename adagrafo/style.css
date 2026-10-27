@@ -565,30 +565,30 @@ input[type="range"]::-webkit-slider-thumb {
 /* ---------- Modal do Candidato em Foco (Canto Superior Esquerdo) ---------- */
 .focus-card {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  max-width: 380px;
+  top: 20px;
+  left: 20px;
+  max-width: 440px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  border-radius: 20px;
-  border: 1px solid rgba(139, 140, 248, 0.45);
-  background: rgba(14, 18, 32, 0.94);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 28px rgba(124, 127, 245, 0.22);
+  gap: 18px;
+  padding: 18px 22px;
+  border-radius: 22px;
+  border: 1.5px solid rgba(139, 140, 248, 0.5);
+  background: rgba(13, 17, 32, 0.96);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 35px rgba(124, 127, 245, 0.28);
   z-index: 35;
   animation: dropIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .fc-photo-wrap {
   position: relative;
-  width: 90px;
-  height: 90px;
-  border-radius: 18px;
+  width: 120px;
+  height: 120px;
+  border-radius: 22px;
   overflow: hidden;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  border: 2.5px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -605,7 +605,7 @@ input[type="range"]::-webkit-slider-thumb {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, #4f46e5, #7c3aed);
@@ -927,6 +927,48 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .tooltip.show { opacity: 1; }
 .tooltip.pinned { pointer-events: auto; border-color: rgba(139, 140, 248, 0.45); }
+
+/* Avatar Grande no Tooltip do Hover */
+.tt-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+.tt-avatar-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tt-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.tt-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+}
+.tt-header-text {
+  flex: 1;
+  min-width: 0;
+}
 
 /* Avatares na Modal de Classificação (Grandes) */
 .th-photo {
