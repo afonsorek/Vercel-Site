@@ -1062,9 +1062,23 @@
     const netSign = n.net > 0 ? `+${n.net}` : `${n.net}`;
     const netColor = n.net > 0 ? "var(--pos)" : n.net < 0 ? "var(--neg)" : "var(--muted)";
 
-    return `<div class="tt-node-name">${esc(n.name)}</div>
-      <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
-      ${repInfo}
+    const words = (n.name || "").trim().split(/\s+/).filter(Boolean);
+    const initials = words.length > 1
+      ? (words[0][0] + words[words.length - 1][0]).toUpperCase()
+      : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
+
+    const avatarHtml = n.photo
+      ? `<div class="tt-avatar-wrap"><img src="${n.photo}" alt="${esc(n.name)}" class="tt-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'tt-avatar-fallback\\'>${initials}</div>';" /></div>`
+      : `<div class="tt-avatar-wrap"><div class="tt-avatar-fallback">${initials}</div></div>`;
+
+    return `<div class="tt-header">
+        ${avatarHtml}
+        <div class="tt-header-text">
+          <div class="tt-node-name">${esc(n.name)}</div>
+          <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
+          ${repInfo}
+        </div>
+      </div>
       <div class="tt-grid">
         <span></span><span class="h">Recebidas</span><span class="h">Dadas</span>
         <span style="color:var(--pos)">● Positivas</span><b>${n.recvPos}</b><b>${n.givePos}</b>
