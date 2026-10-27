@@ -26,6 +26,9 @@
     hoverNode: null,
     focusNode: null,
     pinned: false,
+    searchSet: null,
+    previewNode: null,
+    adj: new Map(),
     sim: null,
     width: 0,
     height: 0,
@@ -134,6 +137,7 @@
       if (!n) {
         n = { id, name: name || id, recvPos: 0, recvNeg: 0, givePos: 0, giveNeg: 0 };
         n.short = shortName(n.name);
+        n.key = `${norm(n.name)} ${norm(id)}`;
         nodeById.set(id, n);
       }
       return n;
@@ -217,9 +221,21 @@
 
     const observedMax = edges.reduce((m, e) => Math.max(m, e.items.length), 1);
     S.maxCount = observedMax;
-    edges.forEach((e) => (e.t = S.maxCount > 1 ? (e.items.length - 1) / (S.maxCount - 1) : 1));
+    edges.forEach((e) => {
+      e.t = S.maxCount > 1 ? (e.items.length - 1) / (S.maxCount - 1) : 1;
+      // Estilo pré-calculado: evita montar strings de cor a cada quadro
+      e.w = 0.9 + 2.2 * e.t;
+      e.color = edgeColor(e.type, e.t);
+      e.key = `${e.type}${e.items.length}`;
+    });
     edges.sort((a, b) => a.items.length - b.items.length);
     S.edges = edges;
+
+    // Adjacência dos nós (para o modo foco, sem varrer todas as arestas a cada quadro)
+    const adj = new Map();
+    const link = (a, b) => (adj.get(a) || adj.set(a, new Set()).get(a)).add(b);
+    for (const e of edges) { link(e.source, e.target); link(e.target, e.source); }
+    S.adj = adj;
 
     // Lado oposto (para mostrar no tooltip)
     const byKey = new Map(edges.map((e) => [`${e.source.id}\u0000${e.target.id}\u0000${e.type}`, e]));
@@ -259,8 +275,7 @@
     return { sx, sy, cx, cy, ex, ey, ang: Math.atan2(ey - cy, ex - cx) };
   }
 
-  function distToEdge(e, px, py) {
-    const g = edgeGeom(e);
+  function distToEdge(g, px, py) {
     let best = Infinity, lx = g.sx, ly = g.sy;
     const N = 16;
     for (let i = 1; i <= N; i++) {
@@ -296,119 +311,186 @@
     requestRender();
   }
 
-  function isActiveEdge(e, focus) {
-    if (S.hoverEdge) return e === S.hoverEdge;
-    if (focus) return e.source === focus || e.target === focus;
-    return true;
+  // Sprites pré-renderizados das esferas (gradiente + brilho), em vários tamanhos
+  // para não criar gradientes/sombras a cada quadro e evitar serrilhado ao reduzir.
+  function makeSprite(highlighted, r) {
+    const pad = highlighted ? r * 2 : 2;
+    const c = document.createElement("canvas");
+    c.width = c.height = Math.ceil((r + pad) * 2);
+    const g = c.getContext("2d");
+    const o = c.width / 2;
+    if (highlighted) {
+      g.shadowColor = "rgba(139,140,248,0.9)";
+      g.shadowBlur = r * 1.5;
+    }
+    const grad = g.createRadialGradient(o - r * 0.35, o - r * 0.4, r * 0.1, o, o, r);
+    grad.addColorStop(0, highlighted ? "#e4e5ff" : "#c9cbff");
+    grad.addColorStop(0.45, highlighted ? "#8f92ff" : "#7376e6");
+    grad.addColorStop(1, highlighted ? "#3d3fb0" : "#2d2f86");
+    g.beginPath();
+    g.arc(o, o, r, 0, Math.PI * 2);
+    g.fillStyle = grad;
+    g.fill();
+    return { img: c, r, k: o / r };
+  }
+  const SPRITE_SIZES = [8, 16, 32, 64, 128, 256];
+  const SPRITES = {
+    normal: SPRITE_SIZES.map((r) => makeSprite(false, r)),
+    hl: SPRITE_SIZES.map((r) => makeSprite(true, r)),
+  };
+  const spriteFor = (set, screenR) => set.find((s) => s.r >= screenR) || set[set.length - 1];
+
+  const DIM_COLOR = { pos: edgeColor("pos", 0.5, 0.09), neg: edgeColor("neg", 0.5, 0.09) };
+
+  function viewBounds(pad) {
+    const T = S.transform;
+    return {
+      x0: -T.x / T.k - pad, y0: -T.y / T.k - pad,
+      x1: (S.width - T.x) / T.k + pad, y1: (S.height - T.y) / T.k + pad,
+    };
+  }
+
+  // Define o que fica aceso: aresta sob o mouse, nó em foco, ou resultados da busca
+  function computeHighlight() {
+    const focus = S.focusNode || S.previewNode || (S.hoverEdge ? null : S.hoverNode);
+    let lit = null, activeOf = null;
+    if (focus) {
+      lit = new Set(S.adj.get(focus) || []);
+      lit.add(focus);
+      activeOf = (e) => e.source === focus || e.target === focus;
+    } else if (S.searchSet) {
+      const set = S.searchSet;
+      lit = new Set(set);
+      activeOf = (e) => set.has(e.source) || set.has(e.target);
+    }
+    if (S.hoverEdge) {
+      const he = S.hoverEdge;
+      lit = lit || new Set();
+      lit.add(he.source);
+      lit.add(he.target);
+      activeOf = (e) => e === he;
+    }
+    return { focus, lit, activeOf };
+  }
+
+  function addEdgePath(b, g) {
+    const head = b.head;
+    const bx = g.ex - Math.cos(g.ang) * head * 0.8; // linha termina na base da seta
+    const by = g.ey - Math.sin(g.ang) * head * 0.8;
+    b.line.moveTo(g.sx, g.sy);
+    b.line.quadraticCurveTo(g.cx, g.cy, bx, by);
+    b.tip.moveTo(g.ex, g.ey);
+    b.tip.lineTo(g.ex - head * Math.cos(g.ang - 0.42), g.ey - head * Math.sin(g.ang - 0.42));
+    b.tip.lineTo(g.ex - head * Math.cos(g.ang + 0.42), g.ey - head * Math.sin(g.ang + 0.42));
+    b.tip.closePath();
+  }
+
+  const newBucket = (color, w) => ({ color, w, head: 5 + w * 1.6, line: new Path2D(), tip: new Path2D() });
+  function getBucket(map, key, color, w) {
+    let b = map.get(key);
+    if (!b) map.set(key, (b = newBucket(color, w)));
+    return b;
+  }
+  function paintBucket(b) {
+    ctx.strokeStyle = b.color;
+    ctx.fillStyle = b.color;
+    ctx.lineWidth = b.w;
+    ctx.stroke(b.line);
+    ctx.fill(b.tip);
   }
 
   function draw() {
-    const { width, height, dpr, transform: T } = S;
+    const { dpr, transform: T } = S;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!S.nodes.length) return;
     ctx.setTransform(dpr * T.k, 0, 0, dpr * T.k, dpr * T.x, dpr * T.y);
 
-    const focus = S.focusNode || (S.hoverEdge ? null : S.hoverNode);
-    const dimming = !!(focus || S.hoverEdge);
-    const neighbors = new Set();
-    if (focus) {
-      neighbors.add(focus);
-      S.edges.forEach((e) => {
-        if (e.source === focus) neighbors.add(e.target);
-        if (e.target === focus) neighbors.add(e.source);
-      });
-    }
-    if (S.hoverEdge) { neighbors.add(S.hoverEdge.source); neighbors.add(S.hoverEdge.target); }
+    const { focus, lit, activeOf } = computeHighlight();
+    const dimming = !!activeOf;
 
-    // Arestas: inativas primeiro, depois ativas
-    const passes = dimming ? [false, true] : [true];
-    for (const activePass of passes) {
-      for (const e of S.edges) {
-        const active = isActiveEdge(e, focus);
-        if (dimming && active !== activePass) continue;
-        drawEdge(e, dimming && !active ? 0.07 : 1, e === S.hoverEdge);
-      }
+    // Arestas agrupadas por estilo: poucos stroke()/fill() por quadro em vez de 2 por seta.
+    // S.edges está ordenado por intensidade, então as mais fortes ficam por cima.
+    const vb = viewBounds(20 / T.k);
+    const dimB = new Map(), actB = new Map();
+    let hovered = null;
+    for (const e of S.edges) {
+      const g = (e.g = edgeGeom(e));
+      if (
+        Math.max(g.sx, g.cx, g.ex) < vb.x0 || Math.min(g.sx, g.cx, g.ex) > vb.x1 ||
+        Math.max(g.sy, g.cy, g.ey) < vb.y0 || Math.min(g.sy, g.cy, g.ey) > vb.y1
+      ) continue; // fora da tela
+      if (e === S.hoverEdge) { hovered = e; continue; }
+      const b = !dimming || activeOf(e)
+        ? getBucket(actB, e.key, e.color, e.w)
+        : getBucket(dimB, e.type, DIM_COLOR[e.type], 1.2);
+      addEdgePath(b, g);
+    }
+    ctx.lineCap = "butt";
+    dimB.forEach(paintBucket);
+    actB.forEach(paintBucket);
+    if (hovered) {
+      const b = newBucket(edgeColor(hovered.type, 1), hovered.w * 1.6);
+      addEdgePath(b, hovered.g);
+      ctx.save();
+      ctx.shadowColor = hovered.type === "pos" ? "rgba(52,211,153,0.8)" : "rgba(251,113,133,0.8)";
+      ctx.shadowBlur = 14;
+      paintBucket(b);
+      ctx.restore();
     }
 
-    // Nós
-    const showLabels = T.k > 0.55;
+    // Nós (sprites) + contornos agrupados
+    const nb = viewBounds(40 / T.k);
+    const scale = T.k * dpr;
+    const ringN = new Path2D(), ringF = new Path2D(), ringH = new Path2D(), ringS = new Path2D();
+    const addCircle = (p, x, y, r) => { p.moveTo(x + r, y); p.arc(x, y, r, 0, Math.PI * 2); };
+    const visible = [];
     for (const n of S.nodes) {
-      const faded = dimming && !neighbors.has(n);
-      drawNode(n, faded, n === S.hoverNode || n === S.focusNode);
+      if (n.x + n.r < nb.x0 || n.x - n.r > nb.x1 || n.y + n.r < nb.y0 || n.y - n.r > nb.y1) continue;
+      visible.push(n);
+      const faded = dimming && !lit.has(n);
+      const hl = n === S.hoverNode || n === focus || n === S.focusNode;
+      const sp = spriteFor(hl ? SPRITES.hl : SPRITES.normal, n.r * scale);
+      const d = n.r * sp.k;
+      ctx.globalAlpha = faded ? 0.18 : 1;
+      ctx.drawImage(sp.img, n.x - d, n.y - d, d * 2, d * 2);
+      addCircle(hl ? ringH : faded ? ringF : ringN, n.x, n.y, n.r);
+      if (S.searchSet && S.searchSet.has(n)) addCircle(ringS, n.x, n.y, n.r + 4 / T.k);
     }
-    // Rótulos
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1 / T.k;
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.stroke(ringN);
+    ctx.strokeStyle = "rgba(255,255,255,0.035)";
+    ctx.stroke(ringF);
+    ctx.lineWidth = 2 / T.k;
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.stroke(ringH);
+    ctx.lineWidth = 1.6 / T.k;
+    ctx.strokeStyle = "rgba(167,169,255,0.95)";
+    ctx.stroke(ringS);
+
+    // Rótulos (fonte definida uma vez por grupo)
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3 / T.k;
+    ctx.strokeStyle = "rgba(11,14,23,0.85)";
     const fs = 11 / Math.min(T.k, 1.6);
-    for (const n of S.nodes) {
-      const faded = dimming && !neighbors.has(n);
-      const highlighted = neighbors.has(n);
-      if (!showLabels && !highlighted) continue;
-      ctx.font = `${highlighted ? 600 : 500} ${fs}px Inter, sans-serif`;
-      ctx.lineWidth = 3 / T.k;
-      ctx.strokeStyle = "rgba(11,14,23,0.85)";
-      const y = n.y + n.r + 3 / T.k;
-      ctx.strokeText(n.short, n.x, y);
-      ctx.fillStyle = faded ? "rgba(200,205,225,0.15)" : highlighted ? "#ffffff" : "rgba(220,224,240,0.85)";
-      ctx.fillText(n.short, n.x, y);
-    }
-  }
-
-  function drawEdge(e, alphaMul, hovered) {
-    const g = edgeGeom(e);
-    const t = e.t;
-    const w = (0.9 + 2.2 * t) * (hovered ? 1.6 : 1);
-    const color = edgeColor(e.type, hovered ? 1 : t, alphaMul);
-    const head = 5 + w * 1.6;
-
-    // Linha termina na base da seta
-    const bx = g.ex - Math.cos(g.ang) * head * 0.8;
-    const by = g.ey - Math.sin(g.ang) * head * 0.8;
-
-    if (hovered) {
-      ctx.save();
-      ctx.shadowColor = e.type === "pos" ? "rgba(52,211,153,0.8)" : "rgba(251,113,133,0.8)";
-      ctx.shadowBlur = 14;
-    }
-    ctx.beginPath();
-    ctx.moveTo(g.sx, g.sy);
-    ctx.quadraticCurveTo(g.cx, g.cy, bx, by);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = w;
-    ctx.lineCap = "butt";
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(g.ex, g.ey);
-    ctx.lineTo(g.ex - head * Math.cos(g.ang - 0.42), g.ey - head * Math.sin(g.ang - 0.42));
-    ctx.lineTo(g.ex - head * Math.cos(g.ang + 0.42), g.ey - head * Math.sin(g.ang + 0.42));
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-    if (hovered) ctx.restore();
-  }
-
-  function drawNode(n, faded, highlighted) {
-    ctx.save();
-    ctx.globalAlpha = faded ? 0.18 : 1;
-    if (highlighted) {
-      ctx.shadowColor = "rgba(139,140,248,0.9)";
-      ctx.shadowBlur = 22;
-    }
-    const g = ctx.createRadialGradient(n.x - n.r * 0.35, n.y - n.r * 0.4, n.r * 0.1, n.x, n.y, n.r);
-    g.addColorStop(0, highlighted ? "#e4e5ff" : "#c9cbff");
-    g.addColorStop(0.45, highlighted ? "#8f92ff" : "#7376e6");
-    g.addColorStop(1, highlighted ? "#3d3fb0" : "#2d2f86");
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-    ctx.fillStyle = g;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.lineWidth = highlighted ? 2 / S.transform.k : 1 / S.transform.k;
-    ctx.strokeStyle = highlighted ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.18)";
-    ctx.stroke();
-    ctx.restore();
+    const off = 3 / T.k;
+    const isLit = (n) => !!lit && lit.has(n);
+    const labels = (weight, fill, filter) => {
+      ctx.font = `${weight} ${fs}px Inter, sans-serif`;
+      ctx.fillStyle = fill;
+      for (const n of visible) {
+        if (!filter(n)) continue;
+        const y = n.y + n.r + off;
+        ctx.strokeText(n.short, n.x, y);
+        ctx.fillText(n.short, n.x, y);
+      }
+    };
+    if (T.k > 0.55) labels(500, dimming ? "rgba(200,205,225,0.15)" : "rgba(220,224,240,0.85)", (n) => !isLit(n));
+    if (lit) labels(600, "#ffffff", isLit);
   }
 
   // ---------- Hit testing ----------
@@ -432,7 +514,13 @@
     for (let i = S.edges.length - 1; i >= 0; i--) {
       const e = S.edges[i];
       if (focus && e.source !== focus && e.target !== focus) continue;
-      const d = distToEdge(e, x, y);
+      const g = e.g || (e.g = edgeGeom(e));
+      // Rejeição rápida pela caixa envolvente da curva antes do cálculo fino
+      if (
+        x < Math.min(g.sx, g.cx, g.ex) - tol || x > Math.max(g.sx, g.cx, g.ex) + tol ||
+        y < Math.min(g.sy, g.cy, g.ey) - tol || y > Math.max(g.sy, g.cy, g.ey) + tol
+      ) continue;
+      const d = distToEdge(g, x, y);
       if (d < bestD) { bestD = d; best = e; }
     }
     return best;
@@ -480,22 +568,23 @@
   }
 
   let lastMouse = { x: 0, y: 0 };
+  let ttW = 0, ttH = 0; // tamanho medido uma vez por conteúdo (evita reflow a cada mousemove)
   function showTooltip(html, cx, cy) {
     tooltip.innerHTML = (S.pinned ? `<button class="tt-close" id="tt-close" title="Fechar">×</button>` : "") + html;
     tooltip.classList.add("show");
     tooltip.setAttribute("aria-hidden", "false");
+    ttW = tooltip.offsetWidth;
+    ttH = tooltip.offsetHeight;
     positionTooltip(cx, cy);
     if (S.pinned) $("tt-close").onclick = unpin;
   }
   function positionTooltip(cx, cy) {
     const pad = 16;
-    const w = tooltip.offsetWidth, h = tooltip.offsetHeight;
     let x = cx + pad, y = cy + pad;
-    if (x + w > S.width - 8) x = cx - w - pad;
-    if (y + h > S.height - 8) y = Math.max(8, S.height - h - 8);
-    tooltip.style.transform = "";
-    tooltip.style.left = `${Math.max(8, x)}px`;
-    tooltip.style.top = `${Math.max(8, y)}px`;
+    if (x + ttW > S.width - 8) x = cx - ttW - pad;
+    if (y + ttH > S.height - 8) y = Math.max(8, S.height - ttH - 8);
+    // transform é composto na GPU, sem recalcular layout
+    tooltip.style.transform = `translate3d(${Math.max(8, x)}px, ${Math.max(8, y)}px, 0)`;
   }
   function hideTooltip() {
     tooltip.classList.remove("show", "pinned");
@@ -518,11 +607,14 @@
     const changed = n !== S.hoverNode || e !== S.hoverEdge;
     S.hoverNode = n;
     S.hoverEdge = e;
-    canvas.classList.toggle("pointer", !!(n || e));
-    if (e) showTooltip(edgeTooltipHTML(e), ev.clientX, ev.clientY);
-    else if (n) showTooltip(nodeTooltipHTML(n), ev.clientX, ev.clientY);
-    else hideTooltip();
-    if (changed) requestRender();
+    if (changed) {
+      // Só reconstrói o HTML do tooltip quando o alvo muda
+      canvas.classList.toggle("pointer", !!(n || e));
+      if (e) showTooltip(edgeTooltipHTML(e), ev.clientX, ev.clientY);
+      else if (n) showTooltip(nodeTooltipHTML(n), ev.clientX, ev.clientY);
+      else hideTooltip();
+      requestRender();
+    } else if (n || e) positionTooltip(ev.clientX, ev.clientY);
   }
 
   function onClick(ev) {
@@ -573,6 +665,7 @@
       if (!ev.active) S.sim.alphaTarget(0.25).restart();
       const n = ev.subject.node;
       n.fx = n.x; n.fy = n.y;
+      S.hoverNode = null; // ao soltar, o próximo mousemove volta a mostrar o tooltip
       hideTooltip();
     })
     .on("drag", (ev) => {
@@ -587,7 +680,13 @@
     });
 
   d3.select(canvas).call(drag).call(zoom).on("dblclick.zoom", null);
-  canvas.addEventListener("mousemove", onMove);
+  // Hit testing no máximo uma vez por quadro
+  let pendingMove = null;
+  canvas.addEventListener("mousemove", (ev) => {
+    const idle = !pendingMove;
+    pendingMove = ev;
+    if (idle) requestAnimationFrame(() => { const e = pendingMove; pendingMove = null; onMove(e); });
+  });
   canvas.addEventListener("click", onClick);
   canvas.addEventListener("mouseleave", () => {
     if (S.pinned) return;
@@ -685,12 +784,161 @@
     aggregateEdges();
   };
 
-  $("search-input").addEventListener("change", (ev) => {
-    const q = norm(ev.target.value);
-    if (!q) { S.focusNode = null; requestRender(); return; }
-    const n = S.nodes.find((x) => norm(x.name) === q) || S.nodes.find((x) => norm(x.name).includes(q));
-    if (n) focusOn(n);
+  // ---------- Busca ----------
+  const searchInput = $("search-input");
+  const searchPop = $("search-pop");
+  const searchList = $("search-results");
+  const searchClear = $("search-clear");
+  const SEARCH_LIMIT = 50;
+  let searchHits = [], searchIdx = -1;
+
+  const tokenize = (q) => norm(q).split(" ").filter(Boolean);
+
+  // Todas as palavras precisam aparecer (sem acento, sem caixa); prioriza início de nome/palavra
+  function matchNodes(tokens) {
+    const out = [];
+    for (const n of S.nodes) {
+      let score = 0;
+      for (const t of tokens) {
+        const i = n.key.indexOf(t);
+        if (i === -1) { score = -1; break; }
+        score += i === 0 ? 0 : n.key[i - 1] === " " ? 1 : 3;
+      }
+      if (score >= 0) out.push({ n, score });
+    }
+    out.sort((a, b) => a.score - b.score || a.n.name.localeCompare(b.n.name, "pt-BR"));
+    return out.map((o) => o.n);
+  }
+
+  // Destaca os trechos encontrados preservando acentos do nome original
+  function highlightName(name, tokens) {
+    let flat = "";
+    const map = [];
+    for (let i = 0; i < name.length; i++) {
+      for (const ch of name[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()) {
+        flat += ch;
+        map.push(i);
+      }
+    }
+    const mark = new Array(name.length).fill(false);
+    for (const t of tokens) {
+      const i = flat.indexOf(t);
+      if (i >= 0) for (let j = i; j < i + t.length; j++) mark[map[j]] = true;
+    }
+    let html = "", open = false;
+    for (let i = 0; i < name.length; i++) {
+      if (mark[i] !== open) { html += mark[i] ? "<mark>" : "</mark>"; open = mark[i]; }
+      html += esc(name[i]);
+    }
+    return open ? html + "</mark>" : html;
+  }
+
+  function openResults() {
+    searchPop.classList.remove("hidden");
+    searchInput.setAttribute("aria-expanded", "true");
+  }
+  function closeResults() {
+    searchPop.classList.add("hidden");
+    searchInput.setAttribute("aria-expanded", "false");
+    searchInput.removeAttribute("aria-activedescendant");
+    if (S.previewNode) { S.previewNode = null; requestRender(); }
+  }
+
+  function renderResults() {
+    const tokens = tokenize(searchInput.value);
+    searchClear.hidden = !searchInput.value;
+    S.previewNode = null;
+    if (!tokens.length) {
+      searchHits = [];
+      S.searchSet = null;
+      closeResults();
+      requestRender();
+      return;
+    }
+    searchHits = matchNodes(tokens);
+    S.searchSet = new Set(searchHits);
+    searchIdx = searchHits.length ? 0 : -1;
+    const shown = searchHits.slice(0, SEARCH_LIMIT);
+    searchList.innerHTML = shown.length
+      ? shown
+          .map(
+            (n, i) => `<li role="option" id="sr-${i}" data-i="${i}" class="sr-item${i === 0 ? " active" : ""}" aria-selected="${i === 0}">
+              <span class="sr-name">${highlightName(n.name, tokens)}</span>
+              <span class="sr-counts" title="Menções recebidas"><span class="pos">+${n.recvPos}</span><span class="neg">−${n.recvNeg}</span></span>
+            </li>`
+          )
+          .join("") + (searchHits.length > SEARCH_LIMIT ? `<li class="sr-note">+${searchHits.length - SEARCH_LIMIT} — refine a busca</li>` : "")
+      : `<li class="sr-note">Nenhum candidato encontrado</li>`;
+    $("search-count").textContent = `${searchHits.length} ${searchHits.length === 1 ? "resultado" : "resultados"}`;
+    searchList.scrollTop = 0;
+    openResults();
+    requestRender();
+  }
+
+  function setActive(i, { scroll = true, preview = true } = {}) {
+    const items = searchList.querySelectorAll(".sr-item");
+    if (!items.length) return;
+    searchIdx = (i + items.length) % items.length;
+    items.forEach((el, j) => {
+      el.classList.toggle("active", j === searchIdx);
+      el.setAttribute("aria-selected", String(j === searchIdx));
+    });
+    if (scroll) items[searchIdx].scrollIntoView({ block: "nearest" });
+    searchInput.setAttribute("aria-activedescendant", items[searchIdx].id);
+    if (preview) { S.previewNode = searchHits[searchIdx]; requestRender(); }
+  }
+
+  function selectHit(n) {
+    if (!n) return;
+    searchInput.value = n.name;
+    searchClear.hidden = false;
+    S.searchSet = null;
+    closeResults();
+    resetHover();
+    focusOn(n);
+    searchInput.blur();
+  }
+
+  function clearSearch() {
+    searchInput.value = "";
+    searchHits = [];
+    S.searchSet = null;
+    S.focusNode = null;
+    searchClear.hidden = true;
+    closeResults();
+    requestRender();
+  }
+
+  searchInput.addEventListener("input", renderResults);
+  searchInput.addEventListener("focus", () => { if (searchInput.value) renderResults(); });
+  searchInput.addEventListener("blur", closeResults);
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (searchPop.classList.contains("hidden")) renderResults();
+      else setActive(searchIdx + (e.key === "ArrowDown" ? 1 : -1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      selectHit(searchHits[Math.max(0, searchIdx)]);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      if (searchInput.value) clearSearch();
+      else searchInput.blur();
+    }
   });
+  searchClear.addEventListener("click", () => { clearSearch(); searchInput.focus(); });
+  // mousedown + preventDefault: clicar num resultado não tira o foco do campo antes do click
+  searchPop.addEventListener("mousedown", (e) => e.preventDefault());
+  searchList.addEventListener("click", (e) => {
+    const li = e.target.closest(".sr-item");
+    if (li) selectHit(searchHits[+li.dataset.i]);
+  });
+  searchList.addEventListener("mouseover", (e) => {
+    const li = e.target.closest(".sr-item");
+    if (li && +li.dataset.i !== searchIdx) setActive(+li.dataset.i, { scroll: false });
+    else if (li && !S.previewNode) setActive(searchIdx, { scroll: false });
+  });
+  searchList.addEventListener("mouseleave", () => { S.previewNode = null; requestRender(); });
 
   $("zoom-in").onclick = () => d3.select(canvas).transition().duration(250).call(zoom.scaleBy, 1.4);
   $("zoom-out").onclick = () => d3.select(canvas).transition().duration(250).call(zoom.scaleBy, 1 / 1.4);
@@ -730,12 +978,12 @@
     $("toggle-pos").classList.add("active");
     $("toggle-neg").classList.add("active");
     $("file-name").textContent = fileName;
-    $("search-input").value = "";
-    $("names-list").innerHTML = S.nodes
-      .map((n) => n.name)
-      .sort((a, b) => a.localeCompare(b, "pt-BR"))
-      .map((n) => `<option value="${esc(n)}"></option>`)
-      .join("");
+    searchInput.value = "";
+    searchHits = [];
+    S.searchSet = null;
+    S.previewNode = null;
+    searchClear.hidden = true;
+    closeResults();
 
     $("dropzone").classList.add("hidden");
     $("panel").classList.remove("hidden");
@@ -796,7 +1044,16 @@
 
   window.addEventListener("resize", resize);
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") { unpin(); S.focusNode = null; requestRender(); }
+    const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
+    const ready = !$("panel").classList.contains("hidden");
+    // Atalhos: "/" ou ⌘K / Ctrl+K focam a busca
+    if (ready && ((e.key === "/" && !typing) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k"))) {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+      return;
+    }
+    if (e.key === "Escape" && !typing) { unpin(); S.focusNode = null; requestRender(); }
   });
   resize();
 

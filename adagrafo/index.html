@@ -47,9 +47,23 @@
 
       <div class="stats" id="stats"></div>
 
-      <div class="field">
-        <input id="search-input" type="search" placeholder="Buscar candidato…" autocomplete="off" list="names-list" />
-        <datalist id="names-list"></datalist>
+      <button id="btn-open-ranking" class="btn btn-ranking" type="button">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Tabela de Classificação
+      </button>
+
+      <div class="field search-field" role="search">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+          <input id="search-input" type="text" placeholder="Buscar candidato…" autocomplete="off" spellcheck="false"
+            role="combobox" aria-label="Buscar candidato" aria-autocomplete="list" aria-expanded="false" aria-controls="search-results" />
+          <button id="search-clear" class="search-clear" type="button" title="Limpar busca" aria-label="Limpar busca" hidden>×</button>
+          <kbd class="search-kbd" aria-hidden="true">/</kbd>
+        </div>
+        <div id="search-pop" class="search-pop hidden">
+          <ul id="search-results" class="search-results" role="listbox" aria-label="Resultados da busca"></ul>
+          <div class="search-foot"><span id="search-count"></span><span>↑↓ navegar · Enter focar · Esc limpar</span></div>
+        </div>
       </div>
 
       <div class="field">
@@ -65,13 +79,27 @@
         <div id="cat-chips" class="chips"></div>
       </div>
 
-      <div class="field">
-        <span class="field-label">Intensidade (nº de menções colapsadas)</span>
-        <div class="legend" id="legend"></div>
-      </div>
-
-      <p class="help muted">Passe o mouse sobre uma seta para ler os comentários · clique para fixar · clique numa esfera para focar · arraste para mover.</p>
+      <p class="help muted">Clique em um candidato para agrupar e focar nas relações · passe o mouse para ler comentários · arraste para mover.</p>
     </aside>
+
+    <!-- Top nav quick shortcuts -->
+    <div id="top-nav" class="top-nav glass hidden">
+      <button id="top-btn-ranking" class="btn btn-ghost btn-sm" type="button">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Classificação
+      </button>
+    </div>
+
+    <!-- Focus Banner -->
+    <div id="focus-banner" class="focus-banner glass hidden">
+      <div class="fb-badge">Foco Ativo</div>
+      <div class="fb-info">
+        <strong id="fb-name"></strong>
+        <span id="fb-sub" class="muted"></span>
+      </div>
+      <div id="fb-counters" class="fb-counters"></div>
+      <button id="fb-unfocus" class="btn btn-ghost btn-sm" type="button" title="Sair do foco (Esc)">Sair do foco ✕</button>
+    </div>
 
     <!-- Zoom controls -->
     <nav id="controls" class="controls glass hidden" aria-label="Controles de zoom">
@@ -81,6 +109,72 @@
       <button id="export-png" type="button" title="Exportar PNG">⇩</button>
     </nav>
 
+    <!-- Modal Tabela de Classificação -->
+    <div id="ranking-modal" class="ranking-modal hidden" role="dialog" aria-modal="true" aria-labelledby="rm-title">
+      <div class="rm-backdrop" id="rm-backdrop"></div>
+      <div class="rm-card glass">
+        <header class="rm-head">
+          <div class="rm-head-text">
+            <div class="rm-tag">🏆 Ranking</div>
+            <h2 id="rm-title">Tabela de Classificação</h2>
+            <p class="muted">Classificação dos candidatos com base nas menções positivas e negativas recebidas.</p>
+          </div>
+          <button id="rm-close" class="btn btn-ghost rm-close" type="button" title="Fechar (Esc)">✕</button>
+        </header>
+
+        <div class="rm-filters">
+          <div class="rm-filter-group">
+            <label class="rm-label" for="rm-profile-select">Perfil / Atributo</label>
+            <select id="rm-profile-select" class="rm-select">
+              <option value="all">🏆 Todos os Perfis (Geral)</option>
+              <option value="Colaboração">🤝 Mais / Menos Colaborativo (Colaboração)</option>
+              <option value="Comunicação">💬 Mais / Menos Comunicativo (Comunicação)</option>
+              <option value="Criatividade">💡 Mais / Menos Criativo (Criatividade)</option>
+              <option value="Concentração">🎯 Mais / Menos Concentrado (Concentração)</option>
+              <option value="Contribuição">⭐ Mais / Menos Útil (Contribuição)</option>
+              <option value="Preferência de trabalho">❤️ Mais Gostou de Trabalhar</option>
+            </select>
+          </div>
+
+          <div class="rm-filter-group">
+            <label class="rm-label">Filtro de Menções</label>
+            <div class="toggle-row rm-type-toggles">
+              <button id="rm-type-all" class="toggle active" type="button">Todas</button>
+              <button id="rm-type-pos" class="toggle pos" type="button">+ Positivas</button>
+              <button id="rm-type-neg" class="toggle neg" type="button">− Negativas</button>
+            </div>
+          </div>
+
+          <div class="rm-filter-group rm-search-group">
+            <label class="rm-label" for="rm-search-input">Buscar Candidato</label>
+            <input id="rm-search-input" type="search" placeholder="Filtrar por nome ou código…" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="rm-table-wrap">
+          <table class="rm-table">
+            <thead>
+              <tr>
+                <th class="th-rank">#</th>
+                <th class="th-name" data-sort="name">Candidato <span class="sort-arr">↕</span></th>
+                <th class="th-num" data-sort="pos">Positivas <span class="sort-arr">↕</span></th>
+                <th class="th-num" data-sort="neg">Negativas <span class="sort-arr">↕</span></th>
+                <th class="th-num" data-sort="net">Saldo Líquido <span class="sort-arr active">↓</span></th>
+                <th class="th-bar">Aprovação (%)</th>
+                <th class="th-action">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="rm-tbody"></tbody>
+          </table>
+        </div>
+
+        <footer class="rm-footer">
+          <span id="rm-summary" class="muted"></span>
+          <span class="muted rm-hint">Dica: clique em uma linha para focar e agrupar o candidato no grafo</span>
+        </footer>
+      </div>
+    </div>
+
     <!-- Tooltip -->
     <div id="tooltip" class="tooltip glass" role="dialog" aria-hidden="true"></div>
 
@@ -89,7 +183,7 @@
     <input id="file-input" type="file" accept=".csv,text/csv" hidden />
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
