@@ -651,30 +651,33 @@
       normal: { c0: "#c9cbff", c1: "#7376e6", c2: "#2d2f86" },
       ring: "rgba(255,255,255,0.18)",
     },
+    // Verde Vibrante para Saldo Positivo
     pos_high: {
-      hl: { c0: "#ecfdf5", c1: "#34d399", c2: "#065f46", glow: "rgba(52,211,153,0.95)" },
-      normal: { c0: "#d1fae5", c1: "#10b981", c2: "#047857" },
-      ring: "rgba(52,211,153,0.45)",
+      hl: { c0: "#ecfdf5", c1: "#34d399", c2: "#047857", glow: "rgba(52,211,153,0.95)" },
+      normal: { c0: "#6ee7b7", c1: "#10b981", c2: "#065f46" },
+      ring: "rgba(52,211,153,0.55)",
     },
     pos_mid: {
-      hl: { c0: "#f0fdfa", c1: "#5eead4", c2: "#115e59", glow: "rgba(45,212,191,0.9)" },
-      normal: { c0: "#ccfbf1", c1: "#2dd4bf", c2: "#0f766e" },
-      ring: "rgba(45,212,191,0.35)",
+      hl: { c0: "#f0fdf4", c1: "#4ade80", c2: "#15803d", glow: "rgba(74,222,128,0.9)" },
+      normal: { c0: "#86efac", c1: "#22c55e", c2: "#166534" },
+      ring: "rgba(74,222,128,0.45)",
     },
+    // Roxo/Índigo Neutro para Saldo Zero
     neutral: {
       hl: { c0: "#e0e7ff", c1: "#818cf8", c2: "#312e81", glow: "rgba(129,140,248,0.9)" },
       normal: { c0: "#c7d2fe", c1: "#6366f1", c2: "#3730a3" },
-      ring: "rgba(129,140,248,0.25)",
+      ring: "rgba(129,140,248,0.35)",
     },
+    // Vermelho/Rubi Vibrante para Saldo Negativo
     neg_mid: {
-      hl: { c0: "#fff1f2", c1: "#fb7185", c2: "#881337", glow: "rgba(251,113,133,0.95)" },
-      normal: { c0: "#ffe4e6", c1: "#f43f5e", c2: "#9f1239" },
-      ring: "rgba(251,113,133,0.35)",
+      hl: { c0: "#fff1f2", c1: "#fb7185", c2: "#9f1239", glow: "rgba(251,113,133,0.95)" },
+      normal: { c0: "#fda4af", c1: "#f43f5e", c2: "#881337" },
+      ring: "rgba(251,113,133,0.45)",
     },
     neg_high: {
-      hl: { c0: "#ffe4e6", c1: "#e11d48", c2: "#4c0519", glow: "rgba(225,29,72,1.0)" },
-      normal: { c0: "#fecdd3", c1: "#be123c", c2: "#4c0519" },
-      ring: "rgba(225,29,72,0.55)",
+      hl: { c0: "#fff1f2", c1: "#f43f5e", c2: "#881337", glow: "rgba(239,68,68,1.0)" },
+      normal: { c0: "#fca5a5", c1: "#ef4444", c2: "#7f1d1d" },
+      ring: "rgba(239,68,68,0.6)",
     },
   };
 
@@ -682,18 +685,18 @@
     if (S.nodeColorMode === "default") return "default";
     if (S.nodeColorMode === "ratio") {
       const r = n.ratio ?? 0.5;
-      if (r >= 0.75) return "pos_high";
-      if (r >= 0.55) return "pos_mid";
-      if (r >= 0.45) return "neutral";
-      if (r >= 0.25) return "neg_mid";
+      if (r > 0.6) return "pos_high";
+      if (r > 0.5) return "pos_mid";
+      if (r === 0.5) return "neutral";
+      if (r >= 0.4) return "neg_mid";
       return "neg_high";
     }
-    // "balance" (Saldo de avaliações)
+    // "balance" (Saldo de avaliações: Verde = Positivo, Vermelho = Negativo, Neutro = 0)
     const net = n.net ?? 0;
-    if (net >= 4) return "pos_high";
+    if (net >= 3) return "pos_high";
     if (net >= 1) return "pos_mid";
     if (net === 0) return "neutral";
-    if (net >= -4) return "neg_mid";
+    if (net >= -2) return "neg_mid";
     return "neg_high";
   }
 
@@ -902,16 +905,6 @@
       // No modo foco: nós desconectados ficam com opacidade quase invisível (0.025)
       ctx.globalAlpha = faded ? (isFocused ? 0.025 : 0.18) : 1;
       ctx.drawImage(sp.img, n.x - d, n.y - d, d * 2, d * 2);
-
-      // Ao passar o mouse ou focar no nó, renderiza a foto circular diretamente no nó
-      if (hl && n.photoImg && n.photoImg.complete && n.photoImg.naturalWidth > 0) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r - 0.4 / T.k, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(n.photoImg, n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
-        ctx.restore();
-      }
 
       if (!faded || !isFocused) {
         addCircle(hl ? ringH : faded ? ringF : ringN, n.x, n.y, n.r);
