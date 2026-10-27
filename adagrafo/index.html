@@ -146,15 +146,22 @@
       </button>
     </div>
 
-    <!-- Focus Banner -->
-    <div id="focus-banner" class="focus-banner glass hidden">
-      <div class="fb-badge">Foco Ativo</div>
-      <div class="fb-info">
-        <strong id="fb-name"></strong>
-        <span id="fb-sub" class="muted"></span>
+    <!-- Focus Candidate Modal Card (Canto Superior Esquerdo) -->
+    <div id="focus-card" class="focus-card glass hidden" role="region" aria-label="Candidato em foco">
+      <div class="fc-photo-wrap">
+        <img id="fc-photo" class="fc-photo" alt="" src="" />
+        <div id="fc-fallback" class="fc-fallback"></div>
       </div>
-      <div id="fb-counters" class="fb-counters"></div>
-      <button id="fb-unfocus" class="btn btn-ghost btn-sm" type="button" title="Sair do foco (Esc)">Sair do foco ✕</button>
+      <div class="fc-body">
+        <div class="fc-header">
+          <div class="fc-tag">🎯 Candidato em Foco</div>
+          <button id="fc-unfocus" class="btn btn-ghost fc-close" type="button" title="Sair do foco (Esc)">✕</button>
+        </div>
+        <h3 id="fc-name" class="fc-name"></h3>
+        <span id="fc-sub" class="fc-sub muted"></span>
+        <div id="fc-counters" class="fc-counters"></div>
+        <div id="fc-metrics" class="fc-metrics"></div>
+      </div>
     </div>
 
     <!-- Zoom controls -->

@@ -1639,7 +1639,7 @@
     }
 
     if (!data.length) {
-      rmTbody.innerHTML = `<tr><td colspan="7" class="sr-note" style="text-align:center;padding:28px;">Nenhum candidato encontrado com os filtros selecionados.</td></tr>`;
+      rmTbody.innerHTML = `<tr><td colspan="8" class="sr-note" style="text-align:center;padding:28px;">Nenhum candidato encontrado com os filtros selecionados.</td></tr>`;
       return;
     }
 
@@ -1662,20 +1662,18 @@
         return `
           <tr class="rm-tr${isFocused ? " active-focus" : ""}" data-id="${esc(item.node.id)}">
             <td class="td-rank">${rankBadge}</td>
+            <td class="td-photo">
+              ${(() => {
+                const words = (item.node.name || "").trim().split(/\s+/).filter(Boolean);
+                const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
+                return item.node.photo
+                  ? `<div class="rm-avatar-wrap"><img src="${item.node.photo}" class="rm-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\\'rm-avatar-fallback\\'>${initials}</span>';" /></div>`
+                  : `<div class="rm-avatar-wrap"><span class="rm-avatar-fallback">${initials}</span></div>`;
+              })()}
+            </td>
             <td class="td-name">
-              <div class="rm-candidate-cell">
-                ${(() => {
-                  const words = (item.node.name || "").trim().split(/\s+/).filter(Boolean);
-                  const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
-                  return item.node.photo
-                    ? `<div class="rm-avatar-wrap"><img src="${item.node.photo}" class="rm-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\\'rm-avatar-fallback\\'>${initials}</span>';" /></div>`
-                    : `<div class="rm-avatar-wrap"><span class="rm-avatar-fallback">${initials}</span></div>`;
-                })()}
-                <div>
-                  <strong>${esc(item.node.name)}</strong>
-                  <small>${esc(item.node.id !== item.node.name ? item.node.id : "")}</small>
-                </div>
-              </div>
+              <strong>${esc(item.node.name)}</strong>
+              <small>${esc(item.node.id !== item.node.name ? item.node.id : "")}</small>
             </td>
             <td class="td-num"><span class="pill-pos">${posText}</span></td>
             <td class="td-num"><span class="pill-neg">${negText}</span></td>
