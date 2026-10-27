@@ -243,7 +243,6 @@
       e.reverse = ["pos", "neg"].map((t) => byKey.get(`${e.target.id}\u0000${e.source.id}\u0000${t}`)).filter(Boolean);
     });
 
-    renderLegend();
     renderStats();
     requestRender();
   }
@@ -409,26 +408,75 @@
     const { focus, lit, activeOf } = computeHighlight();
     const dimming = !!activeOf;
 
+    const isFocused = !!S.focusNode;
+
     // Arestas agrupadas por estilo: poucos stroke()/fill() por quadro em vez de 2 por seta.
     // S.edges está ordenado por intensidade, então as mais fortes ficam por cima.
     const vb = viewBounds(20 / T.k);
     const dimB = new Map(), actB = new Map();
     let hovered = null;
+    const activeEdges = [];
+
     for (const e of S.edges) {
       const g = (e.g = edgeGeom(e));
       if (
         Math.max(g.sx, g.cx, g.ex) < vb.x0 || Math.min(g.sx, g.cx, g.ex) > vb.x1 ||
         Math.max(g.sy, g.cy, g.ey) < vb.y0 || Math.min(g.sy, g.cy, g.ey) > vb.y1
       ) continue; // fora da tela
+
       if (e === S.hoverEdge) { hovered = e; continue; }
-      const b = !dimming || activeOf(e)
-        ? getBucket(actB, e.key, e.color, e.w)
-        : getBucket(dimB, e.type, DIM_COLOR[e.type], 1.2);
-      addEdgePath(b, g);
+
+      const isActive = !dimming || activeOf(e);
+      if (isFocused && !isActive) {
+        // No modo foco: oculta arestas de terceiros para visualização máxima de clareza
+        continue;
+      }
+
+      if (isActive) {
+        const b = getBucket(actB, e.key, e.color, isFocused ? e.w * 1.3 : e.w);
+        addEdgePath(b, g);
+        if (isFocused && (e.source === S.focusNode || e.target === S.focusNode)) {
+          activeEdges.push(e);
+        }
+      } else {
+        const b = getBucket(dimB, e.type, DIM_COLOR[e.type], 1.2);
+        addEdgePath(b, g);
+      }
     }
     ctx.lineCap = "butt";
     dimB.forEach(paintBucket);
     actB.forEach(paintBucket);
+
+    // Se estiver em foco, desenha badges com contagem (+ / -) no centro de cada aresta
+    if (isFocused && activeEdges.length) {
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const fsBadge = Math.max(9, 10.5 / T.k);
+      ctx.font = `700 ${fsBadge}px Inter, sans-serif`;
+
+      for (const e of activeEdges) {
+        const g = e.g;
+        const mx = 0.25 * g.sx + 0.5 * g.cx + 0.25 * g.ex;
+        const my = 0.25 * g.sy + 0.5 * g.cy + 0.25 * g.ey;
+        const badgeText = `${e.type === "pos" ? "+" : "−"}${e.items.length}`;
+        const badgeW = (16 + String(e.items.length).length * 7.5) / T.k;
+        const badgeH = 15.5 / T.k;
+        const rx = mx - badgeW / 2, ry = my - badgeH / 2, r = badgeH / 2;
+
+        ctx.fillStyle = "rgba(11, 14, 23, 0.94)";
+        ctx.strokeStyle = e.type === "pos" ? "rgba(52, 211, 153, 0.9)" : "rgba(251, 113, 133, 0.9)";
+        ctx.lineWidth = 1.3 / T.k;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(rx, ry, badgeW, badgeH, r);
+        else ctx.rect(rx, ry, badgeW, badgeH);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = e.type === "pos" ? "#34d399" : "#fb7185";
+        ctx.fillText(badgeText, mx, my);
+      }
+    }
+
     if (hovered) {
       const b = newBucket(edgeColor(hovered.type, 1), hovered.w * 1.6);
       addEdgePath(b, hovered.g);
@@ -448,14 +496,21 @@
     for (const n of S.nodes) {
       if (n.x + n.r < nb.x0 || n.x - n.r > nb.x1 || n.y + n.r < nb.y0 || n.y - n.r > nb.y1) continue;
       visible.push(n);
-      const faded = dimming && !lit.has(n);
-      const hl = n === S.hoverNode || n === focus || n === S.focusNode;
+      const isNeighbor = lit && lit.has(n);
+      const isFocal = n === S.focusNode;
+      const faded = dimming && !isNeighbor;
+      const hl = n === S.hoverNode || n === focus || isFocal;
       const sp = spriteFor(hl ? SPRITES.hl : SPRITES.normal, n.r * scale);
       const d = n.r * sp.k;
-      ctx.globalAlpha = faded ? 0.18 : 1;
+
+      // No modo foco: nós desconectados ficam com opacidade quase invisível (0.025)
+      ctx.globalAlpha = faded ? (isFocused ? 0.025 : 0.18) : 1;
       ctx.drawImage(sp.img, n.x - d, n.y - d, d * 2, d * 2);
-      addCircle(hl ? ringH : faded ? ringF : ringN, n.x, n.y, n.r);
-      if (S.searchSet && S.searchSet.has(n)) addCircle(ringS, n.x, n.y, n.r + 4 / T.k);
+
+      if (!faded || !isFocused) {
+        addCircle(hl ? ringH : faded ? ringF : ringN, n.x, n.y, n.r);
+        if (S.searchSet && S.searchSet.has(n)) addCircle(ringS, n.x, n.y, n.r + 4 / T.k);
+      }
     }
     ctx.globalAlpha = 1;
     ctx.lineWidth = 1 / T.k;
@@ -463,8 +518,8 @@
     ctx.stroke(ringN);
     ctx.strokeStyle = "rgba(255,255,255,0.035)";
     ctx.stroke(ringF);
-    ctx.lineWidth = 2 / T.k;
-    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 2.2 / T.k;
+    ctx.strokeStyle = "rgba(255,255,255,0.95)";
     ctx.stroke(ringH);
     ctx.lineWidth = 1.6 / T.k;
     ctx.strokeStyle = "rgba(167,169,255,0.95)";
@@ -474,23 +529,37 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 3 / T.k;
-    ctx.strokeStyle = "rgba(11,14,23,0.85)";
-    const fs = 11 / Math.min(T.k, 1.6);
-    const off = 3 / T.k;
+    ctx.lineWidth = 3.5 / T.k;
+    ctx.strokeStyle = "rgba(11,14,23,0.92)";
+    const fs = 11.5 / Math.min(T.k, 1.5);
+    const off = 4 / T.k;
     const isLit = (n) => !!lit && lit.has(n);
-    const labels = (weight, fill, filter) => {
-      ctx.font = `${weight} ${fs}px Inter, sans-serif`;
-      ctx.fillStyle = fill;
+
+    if (isFocused) {
+      // Modo Foco: máxima clareza - SOMENTE o estudante em foco e seus vizinhos têm rótulos
       for (const n of visible) {
-        if (!filter(n)) continue;
+        if (!isLit(n)) continue;
+        const isFocal = n === S.focusNode;
+        ctx.font = `${isFocal ? 700 : 600} ${isFocal ? fs * 1.15 : fs}px Inter, sans-serif`;
+        ctx.fillStyle = isFocal ? "#ffffff" : "#f1f3fd";
         const y = n.y + n.r + off;
         ctx.strokeText(n.short, n.x, y);
         ctx.fillText(n.short, n.x, y);
       }
-    };
-    if (T.k > 0.55) labels(500, dimming ? "rgba(200,205,225,0.15)" : "rgba(220,224,240,0.85)", (n) => !isLit(n));
-    if (lit) labels(600, "#ffffff", isLit);
+    } else {
+      const labels = (weight, fill, filter) => {
+        ctx.font = `${weight} ${fs}px Inter, sans-serif`;
+        ctx.fillStyle = fill;
+        for (const n of visible) {
+          if (!filter(n)) continue;
+          const y = n.y + n.r + off;
+          ctx.strokeText(n.short, n.x, y);
+          ctx.fillText(n.short, n.x, y);
+        }
+      };
+      if (T.k > 0.55) labels(500, dimming ? "rgba(200,205,225,0.15)" : "rgba(220,224,240,0.85)", (n) => !isLit(n));
+      if (lit) labels(600, "#ffffff", isLit);
+    }
   }
 
   // ---------- Hit testing ----------
@@ -623,10 +692,9 @@
     const n = findNode(x, y);
     if (n) {
       if (S.pinned) unpin();
-      S.focusNode = S.focusNode === n ? null : n;
+      setFocus(n);
       S.hoverNode = n;
       showTooltip(nodeTooltipHTML(n), ev.clientX, ev.clientY);
-      requestRender();
       return;
     }
     const e = findEdge(x, y);
@@ -640,7 +708,7 @@
       return;
     }
     if (S.pinned) unpin();
-    else if (S.focusNode) { S.focusNode = null; requestRender(); }
+    else if (S.focusNode) { setFocus(null); }
   }
 
   // ---------- Zoom / drag ----------
@@ -710,15 +778,140 @@
     d3.select(canvas).transition().duration(duration).call(zoom.transform, t);
   }
 
-  function focusOn(n) {
+  let focusAnim = null;
+  function animatePositions(targets, duration = 480, onEnd = null) {
+    if (focusAnim) cancelAnimationFrame(focusAnim);
+    const start = performance.now();
+    const items = [];
+    for (const [node, t] of targets.entries()) {
+      items.push({ node, sx: node.x, sy: node.y, tx: t.x, ty: t.y });
+    }
+    function tick(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const ease = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      for (const it of items) {
+        it.node.x = it.sx + (it.tx - it.sx) * ease;
+        it.node.y = it.sy + (it.ty - it.sy) * ease;
+      }
+      requestRender();
+      if (p < 1) {
+        focusAnim = requestAnimationFrame(tick);
+      } else {
+        focusAnim = null;
+        if (onEnd) onEnd();
+      }
+    }
+    focusAnim = requestAnimationFrame(tick);
+  }
+
+  const focusBanner = $("focus-banner");
+  function showFocusBanner(n) {
+    if (!focusBanner) return;
+    $("fb-name").textContent = n.name;
+    $("fb-sub").textContent = n.id !== n.name ? `(${n.id})` : "";
+    const neighbors = Array.from(S.adj.get(n) || []);
+    $("fb-counters").innerHTML = `
+      <span class="pos">+${n.recvPos} recebidas</span>
+      <span class="neg">−${n.recvNeg} recebidas</span>
+      <span class="muted">· ${neighbors.length} ${neighbors.length === 1 ? "relação agrupada" : "relações agrupadas"}</span>
+    `;
+    focusBanner.classList.remove("hidden");
+  }
+  function hideFocusBanner() {
+    if (focusBanner) focusBanner.classList.add("hidden");
+  }
+  if ($("fb-unfocus")) {
+    $("fb-unfocus").onclick = () => setFocus(null);
+  }
+
+  function setFocus(n, { centerCamera = true } = {}) {
+    if (!S.nodes.length) return;
+
+    // Salvar posições naturais/originais de todos os nós
+    for (const node of S.nodes) {
+      if (node.homeX == null) {
+        node.homeX = node.x;
+        node.homeY = node.y;
+      }
+    }
+
+    if (n === S.focusNode || !n) {
+      // Sair do foco: animar nós de volta às suas posições originais
+      const targets = new Map();
+      for (const node of S.nodes) {
+        if (node.homeX != null && (Math.abs(node.x - node.homeX) > 0.5 || Math.abs(node.y - node.homeY) > 0.5)) {
+          targets.set(node, { x: node.homeX, y: node.homeY });
+        }
+      }
+      S.focusNode = null;
+      hideFocusBanner();
+      if (targets.size) {
+        animatePositions(targets, 480);
+      }
+      requestRender();
+      return;
+    }
+
     S.focusNode = n;
-    const k = Math.max(S.transform.k, 1.2);
-    const panelW = 330;
-    const t = d3.zoomIdentity
-      .translate(panelW + (S.width - panelW) / 2, S.height / 2)
-      .scale(k)
-      .translate(-n.x, -n.y);
-    d3.select(canvas).transition().duration(700).call(zoom.transform, t);
+    showFocusBanner(n);
+
+    // Agrupar nós vizinhos para perto do candidato selecionado
+    const neighbors = Array.from(S.adj.get(n) || []);
+    const targets = new Map();
+
+    if (neighbors.length > 0) {
+      // Ordenar vizinhos pelo ângulo natural em relação a n
+      neighbors.sort((a, b) => {
+        const angA = Math.atan2((a.homeY ?? a.y) - n.y, (a.homeX ?? a.x) - n.x);
+        const angB = Math.atan2((b.homeY ?? b.y) - n.y, (b.homeX ?? b.x) - n.x);
+        return angA - angB;
+      });
+
+      const M = neighbors.length;
+      if (M <= 12) {
+        const R = Math.max(120, Math.min(200, 75 + M * 9));
+        neighbors.forEach((nb, i) => {
+          const ang = (i / M) * Math.PI * 2 - Math.PI / 2;
+          targets.set(nb, { x: n.x + Math.cos(ang) * R, y: n.y + Math.sin(ang) * R });
+        });
+      } else {
+        // Dois anéis concêntricos se houver muitos vizinhos
+        const M1 = Math.ceil(M / 2);
+        const M2 = M - M1;
+        const R1 = 135, R2 = 230;
+        let c1 = 0, c2 = 0;
+        neighbors.forEach((nb, i) => {
+          if (i % 2 === 0) {
+            const ang = (c1 / M1) * Math.PI * 2 - Math.PI / 2;
+            targets.set(nb, { x: n.x + Math.cos(ang) * R1, y: n.y + Math.sin(ang) * R1 });
+            c1++;
+          } else {
+            const ang = (c2 / M2) * Math.PI * 2 - Math.PI / 2 + Math.PI / M2;
+            targets.set(nb, { x: n.x + Math.cos(ang) * R2, y: n.y + Math.sin(ang) * R2 });
+            c2++;
+          }
+        });
+      }
+
+      animatePositions(targets, 480);
+    }
+
+    if (centerCamera) {
+      // Zoom suave para enquadrar n e os nós agrupados com clareza total
+      const allXs = [n.x, ...Array.from(targets.values()).map((p) => p.x)];
+      const allYs = [n.y, ...Array.from(targets.values()).map((p) => p.y)];
+      const x0 = Math.min(...allXs) - 75, x1 = Math.max(...allXs) + 75;
+      const y0 = Math.min(...allYs) - 75, y1 = Math.max(...allYs) + 75;
+      const panelW = $("panel").classList.contains("hidden") ? 0 : 330;
+      const W = S.width - panelW, H = S.height;
+      const k = Math.min(W / (x1 - x0), H / (y1 - y0), 2.2) * 0.92;
+      const t = d3.zoomIdentity
+        .translate(panelW + W / 2, H / 2)
+        .scale(k)
+        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+      d3.select(canvas).transition().duration(600).call(zoom.transform, t);
+    }
+
     requestRender();
   }
 
@@ -732,16 +925,6 @@
       <div class="stat"><b>${S.edges.length}</b><span>Setas visíveis</span></div>
       <div class="stat pos"><b>${sum(pos)}</b><span>Menções positivas</span></div>
       <div class="stat neg"><b>${sum(neg)}</b><span>Menções negativas</span></div>`;
-  }
-
-  function renderLegend() {
-    const steps = [];
-    for (let i = 1; i <= S.maxCount; i++) steps.push(S.maxCount > 1 ? (i - 1) / (S.maxCount - 1) : 1);
-    const bar = (type) => steps.map((t) => `<i style="background:${edgeColor(type, t)}"></i>`).join("");
-    $("legend").innerHTML = `
-      <div class="legend-row"><span class="lbl">Positiva</span><span class="bar">${bar("pos")}</span></div>
-      <div class="legend-row"><span class="lbl">Negativa</span><span class="bar">${bar("neg")}</span></div>
-      <div class="legend-scale"><span>1</span><span>${S.maxCount}</span></div>`;
   }
 
   function renderChips() {
@@ -895,7 +1078,7 @@
     S.searchSet = null;
     closeResults();
     resetHover();
-    focusOn(n);
+    setFocus(n);
     searchInput.blur();
   }
 
@@ -903,10 +1086,9 @@
     searchInput.value = "";
     searchHits = [];
     S.searchSet = null;
-    S.focusNode = null;
     searchClear.hidden = true;
     closeResults();
-    requestRender();
+    setFocus(null);
   }
 
   searchInput.addEventListener("input", renderResults);
@@ -940,6 +1122,203 @@
   });
   searchList.addEventListener("mouseleave", () => { S.previewNode = null; requestRender(); });
 
+  // ---------- Tabela de Classificação ----------
+  const rankingModal = $("ranking-modal");
+  const rmProfileSelect = $("rm-profile-select");
+  const rmSearchInput = $("rm-search-input");
+  const rmTbody = $("rm-tbody");
+  const rmSummary = $("rm-summary");
+
+  let rmSortKey = "net";
+  let rmSortDir = "desc";
+  let rmTypeFilter = "all"; // 'all' | 'pos' | 'neg'
+
+  function openRankingModal() {
+    if (!S.nodes.length) return;
+    rankingModal.classList.remove("hidden");
+    renderRanking();
+    setTimeout(() => rmSearchInput.focus(), 60);
+  }
+
+  function closeRankingModal() {
+    rankingModal.classList.add("hidden");
+  }
+
+  function computeRankingData(profile = "all", typeFilter = "all", search = "") {
+    const q = norm(search);
+    const candidateStats = new Map();
+
+    for (const n of S.nodes) {
+      candidateStats.set(n.id, {
+        node: n,
+        pos: 0,
+        neg: 0,
+        net: 0,
+        total: 0,
+        ratio: 0,
+      });
+    }
+
+    // Filtrar menções pelo perfil selecionado
+    for (const m of S.mentions) {
+      if (profile !== "all" && m.attr !== profile) continue;
+      const stat = candidateStats.get(m.tgt);
+      if (!stat) continue;
+      if (m.type === "pos") stat.pos++;
+      else if (m.type === "neg") stat.neg++;
+    }
+
+    // Calcular saldos e taxas
+    let list = Array.from(candidateStats.values());
+    list.forEach((st) => {
+      st.net = st.pos - st.neg;
+      st.total = st.pos + st.neg;
+      st.ratio = st.total > 0 ? Math.round((st.pos / st.total) * 100) : 0;
+    });
+
+    // Filtro por busca de nome ou código
+    if (q) {
+      list = list.filter((st) => st.node.key.includes(q));
+    }
+
+    // Filtro por tipo
+    if (typeFilter === "pos") {
+      list = list.filter((st) => st.pos > 0);
+    } else if (typeFilter === "neg") {
+      list = list.filter((st) => st.neg > 0);
+    }
+
+    // Ordenação
+    list.sort((a, b) => {
+      let diff = 0;
+      if (rmSortKey === "name") {
+        diff = a.node.name.localeCompare(b.node.name, "pt-BR");
+      } else if (rmSortKey === "pos") {
+        diff = a.pos - b.pos || a.net - b.net;
+      } else if (rmSortKey === "neg") {
+        diff = a.neg - b.neg || b.net - a.net;
+      } else { // 'net'
+        diff = a.net - b.net || a.pos - b.pos;
+      }
+      return rmSortDir === "desc" ? -diff : diff;
+    });
+
+    return list;
+  }
+
+  function renderRanking() {
+    if (!S.nodes.length) return;
+    const profile = rmProfileSelect ? rmProfileSelect.value : "all";
+    const search = rmSearchInput ? rmSearchInput.value : "";
+    const data = computeRankingData(profile, rmTypeFilter, search);
+
+    if (rmSummary) {
+      rmSummary.textContent = `${data.length} candidatos listados ${profile !== "all" ? `no perfil "${profile}"` : "no geral"}`;
+    }
+
+    if (!data.length) {
+      rmTbody.innerHTML = `<tr><td colspan="7" class="sr-note" style="text-align:center;padding:28px;">Nenhum candidato encontrado com os filtros selecionados.</td></tr>`;
+      return;
+    }
+
+    rmTbody.innerHTML = data
+      .map((item, idx) => {
+        const rank = idx + 1;
+        const isFocused = S.focusNode === item.node;
+        const rankBadge =
+          rank === 1 ? `<span class="rank-badge top-1">🥇</span>` :
+          rank === 2 ? `<span class="rank-badge top-2">🥈</span>` :
+          rank === 3 ? `<span class="rank-badge top-3">🥉</span>` :
+          `#${rank}`;
+
+        const netClass = item.net > 0 ? "pos" : item.net < 0 ? "neg" : "zero";
+        const netSign = item.net > 0 ? `+${item.net}` : `${item.net}`;
+
+        return `
+          <tr class="rm-tr${isFocused ? " active-focus" : ""}" data-id="${esc(item.node.id)}">
+            <td class="td-rank">${rankBadge}</td>
+            <td class="td-name">
+              <strong>${esc(item.node.name)}</strong>
+              <small>${esc(item.node.id !== item.node.name ? item.node.id : "")}</small>
+            </td>
+            <td class="td-num"><span class="pill-pos">+${item.pos}</span></td>
+            <td class="td-num"><span class="pill-neg">−${item.neg}</span></td>
+            <td class="td-num"><span class="pill-net ${netClass}">${netSign}</span></td>
+            <td class="td-bar">
+              <div class="ratio-bar-wrap">
+                <div class="ratio-track">
+                  <div class="ratio-fill" style="width:${item.ratio}%"></div>
+                </div>
+                <span>${item.ratio}%</span>
+              </div>
+            </td>
+            <td class="td-action">
+              <button class="btn-focus-row" type="button" title="Ver no Grafo">Focar no Grafo ↗</button>
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
+  }
+
+  if ($("btn-open-ranking")) $("btn-open-ranking").onclick = openRankingModal;
+  if ($("top-btn-ranking")) $("top-btn-ranking").onclick = openRankingModal;
+  if ($("rm-close")) $("rm-close").onclick = closeRankingModal;
+  if ($("rm-backdrop")) $("rm-backdrop").onclick = closeRankingModal;
+
+  if (rmProfileSelect) rmProfileSelect.addEventListener("change", renderRanking);
+  if (rmSearchInput) rmSearchInput.addEventListener("input", renderRanking);
+
+  const rmTypeBtns = {
+    all: $("rm-type-all"),
+    pos: $("rm-type-pos"),
+    neg: $("rm-type-neg"),
+  };
+  Object.entries(rmTypeBtns).forEach(([key, btn]) => {
+    if (!btn) return;
+    btn.onclick = () => {
+      rmTypeFilter = key;
+      Object.values(rmTypeBtns).forEach((b) => b && b.classList.remove("active"));
+      btn.classList.add("active");
+      renderRanking();
+    };
+  });
+
+  document.querySelectorAll(".rm-table th[data-sort]").forEach((th) => {
+    th.onclick = () => {
+      const key = th.dataset.sort;
+      if (rmSortKey === key) {
+        rmSortDir = rmSortDir === "desc" ? "asc" : "desc";
+      } else {
+        rmSortKey = key;
+        rmSortDir = key === "name" ? "asc" : "desc";
+      }
+      document.querySelectorAll(".rm-table th .sort-arr").forEach((span) => {
+        span.classList.remove("active");
+        span.textContent = "↕";
+      });
+      const arr = th.querySelector(".sort-arr");
+      if (arr) {
+        arr.classList.add("active");
+        arr.textContent = rmSortDir === "desc" ? "↓" : "↑";
+      }
+      renderRanking();
+    };
+  });
+
+  if (rmTbody) {
+    rmTbody.addEventListener("click", (e) => {
+      const tr = e.target.closest(".rm-tr");
+      if (!tr) return;
+      const id = tr.dataset.id;
+      const n = S.nodeById.get(id);
+      if (n) {
+        closeRankingModal();
+        setFocus(n);
+      }
+    });
+  }
+
   $("zoom-in").onclick = () => d3.select(canvas).transition().duration(250).call(zoom.scaleBy, 1.4);
   $("zoom-out").onclick = () => d3.select(canvas).transition().duration(250).call(zoom.scaleBy, 1 / 1.4);
   $("zoom-fit").onclick = () => fitView();
@@ -970,7 +1349,7 @@
     $("dz-error").textContent = "";
     if (S.sim) S.sim.stop();
     resetHover();
-    S.focusNode = null;
+    setFocus(null);
 
     Object.assign(S, data);
     S.activeCats = new Set(S.categories);
@@ -988,6 +1367,7 @@
     $("dropzone").classList.add("hidden");
     $("panel").classList.remove("hidden");
     $("controls").classList.remove("hidden");
+    if ($("top-nav")) $("top-nav").classList.remove("hidden");
 
     renderChips();
     aggregateEdges();
@@ -1002,7 +1382,24 @@
       .force("y", d3.forceY().strength(0.04))
       .stop();
     S.sim.tick(220);
-    S.sim.alpha(0.08).on("tick", requestRender).restart();
+
+    // Gravar posições naturais/originais de todos os nós após o layout da simulação
+    for (const node of S.nodes) {
+      node.homeX = node.x;
+      node.homeY = node.y;
+    }
+
+    S.sim.alpha(0.08).on("tick", () => {
+      // Atualizar posições home enquanto a simulação desacelera
+      for (const node of S.nodes) {
+        if (!S.focusNode) {
+          node.homeX = node.x;
+          node.homeY = node.y;
+        }
+      }
+      requestRender();
+    }).restart();
+
     resize();
     fitView(0);
   }
@@ -1046,6 +1443,19 @@
   window.addEventListener("keydown", (e) => {
     const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
     const ready = !$("panel").classList.contains("hidden");
+
+    if (e.key === "Escape") {
+      if (rankingModal && !rankingModal.classList.contains("hidden")) {
+        closeRankingModal();
+        return;
+      }
+      if (!typing) {
+        unpin();
+        setFocus(null);
+      }
+      return;
+    }
+
     // Atalhos: "/" ou ⌘K / Ctrl+K focam a busca
     if (ready && ((e.key === "/" && !typing) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k"))) {
       e.preventDefault();
@@ -1053,7 +1463,6 @@
       searchInput.select();
       return;
     }
-    if (e.key === "Escape" && !typing) { unpin(); S.focusNode = null; requestRender(); }
   });
   resize();
 
