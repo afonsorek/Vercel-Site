@@ -1220,24 +1220,70 @@
     focusAnim = requestAnimationFrame(tick);
   }
 
-  const focusBanner = $("focus-banner");
-  function showFocusBanner(n) {
-    if (!focusBanner) return;
-    $("fb-name").textContent = n.name;
-    $("fb-sub").textContent = n.id !== n.name ? `(${n.id})` : "";
+  const focusCard = $("focus-card");
+  function showFocusCard(n) {
+    if (!focusCard) return;
+    const nameEl = $("fc-name");
+    const subEl = $("fc-sub");
+    const photoEl = $("fc-photo");
+    const fallbackEl = $("fc-fallback");
+    const countersEl = $("fc-counters");
+    const metricsEl = $("fc-metrics");
+
+    if (nameEl) nameEl.textContent = n.name;
+    if (subEl) subEl.textContent = n.id !== n.name ? n.id : "";
+
+    const words = (n.name || "").trim().split(/\s+/).filter(Boolean);
+    const initials = words.length > 1
+      ? (words[0][0] + words[words.length - 1][0]).toUpperCase()
+      : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
+
+    if (fallbackEl) fallbackEl.textContent = initials;
+
+    if (photoEl) {
+      if (n.photo) {
+        photoEl.src = n.photo;
+        photoEl.style.display = "block";
+        if (fallbackEl) fallbackEl.style.display = "none";
+        photoEl.onerror = () => {
+          photoEl.style.display = "none";
+          if (fallbackEl) fallbackEl.style.display = "flex";
+        };
+      } else {
+        photoEl.style.display = "none";
+        if (fallbackEl) fallbackEl.style.display = "flex";
+      }
+    }
+
+    const netSign = n.net > 0 ? `+${n.net}` : `${n.net}`;
+    const netColor = n.net > 0 ? "var(--pos)" : n.net < 0 ? "var(--neg)" : "var(--muted)";
     const neighbors = Array.from(S.adj.get(n) || []);
-    $("fb-counters").innerHTML = `
-      <span class="pos">+${n.recvPos} recebidas</span>
-      <span class="neg">−${n.recvNeg} recebidas</span>
-      <span class="muted">· ${neighbors.length} ${neighbors.length === 1 ? "relação agrupada" : "relações agrupadas"}</span>
-    `;
-    focusBanner.classList.remove("hidden");
+
+    if (countersEl) {
+      countersEl.innerHTML = `
+        <span class="pos">+${n.recvPos} recebidas</span>
+        <span class="neg">−${n.recvNeg} recebidas</span>
+        <span style="color:${netColor};font-weight:700;">Saldo: ${netSign}</span>
+      `;
+    }
+
+    if (metricsEl) {
+      const rep = getAuthorReputation(n.id);
+      metricsEl.innerHTML = `
+        <span>${neighbors.length} ${neighbors.length === 1 ? "relação conectada" : "relações conectadas"}</span>
+        ${S.weightsEnabled ? ` · Peso de avaliador: <b>${rep.weight.toFixed(1)}x</b>` : ""}
+      `;
+    }
+
+    focusCard.classList.remove("hidden");
   }
-  function hideFocusBanner() {
-    if (focusBanner) focusBanner.classList.add("hidden");
+
+  function hideFocusCard() {
+    if (focusCard) focusCard.classList.add("hidden");
   }
-  if ($("fb-unfocus")) {
-    $("fb-unfocus").onclick = () => setFocus(null);
+
+  if ($("fc-unfocus")) {
+    $("fc-unfocus").onclick = () => setFocus(null);
   }
 
   function setFocus(n, { centerCamera = true } = {}) {
@@ -1260,7 +1306,7 @@
         }
       }
       S.focusNode = null;
-      hideFocusBanner();
+      hideFocusCard();
       if (targets.size) {
         animatePositions(targets, 480);
       }
@@ -1269,7 +1315,7 @@
     }
 
     S.focusNode = n;
-    showFocusBanner(n);
+    showFocusCard(n);
 
     // Agrupar nós vizinhos para perto do candidato selecionado
     const neighbors = Array.from(S.adj.get(n) || []);
