@@ -855,24 +855,34 @@
     if ((isFocused || S.showWeightsOnEdges) && activeEdges.length) {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      const fsBadge = Math.max(9, 10.5 / T.k);
+      const fsBadge = Math.max(9.5, 11 / T.k);
       ctx.font = `700 ${fsBadge}px Inter, sans-serif`;
 
       for (const e of activeEdges) {
         const g = e.g;
-        const mx = 0.25 * g.sx + 0.5 * g.cx + 0.25 * g.ex;
-        const my = 0.25 * g.sy + 0.5 * g.cy + 0.25 * g.ey;
+        // Posição ao longo da curva: leve deslocamento para arestas opostas evitarem sobreposição do badge
+        const tPos = isFocused ? (e.source === S.focusNode ? 0.62 : 0.38) : 0.5;
+        const mtPos = 1 - tPos;
+        const mx = mtPos * mtPos * g.sx + 2 * mtPos * tPos * g.cx + tPos * tPos * g.ex;
+        const my = mtPos * mtPos * g.sy + 2 * mtPos * tPos * g.cy + tPos * tPos * g.ey;
+
         const countStr = S.weightsEnabled && S.showWeightsOnEdges
           ? `${e.weightedCount.toFixed(1)}★`
           : `${e.rawCount}`;
         const badgeText = `${e.type === "pos" ? "+" : "−"}${countStr}`;
-        const badgeW = (16 + badgeText.length * 7.5) / T.k;
-        const badgeH = 15.5 / T.k;
+
+        // Padding aumentado e dimensões generosas para excelente legibilidade
+        const padX = 14 / T.k;
+        const padY = 8 / T.k;
+        const textMetrics = ctx.measureText(badgeText);
+        const textW = textMetrics.width;
+        const badgeW = textW + padX * 2;
+        const badgeH = fsBadge + padY * 2;
         const rx = mx - badgeW / 2, ry = my - badgeH / 2, r = badgeH / 2;
 
-        ctx.fillStyle = "rgba(11, 14, 23, 0.94)";
-        ctx.strokeStyle = e.type === "pos" ? "rgba(52, 211, 153, 0.9)" : "rgba(251, 113, 133, 0.9)";
-        ctx.lineWidth = 1.3 / T.k;
+        ctx.fillStyle = "rgba(10, 13, 24, 0.96)";
+        ctx.strokeStyle = e.type === "pos" ? "rgba(52, 211, 153, 0.95)" : "rgba(251, 113, 133, 0.95)";
+        ctx.lineWidth = 1.4 / T.k;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(rx, ry, badgeW, badgeH, r);
         else ctx.rect(rx, ry, badgeW, badgeH);
@@ -880,7 +890,7 @@
         ctx.stroke();
 
         ctx.fillStyle = e.type === "pos" ? "#34d399" : "#fb7185";
-        ctx.fillText(badgeText, mx, my);
+        ctx.fillText(badgeText, mx, my + 0.5 / T.k);
       }
     }
 
@@ -1342,7 +1352,7 @@
 
       const M = neighbors.length;
       if (M <= 12) {
-        const R = Math.max(120, Math.min(200, 75 + M * 9));
+        const R = Math.max(160, Math.min(260, 110 + M * 12));
         neighbors.forEach((nb, i) => {
           const ang = (i / M) * Math.PI * 2 - Math.PI / 2;
           targets.set(nb, { x: n.x + Math.cos(ang) * R, y: n.y + Math.sin(ang) * R });
@@ -1351,7 +1361,7 @@
         // Dois anéis concêntricos se houver muitos vizinhos
         const M1 = Math.ceil(M / 2);
         const M2 = M - M1;
-        const R1 = 135, R2 = 230;
+        const R1 = 170, R2 = 290;
         let c1 = 0, c2 = 0;
         neighbors.forEach((nb, i) => {
           if (i % 2 === 0) {
