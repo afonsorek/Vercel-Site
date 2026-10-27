@@ -124,6 +124,278 @@
     return idx;
   }
 
+
+  // ---------- Fotos de Perfil e Correspondência Inteligente ----------
+  const DEFAULT_PHOTOS_MANIFEST = [
+  "20261023_184317_405 - Nathália.jpg",
+  "215B8990-4F16-4075-B0B9-55C591DF5BF2 - Tiago.jpg",
+  "FOTODEPERFIL_ESTHERRATZKEWERNERBAGGIO - Esther Ratzke.jpg",
+  "FOTODOCUMENTO_BEATRIZMAKIYAMAKLOSOWSKI - Beatriz Makiyama.jpg",
+  "FOTOPERFIL_AMANDAMACHADODESMOTS - Amanda Machado.jpg",
+  "FOTOPERFIL_ANACAROLINEDEMACEDOSTOCCO - ANA CAROLINE DE MACEDO STOCCO.jpg",
+  "FOTOPERFIL_ANAHEBELLOPEREIRA - 花愛.jpg",
+  "FOTOPERFIL_ANALUIZABURGER - ana burger(1).jpg",
+  "FOTOPERFIL_ANALUIZABURGER - ana burger.jpg",
+  "FOTOPERFIL_ANDRELUIZMARQUESDACUNHA - André Luiz Marques da Cunha.jpg",
+  "FOTOPERFIL_ANDRIELICHEVA - Andrieli Cheva.jpg",
+  "FOTOPERFIL_ANGELOLUIGIFERRONATO - Angelo Ferronato.jpg",
+  "FOTOPERFIL_ANTUNIGIULLIANORIBEIRODASILVA - Antuni ribeiro.jpg",
+  "FOTOPERFIL_ARTHURDEOLIVEIRACARVALHO - Arthur Oliveira.jpg",
+  "FOTOPERFIL_ARTHURJOSEMAGALHAESCZERNIAK - Arthur Czerniak.jpg",
+  "FOTOPERFIL_ARTHURRIBASDEOLIVEIRA - Arthur Ribas de Oliveira.jpg",
+  "FOTOPERFIL_AYNEGABRIELEFIGUEIREDO - Ayne Gabriele.jpg",
+  "FOTOPERFIL_BARBARAMORIEL - Bárbara Moriel.jpg",
+  "FOTOPERFIL_BRENODEMIOPADILHA - Breno Padilha.jpg",
+  "FOTOPERFIL_BRUNAKORSCHDEMELLORENAUX - Bruna Korsch.jpg",
+  "FOTOPERFIL_CAIOKLOPPEL - Caio Klöppel.jpg",
+  "FOTOPERFIL_CAMILAFEIJÓMINKU - Camila Feijó Minku.jpg",
+  "FOTOPERFIL_CARLOSLEONARDOGARCIAPSCHEIDT - Carlos Leonardo.jpg",
+  "FOTOPERFIL_CAROLINERODRIGUESDELIMA - Caroline Lima.jpg",
+  "FOTOPERFIL_CESAR_AUGUSTO_PRÉCOMA_VENDRAMIN - Cesar.jpg",
+  "FOTOPERFIL_DANIELSILVANATAL. - Daniel S. (Dan).jpg",
+  "FOTOPERFIL_DANIELYSDAVILA - Danielys Davila.jpg",
+  "FOTOPERFIL_DAYANARESENDEDEFREITAS - Dayana Freitas.jpg",
+  "FOTOPERFIL_DIEGOFONSECADEOLIVEIRABONFIMSOARES - CharmanderGamer.jpg",
+  "FOTOPERFIL_DIEGOMATHEUSDOSSANTOS - Diego Lazuli Dev.jpg",
+  "FOTOPERFIL_DeboraDatschRodrigues - Debora Datsch.jpg",
+  "FOTOPERFIL_EDUARDAAYUMINAKAMURA - Eduarda Nakamura.jpg",
+  "FOTOPERFIL_EMANUELESACENTIDACOREGIO - Bakdorl.jpg",
+  "FOTOPERFIL_EMELIZEBONFIMMLOT - Emelize Bonfim Mlot.jpg",
+  "FOTOPERFIL_ENZOGUTIERREZYOSHIZUMI - TDM enzogy.jpg",
+  "FOTOPERFIL_GABRIELAANTUNESBARAN - Gabe.jpg",
+  "FOTOPERFIL_GABRIELABURGEL - gabs b.jpg",
+  "FOTOPERFIL_GABRIELARIBEIROSCHMIDT - Gabriela Schmidt.jpg",
+  "FOTOPERFIL_GABRIELESCORELGUERRA - Gabriel Guerra.jpg",
+  "FOTOPERFIL_GABRIELLUCASBARBOSA - Gabriel Lucas.jpg",
+  "FOTOPERFIL_GIOVANNARIBASDOSREIS - Giovanna Reis.jpg",
+  "FOTOPERFIL_GUSTAVODOSSANTOSPOLIDO - Gustavo Pulido.jpg",
+  "FOTOPERFIL_GUSTAVOFINDERVILELADEFARIAS - Gustavo Finder Vilela de Farias.jpg",
+  "FOTOPERFIL_Giovana.Gonçalves.Do.Nascimento - Giovana.jpg",
+  "FOTOPERFIL_HECTORVIEIRASALDIVAR - Hector Vieira Saldivar.jpg",
+  "FOTOPERFIL_HELENAKSANALVES - Helena.jpg",
+  "FOTOPERFIL_HENRIQUEMOLETTA - Henrique moletta.jpg",
+  "FOTOPERFIL_ISABELAFUJIWARAPAULIN - Isabela Fujiwara.jpg",
+  "FOTOPERFIL_ISABELLALUCENACONCEICAO - Isabella Lucena(1).jpg",
+  "FOTOPERFIL_ISABELLALUCENACONCEICAO - Isabella Lucena.jpg",
+  "FOTOPERFIL_ISADORAMULLER - Isa Müller.jpg",
+  "FOTOPERFIL_ISAQUESIMÕESDOSSANTOS - Isaque Simões dos Santos.jpg",
+  "FOTOPERFIL_JEANDERSONRIBEIROSALVEGO - Jeanderson Ribeiro Salvego.jpg",
+  "FOTOPERFIL_JEANPABLOLOPESTEIXEIRA - Jean Pablo.jpg",
+  "FOTOPERFIL_JOAOPEDROFIGURABURKOT - João Pedro Figura Burkot.jpg",
+  "FOTOPERFIL_JOAOVICTORSABOYARIBEIRODECARVALHO - João Victor Carvalho.jpg",
+  "FOTOPERFIL_JOAOVITORBARALHASALVARES - João Vitor Baralhas Alvares.jpg",
+  "FOTOPERFIL_JOAOVITORMATSUMOTO - joao matsumoto.jpg",
+  "FOTOPERFIL_JoaoAfonsoBadinOrth - joao afonso.jpg",
+  "FOTOPERFIL_KATHLEENDANIELLYSOUZALINS - Kathleen Danielly.jpg",
+  "FOTOPERFIL_KEDLINDALLAVECCHIAFERNANDES - Kedlin.jpg",
+  "FOTOPERFIL_KODALISMARAVALHASGONCALVES - KODA LIS MARAVALHAS GONCALVES.jpg",
+  "FOTOPERFIL_LARAEDUARDALEDER - Lara Leder.jpg",
+  "FOTOPERFIL_LARISSAGABRIELAFRARE - Larissa Frare.jpg",
+  "FOTOPERFIL_LETICIAJUSTINOWEHBE - Leh Justino Wehbe.jpg",
+  "FOTOPERFIL_LETÍCIAPATERNORIBEIRO - Letícia Paterno Ribeiro.jpg",
+  "FOTOPERFIL_LORENALEDUCMALUFDASILVA - lorena leduc.jpg",
+  "FOTOPERFIL_LUANENRICOSANTANAPECA - Luan Enrico.jpg",
+  "FOTOPERFIL_LUCASCICARELLOGIRATA - Lucas Cicarello Girata.jpg",
+  "FOTOPERFIL_LUCASVILAINMATRAS - Lucas Vilain Matras.jpg",
+  "FOTOPERFIL_LUCASÁLVARESFERREIRAWALKOWSKI - LW.jpg",
+  "FOTOPERFIL_LUISA_COTINHO_DE_MELO - LUISA COTINHO DE MELO.jpg",
+  "FOTOPERFIL_LUIZABIANCOLINI - Luiza Biancolini.jpg",
+  "FOTOPERFIL_LUÍSA PEDROSO LUCAS  - Luísa Pedroso.jpg",
+  "FOTOPERFIL_MALUHIKARIANDOOYAMAGUCHI - Malu Hikari.jpg",
+  "FOTOPERFIL_MANUELAROMODAADAS - Manuela Adas.jpg",
+  "FOTOPERFIL_MARCOSEMANOELDOSSANTOS - Marcos Emanoel.jpg",
+  "FOTOPERFIL_MARCOSFERNANDODEOLIVEIRAFILHO - Marcos Fernando.jpg",
+  "FOTOPERFIL_MARIAEDUARDAMACHADODOSSANTOS - Maria Eduarda (Meari).jpg",
+  "FOTOPERFIL_MARIANAMONKOLSKITATAREM - Mari Tatarem.jpg",
+  "FOTOPERFIL_MELISSAKAFERCORRALES - Melissa Kafer Corrales.jpg",
+  "FOTOPERFIL_MIGUELCASSAPULAMONTEIRODESOUZA - Miguel Henrique.jpg",
+  "FOTOPERFIL_MURILOCAXAMBUMONTEIRO - Murilo Caxambu Monteiro.jpg",
+  "FOTOPERFIL_MatheusSanchesMartins - Matheus Sanches.jpg",
+  "FOTOPERFIL_NADIALUANALOBKOV - Nadia Lobkov.jpg",
+  "FOTOPERFIL_NATANHENRIQUERAMOSSILVA - Natan Henrique.jpg",
+  "FOTOPERFIL_NATHALIAFUJIWARAPAULIN - Nathalia Paulin.jpg",
+  "FOTOPERFIL_NATHANGABRIELDEOLIVEIRAESILVA - Nathan Gabriel.jpg",
+  "FOTOPERFIL_NICOLASCOSENZA - Nicolas Cosenza.jpg",
+  "FOTOPERFIL_NICOLEITIBEREDACUNHAESILVA - Nicole Itiberê.jpg",
+  "FOTOPERFIL_NINACALMONDEOLIVEIRA - Nina Calmon.jpg",
+  "FOTOPERFIL_PEDRODAFONSECASCHWERTNER - Pedro da Fonseca Schwertner.jpg",
+  "FOTOPERFIL_PEDROGABRIELDEBRITONERYSAVIO - Pedro Savio.jpg",
+  "FOTOPERFIL_PEDROHENRIQUEDACOSTASILVA - Pedro Henrique da Costa Silva.jpg",
+  "FOTOPERFIL_PEDROHENRIQUEHEERDTSEHNEMWICHERAL - Pedro Henrique.jpg",
+  "FOTOPERFIL_PEDROVINICIUSSOUSADASILVA - Pedro Vinicius.jpg",
+  "FOTOPERFIL_PIERRECRAZE - Pierre Craze.jpg",
+  "FOTOPERFIL_RAPHAELANDREYFIAMONCINIZAKOVICZ - Raphael Zakovicz.jpg",
+  "FOTOPERFIL_RODRIGODASILVAALVES - Rodrigo Alves.jpg",
+  "FOTOPERFIL_RUBENSPAESNETO - Rubens Paes Neto.jpg",
+  "FOTOPERFIL_SEUNOMECOMPLETO - Milena Torres Laynes.jpg",
+  "FOTOPERFIL_SOFIAALICEDASILVA - sofia alice.jpg",
+  "FOTOPERFIL_SOFIAMENEZESMATHEUS - Sofia Menezes Matheus.jpg",
+  "FOTOPERFIL_TAHERDOVALLERBARROSHEBLING - Taher Hebling.jpg",
+  "FOTOPERFIL_TAYNARADASILVADIAS - Taynara Da Silva Dias.jpg",
+  "FOTOPERFIL_THALESROMAGNAFABROWSKISANTOS - Thales Santos.jpg",
+  "FOTOPERFIL_THAYLONDIEGOFERREIRA - THAYLON DIEGO FERREIRA.jpg",
+  "FOTOPERFIL_THIAGO IGOR MOTA - THIAGO IGOR MOTA.jpg",
+  "FOTOPERFIL_THIAGOKENJINAKAMURAONO - Thiago Kenji.jpg",
+  "FOTOPERFIL_TIAGOPAREJAVITA - Tiago.jpg",
+  "FOTOPERFIL_VICTORIAAZEVEDODOVAL - Victoria Azevedo.jpg",
+  "FOTOPERFIL_VINÍCIUSHASSE - Vinícius Hasse.jpg",
+  "FOTOPERFIL_WALLACESILVINOPEREIRACOSTA - Wallace Costa.jpg",
+  "FOTOPERFIL_WELLINGTONNERYGONCALVESDACOSTA - Wellington Nery.jpg",
+  "FOTOPERFIL_WYLLAMSBRITO - ludo.jpg",
+  "FOTOPERFIL_YASMINLACERDALOPES - Yasmin Lopes.jpg",
+  "IMG-20261024-WA0000 - Ana Luiza.jpg",
+  "IMG_20261023_235118 - Vitor Natal Cordeiro.jpg",
+  "IMG_2886 - Rafaelle Reali Cavalheiro.jpg",
+  "IMG_5090 - Nah Berbert.jpg",
+  "IMG_7949 - Arthur Oliveira.jpg",
+  "IMG_9420 - Felipe.jpg",
+  "Screenshot 2026-10-22 at 19.27.09 - flora koti.jpg",
+  "Screenshot_20260314_143208_Photos~2 - Lilian Waszak.jpg",
+  "WhatsApp Image 2026-10-23 at 19.43.58 - SAYMON MARCHIORE.jpg"
+];
+  let availablePhotos = DEFAULT_PHOTOS_MANIFEST.slice();
+
+  // Sincroniza lista de fotos com fotos_manifest.json se servido via HTTP
+  try {
+    fetch("fotos_manifest.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((list) => {
+        if (Array.isArray(list) && list.length) {
+          availablePhotos = list;
+          if (S.nodes && S.nodes.length) {
+            matchCandidatePhotos(S.nodes, availablePhotos);
+            requestRender();
+          }
+        }
+      })
+      .catch(() => {});
+  } catch (_) {}
+
+  function matchCandidatePhotos(nodes, photoList = availablePhotos) {
+    if (!Array.isArray(photoList) || !photoList.length || !Array.isArray(nodes) || !nodes.length) return;
+
+    const photoEntries = photoList.map((filename) => ({
+      file: filename,
+      norm: norm(filename),
+      tokens: tokenize(filename).filter((w) => !["foto", "perfil", "fotoperfil", "fotodocumento", "fotodeperfil", "jpg", "jpeg", "png"].includes(w)),
+    }));
+
+    // Frequência do primeiro nome entre os candidatos da planilha
+    const firstNameCounts = new Map();
+    nodes.forEach((n) => {
+      const toks = tokenize(n.name).filter((w) => !["de", "da", "do", "dos", "das", "e"].includes(w));
+      if (toks.length) {
+        const fn = toks[0];
+        firstNameCounts.set(fn, (firstNameCounts.get(fn) || 0) + 1);
+      }
+    });
+
+    const matchedPhotos = new Set();
+    const matchedNodes = new Map();
+
+    function evaluateMatch(node, entry) {
+      const nTokens = tokenize(node.name).filter((w) => !["de", "da", "do", "dos", "das", "e"].includes(w));
+      if (!nTokens.length) return 0;
+      const nNorm = norm(node.name);
+      const fn = nTokens[0];
+      const surnames = nTokens.slice(1);
+      const fnIsDuplicated = (firstNameCounts.get(fn) || 0) > 1;
+
+      // 1. Correspondência exata do nome completo
+      if (entry.norm.includes(nNorm) && nNorm.length >= 5) {
+        return 1000 + nTokens.length * 20;
+      }
+
+      // Presença do primeiro nome
+      const hasFn = entry.tokens.some((t) => t === fn || (fn.length > 3 && (t.startsWith(fn) || fn.startsWith(t)))) || entry.norm.includes(fn);
+
+      // Presença de sobrenomes
+      const matchedSurnames = surnames.filter((sn) =>
+        entry.tokens.some((t) => t === sn || (sn.length > 3 && (t.startsWith(sn) || sn.startsWith(t)))) || entry.norm.includes(sn)
+      );
+
+      // Cuidado crítico para nomes repetidos (Pedro, Arthur, Lucas, João, etc.):
+      // Exige OBRIGATORIAMENTE ao menos 1 sobrenome correspondente
+      if (fnIsDuplicated) {
+        if (!hasFn || matchedSurnames.length === 0) return 0;
+        return 500 + matchedSurnames.length * 50;
+      }
+
+      // Primeiro nome único na turma com sobrenome correspondente
+      if (hasFn && matchedSurnames.length >= 1) {
+        return 400 + matchedSurnames.length * 50;
+      }
+
+      // Sobrenome raro/distintivo presente no arquivo (ex: Berbert, Czerniak, Brito)
+      if (matchedSurnames.length >= 1 && matchedSurnames.some((sn) => sn.length >= 5)) {
+        return 300 + matchedSurnames.length * 40;
+      }
+
+      // Primeiro nome único no dataset (ex: Tiago, Felipe) quando não há ambiguidade
+      if (hasFn && !fnIsDuplicated) {
+        return 150;
+      }
+
+      return 0;
+    }
+
+    // Processa candidatos com nomes mais comuns primeiro para alocar seus sobrenomes exatos
+    const candidatesSorted = [...nodes].sort((a, b) => {
+      const fnA = (tokenize(a.name).filter((w) => !["de", "da", "do", "dos", "das", "e"].includes(w))[0]) || "";
+      const fnB = (tokenize(b.name).filter((w) => !["de", "da", "do", "dos", "das", "e"].includes(w))[0]) || "";
+      const countA = firstNameCounts.get(fnA) || 0;
+      const countB = firstNameCounts.get(fnB) || 0;
+      return countB - countA;
+    });
+
+    for (const node of candidatesSorted) {
+      let bestEntry = null;
+      let bestScore = 0;
+
+      for (const entry of photoEntries) {
+        if (matchedPhotos.has(entry.file)) continue;
+        const score = evaluateMatch(node, entry);
+        if (score > bestScore) {
+          bestScore = score;
+          bestEntry = entry;
+        }
+      }
+
+      if (bestEntry && bestScore > 0) {
+        matchedPhotos.add(bestEntry.file);
+        matchedNodes.set(node.id, bestEntry.file);
+        const url = "fotos_de_perfil/" + encodeURIComponent(bestEntry.file);
+        node.photo = url;
+        const img = new Image();
+        img.src = url;
+        node.photoImg = img;
+      }
+    }
+
+    // Pass 2: Candidatos restantes não alocados com primeiro nome entre arquivos remanescentes
+    for (const node of nodes) {
+      if (matchedNodes.has(node.id)) continue;
+      const nTokens = tokenize(node.name).filter((w) => !["de", "da", "do", "dos", "das", "e"].includes(w));
+      if (!nTokens.length) continue;
+      const fn = nTokens[0];
+
+      for (const entry of photoEntries) {
+        if (matchedPhotos.has(entry.file)) continue;
+        const hasFn = entry.tokens.includes(fn) || entry.norm.includes(fn);
+        if (hasFn) {
+          matchedPhotos.add(entry.file);
+          matchedNodes.set(node.id, entry.file);
+          const url = "fotos_de_perfil/" + encodeURIComponent(entry.file);
+          node.photo = url;
+          const img = new Image();
+          img.src = url;
+          node.photoImg = img;
+          break;
+        }
+      }
+    }
+  }
+
   // ---------- Construção do grafo ----------
   function buildData(text) {
     const rows = parseCSV(text);
@@ -182,6 +454,9 @@
     const maxNet = netScores.length ? Math.max(...netScores) : 10;
     S.minNet = minNet;
     S.maxNet = maxNet;
+
+    // Vincular fotos de perfil correspondentes aos candidatos da planilha
+    matchCandidatePhotos(nodes);
 
     // Atribuir pesos iniciais em cada menção baseado na reputação do avaliador
     mentions.forEach((m) => {
@@ -628,6 +903,16 @@
       ctx.globalAlpha = faded ? (isFocused ? 0.025 : 0.18) : 1;
       ctx.drawImage(sp.img, n.x - d, n.y - d, d * 2, d * 2);
 
+      // Ao passar o mouse ou focar no nó, renderiza a foto circular diretamente no nó
+      if (hl && n.photoImg && n.photoImg.complete && n.photoImg.naturalWidth > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r - 0.4 / T.k, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(n.photoImg, n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+        ctx.restore();
+      }
+
       if (!faded || !isFocused) {
         addCircle(hl ? ringH : faded ? ringF : ringN, n.x, n.y, n.r);
         if (S.searchSet && S.searchSet.has(n)) addCircle(ringS, n.x, n.y, n.r + 4 / T.k);
@@ -763,9 +1048,23 @@
     const netSign = n.net > 0 ? `+${n.net}` : `${n.net}`;
     const netColor = n.net > 0 ? "var(--pos)" : n.net < 0 ? "var(--neg)" : "var(--muted)";
 
-    return `<div class="tt-node-name">${esc(n.name)}</div>
-      <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
-      ${repInfo}
+    const words = (n.name || "").trim().split(/\s+/).filter(Boolean);
+    const initials = words.length > 1
+      ? (words[0][0] + words[words.length - 1][0]).toUpperCase()
+      : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
+
+    const avatarHtml = n.photo
+      ? `<div class="tt-avatar-wrap"><img src="${n.photo}" alt="${esc(n.name)}" class="tt-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'tt-avatar-fallback\\'>${initials}</div>';" /></div>`
+      : `<div class="tt-avatar-wrap"><div class="tt-avatar-fallback">${initials}</div></div>`;
+
+    return `<div class="tt-header">
+        ${avatarHtml}
+        <div class="tt-header-text">
+          <div class="tt-node-name">${esc(n.name)}</div>
+          <div class="muted" style="font-size:11.5px">${esc(n.id !== n.name ? n.id : "")} · Saldo: <b style="color:${netColor}">${netSign}</b></div>
+          ${repInfo}
+        </div>
+      </div>
       <div class="tt-grid">
         <span></span><span class="h">Recebidas</span><span class="h">Dadas</span>
         <span style="color:var(--pos)">● Positivas</span><b>${n.recvPos}</b><b>${n.givePos}</b>
@@ -1182,12 +1481,20 @@
     const shown = searchHits.slice(0, SEARCH_LIMIT);
     searchList.innerHTML = shown.length
       ? shown
-          .map(
-            (n, i) => `<li role="option" id="sr-${i}" data-i="${i}" class="sr-item${i === 0 ? " active" : ""}" aria-selected="${i === 0}">
-              <span class="sr-name">${highlightName(n.name, tokens)}</span>
+          .map((n, i) => {
+            const words = (n.name || "").trim().split(/\s+/).filter(Boolean);
+            const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
+            const thumb = n.photo
+              ? `<div class="sr-avatar-wrap"><img src="${n.photo}" class="sr-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\\'sr-avatar-fallback\\'>${initials}</span>';" /></div>`
+              : `<div class="sr-avatar-wrap"><span class="sr-avatar-fallback">${initials}</span></div>`;
+            return `<li role="option" id="sr-${i}" data-i="${i}" class="sr-item${i === 0 ? " active" : ""}" aria-selected="${i === 0}">
+              <div style="display:flex;align-items:center;gap:9px;min-width:0;overflow:hidden;">
+                ${thumb}
+                <span class="sr-name">${highlightName(n.name, tokens)}</span>
+              </div>
               <span class="sr-counts" title="Menções recebidas"><span class="pos">+${n.recvPos}</span><span class="neg">−${n.recvNeg}</span></span>
-            </li>`
-          )
+            </li>`;
+          })
           .join("") + (searchHits.length > SEARCH_LIMIT ? `<li class="sr-note">+${searchHits.length - SEARCH_LIMIT} — refine a busca</li>` : "")
       : `<li class="sr-note">Nenhum candidato encontrado</li>`;
     $("search-count").textContent = `${searchHits.length} ${searchHits.length === 1 ? "resultado" : "resultados"}`;
@@ -1385,8 +1692,19 @@
           <tr class="rm-tr${isFocused ? " active-focus" : ""}" data-id="${esc(item.node.id)}">
             <td class="td-rank">${rankBadge}</td>
             <td class="td-name">
-              <strong>${esc(item.node.name)}</strong>
-              <small>${esc(item.node.id !== item.node.name ? item.node.id : "")}</small>
+              <div class="rm-candidate-cell">
+                ${(() => {
+                  const words = (item.node.name || "").trim().split(/\s+/).filter(Boolean);
+                  const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : "?");
+                  return item.node.photo
+                    ? `<div class="rm-avatar-wrap"><img src="${item.node.photo}" class="rm-avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\\'rm-avatar-fallback\\'>${initials}</span>';" /></div>`
+                    : `<div class="rm-avatar-wrap"><span class="rm-avatar-fallback">${initials}</span></div>`;
+                })()}
+                <div>
+                  <strong>${esc(item.node.name)}</strong>
+                  <small>${esc(item.node.id !== item.node.name ? item.node.id : "")}</small>
+                </div>
+              </div>
             </td>
             <td class="td-num"><span class="pill-pos">${posText}</span></td>
             <td class="td-num"><span class="pill-neg">${negText}</span></td>
@@ -1683,5 +2001,13 @@
 
   // Carregamento opcional via URL (?csv=arquivo.csv) quando servido por HTTP
   const qs = new URLSearchParams(location.search).get("csv");
-  if (qs) fetch(qs).then((r) => r.text()).then((t) => loadText(t, qs)).catch(() => {});
+  if (qs) {
+    fetch(qs).then((r) => r.text()).then((t) => loadText(t, qs)).catch(() => {});
+  } else {
+    // Tenta carregar automaticamente mencoes_candidatos.csv se estiver disponível no servidor
+    fetch("mencoes_candidatos.csv")
+      .then((r) => (r.ok ? r.text() : Promise.reject()))
+      .then((t) => loadText(t, "mencoes_candidatos.csv"))
+      .catch(() => {});
+  }
 })();
