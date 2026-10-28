@@ -1,7 +1,7 @@
 :root {
   --bg: #0b0e17;
   --bg-2: #111627;
-  --panel: rgba(18, 23, 40, 0.72);
+  --panel: #121728;
   --border: rgba(255, 255, 255, 0.08);
   --text: #e6e9f2;
   --muted: #8a93ad;
@@ -17,7 +17,7 @@
 html, body {
   margin: 0;
   height: 100%;
-  background: radial-gradient(ellipse at 30% 20%, #161c33 0%, var(--bg) 60%) fixed;
+  background: var(--bg);
   color: var(--text);
   font-family: "Inter", system-ui, -apple-system, sans-serif;
   font-size: 14px;
@@ -65,7 +65,7 @@ html, body {
   user-select: none;
 }
 .btn-primary {
-  background: linear-gradient(135deg, #7c7ff5, #5b8def);
+  background: #6366f1;
   color: white;
   box-shadow: 0 8px 24px rgba(124, 127, 245, 0.35);
 }
@@ -100,10 +100,7 @@ html, body {
   font-size: 30px;
   margin: 18px 0 8px;
   letter-spacing: -0.02em;
-  background: linear-gradient(120deg, #fff, #b7b9ff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #fff;
 }
 .dropzone-card p { color: var(--muted); line-height: 1.6; margin: 0 0 22px; }
 .dz-hint { font-size: 12px; margin-top: 22px !important; }
@@ -317,7 +314,7 @@ html, body {
 .btn-ranking {
   width: 100%;
   padding: 10px 14px;
-  background: linear-gradient(135deg, rgba(139, 140, 248, 0.22), rgba(91, 141, 239, 0.16));
+  background: #1d2245;
   border: 1px solid rgba(139, 140, 248, 0.4);
   color: #ffffff;
   font-size: 13px;
@@ -327,7 +324,7 @@ html, body {
   transition: all 0.2s ease;
 }
 .btn-ranking:hover {
-  background: linear-gradient(135deg, rgba(139, 140, 248, 0.35), rgba(91, 141, 239, 0.28));
+  background: #272d5c;
   border-color: rgba(139, 140, 248, 0.65);
   box-shadow: 0 4px 16px rgba(124, 127, 245, 0.25);
   transform: translateY(-1px);
@@ -416,7 +413,7 @@ html, body {
   flex: 1;
   height: 5px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #fb7185 0%, #818cf8 50%, #34d399 100%);
+  background: #818cf8;
 }
 .c-tag {
   font-size: 10px;
@@ -609,7 +606,7 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 42px;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: #3f3f9e;
 }
 .fc-body {
   flex: 1;
@@ -964,7 +961,7 @@ input[type="range"]::-webkit-slider-thumb {
   font-weight: 700;
   font-size: 26px;
   color: #fff;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: #3f3f9e;
 }
 .tt-header-text {
   flex: 1;
@@ -1011,7 +1008,7 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 22px;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: #3f3f9e;
   width: 100%;
   height: 100%;
   display: flex;
@@ -1070,3 +1067,21 @@ input[type="range"]::-webkit-slider-thumb {
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 8px; }
+
+/* ---------- Visual plano: cores sólidas, sem glow/blur ---------- */
+*, *::before, *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.glass, .panel, .dropzone-card, .tooltip, .rm-backdrop, .rm-card, .focus-card, .top-nav, .controls {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.panel, .focus-card, .top-nav, .controls, .rm-card, .tooltip { background: #121728 !important; }
+.dropzone-card { background: #111627; }
+.rm-backdrop { background: rgba(7, 10, 18, 0.88); }
+.btn-primary:hover { transform: none; background: #5558e3; }
+.focus-card { border-color: rgba(255, 255, 255, 0.12); }
+
+#weights-controls { display: flex; align-items: center; gap: 10px; transition: opacity 0.2s; }
+.config-switch-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }

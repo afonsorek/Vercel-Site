@@ -484,10 +484,16 @@
 
   function aggregateEdges() {
     const map = new Map();
+    const f = S.focusNode;
     for (const m of S.mentions) {
       if (!S.activeCats.has(m.attr)) continue;
       if (m.type === "pos" && !S.showPos) continue;
       if (m.type === "neg" && !S.showNeg) continue;
+      // Filtro de direção relativo ao candidato em foco
+      if (f) {
+        if (m.src === f.id && !S.showSent) continue;
+        if (m.tgt === f.id && !S.showRecv) continue;
+      }
       const k = `${m.src}\u0000${m.tgt}\u0000${m.type}`;
       let e = map.get(k);
       if (!e) {
@@ -572,16 +578,19 @@
     const dist = Math.hypot(dx, dy) || 1;
     const nx = -dy / dist, ny = dx / dist;
 
-    // Em modo foco: setas mais retas, elegantes e sem sobreposição
+    // Em modo foco: setas retas; ida e volta viram duas retas paralelas
     const isFocusEdge = S.focusNode && (s === S.focusNode || t === S.focusNode);
-    let off;
     if (isFocusEdge) {
-      // Quando e.curve === 0 (seta única), fica reta (off = 0)
-      // Quando há ida e volta, dá uma leve separação lateral controlada (6px a 12px)
-      off = e.curve === 0 ? 0 : Math.sign(e.curve) * (7 + Math.abs(e.curve) * 3);
-    } else {
-      off = e.curve * Math.min(Math.max(dist * 0.14, 10), 42);
+      const lo = e.curve === 0 ? 0 : Math.sign(e.curve) * 5;
+      const s0x = s.x + nx * lo, s0y = s.y + ny * lo;
+      const t0x = t.x + nx * lo, t0y = t.y + ny * lo;
+      const ddx = t0x - s0x, ddy = t0y - s0y, dl = Math.hypot(ddx, ddy) || 1;
+      const ux = ddx / dl, uy = ddy / dl;
+      const sx = s0x + ux * (s.r + 1), sy = s0y + uy * (s.r + 1);
+      const ex = t0x - ux * (t.r + 2), ey = t0y - uy * (t.r + 2);
+      return { sx, sy, cx: (sx + ex) / 2, cy: (sy + ey) / 2, ex, ey, ang: Math.atan2(uy, ux) };
     }
+    const off = e.curve * Math.min(Math.max(dist * 0.14, 10), 42);
 
     const cx = (s.x + t.x) / 2 + nx * off * 2;
     const cy = (s.y + t.y) / 2 + ny * off * 2;
@@ -714,22 +723,15 @@
   }
 
   function makeThemeSprite(colors, highlighted, r) {
-    const pad = highlighted ? r * 2 : 2;
+    // Cor sólida, sem gradiente nem brilho
+    const pad = 2;
     const c = document.createElement("canvas");
     c.width = c.height = Math.ceil((r + pad) * 2);
     const g = c.getContext("2d");
     const o = c.width / 2;
-    if (highlighted && colors.glow) {
-      g.shadowColor = colors.glow;
-      g.shadowBlur = r * 1.5;
-    }
-    const grad = g.createRadialGradient(o - r * 0.35, o - r * 0.4, r * 0.1, o, o, r);
-    grad.addColorStop(0, colors.c0);
-    grad.addColorStop(0.45, colors.c1);
-    grad.addColorStop(1, colors.c2);
     g.beginPath();
     g.arc(o, o, r, 0, Math.PI * 2);
-    g.fillStyle = grad;
+    g.fillStyle = colors.c1;
     g.fill();
     return { img: c, r, k: o / r };
   }
@@ -790,7 +792,7 @@
     b.tip.closePath();
   }
 
-  const newBucket = (color, w) => ({ color, w, head: 5 + w * 1.6, line: new Path2D(), tip: new Path2D() });
+  const newBucket = (color, w) => ({ color, w, head: 8 + w * 2.2, line: new Path2D(), tip: new Path2D() });
   function getBucket(map, key, color, w) {
     let b = map.get(key);
     if (!b) map.set(key, (b = newBucket(color, w)));
@@ -869,7 +871,7 @@
         const my = mtPos * mtPos * g.sy + 2 * mtPos * tPos * g.cy + tPos * tPos * g.ey;
 
         const countStr = S.weightsEnabled && S.showWeightsOnEdges
-          ? `${e.weightedCount.toFixed(1)}★`
+          ? `${e.weightedCount.toFixed(1)}`
           : `${e.rawCount}`;
         const badgeText = `${e.type === "pos" ? "+" : "−"}${countStr}`;
 
@@ -899,11 +901,7 @@
     if (hovered) {
       const b = newBucket(edgeColor(hovered.type, 1), hovered.w * 1.6);
       addEdgePath(b, hovered.g);
-      ctx.save();
-      ctx.shadowColor = hovered.type === "pos" ? "rgba(52,211,153,0.8)" : "rgba(251,113,133,0.8)";
-      ctx.shadowBlur = 14;
       paintBucket(b);
-      ctx.restore();
     }
 
     // Nós (sprites) + contornos agrupados
@@ -1040,7 +1038,7 @@
   function edgeSection(e) {
     const label = e.type === "pos" ? "Positiva" : "Negativa";
     const n = e.items.length;
-    const weightInfo = S.weightsEnabled ? ` · Peso Total: <b>${e.weightedCount.toFixed(1)}★</b>` : "";
+    const weightInfo = S.weightsEnabled ? ` · Peso ${e.weightedCount.toFixed(1)}` : "";
     return `<div class="tt-section">
       <div class="tt-route">${esc(e.source.name)}<span class="arrow ${e.type}">→</span>${esc(e.target.name)}</div>
       <span class="badge ${e.type}">${label} · ${n} ${n === 1 ? "menção" : "menções"}${weightInfo}</span>
@@ -1051,8 +1049,7 @@
   function edgeTooltipHTML(e) {
     let html = edgeSection(e);
     if (S.pinned && e.reverse.length) html += e.reverse.map(edgeSection).join("");
-    else if (e.reverse.length) html += `<div class="tt-hint">↔ Existe avaliação no sentido oposto · clique para fixar e ver tudo</div>`;
-    else html += `<div class="tt-hint">Clique para fixar este painel</div>`;
+    else if (e.reverse.length) html += `<div class="tt-hint">↔ Também há avaliação no sentido oposto</div>`;
     return html;
   }
 
@@ -1085,8 +1082,7 @@
         <span></span><span class="h">Recebidas</span><span class="h">Dadas</span>
         <span style="color:var(--pos)">● Positivas</span><b>${n.recvPos}</b><b>${n.givePos}</b>
         <span style="color:var(--neg)">● Negativas</span><b>${n.recvNeg}</b><b>${n.giveNeg}</b>
-      </div>
-      <div class="tt-hint">${S.focusNode === n ? "Clique para sair do foco" : "Clique para focar nas relações"}</div>`;
+      </div>`;
   }
 
   let lastMouse = { x: 0, y: 0 };
@@ -1323,7 +1319,7 @@
     $("fc-unfocus").onclick = () => setFocus(null);
   }
 
-  function setFocus(n, { centerCamera = true } = {}) {
+  function setFocus(n, { centerCamera = true, refresh = false } = {}) {
     if (!S.nodes.length) return;
 
     // Salvar posições naturais/originais de todos os nós
@@ -1334,7 +1330,7 @@
       }
     }
 
-    if (n === S.focusNode || !n) {
+    if (!n || (n === S.focusNode && !refresh)) {
       // Sair do foco: animar nós de volta às suas posições originais
       const targets = new Map();
       for (const node of S.nodes) {
@@ -1344,6 +1340,7 @@
       }
       S.focusNode = null;
       hideFocusCard();
+      aggregateEdges();
       if (targets.size) {
         animatePositions(targets, 480);
       }
@@ -1352,11 +1349,22 @@
     }
 
     S.focusNode = n;
+    // Recalcula arestas/adjacência considerando o filtro Enviadas/Recebidas do candidato em foco
+    aggregateEdges();
     showFocusCard(n);
 
     // Agrupar nós vizinhos para perto do candidato selecionado
     const neighbors = Array.from(S.adj.get(n) || []);
+    const neighborSet = new Set(neighbors);
     const targets = new Map();
+
+    // Nós que deixaram de ser vizinhos voltam para a posição original
+    for (const node of S.nodes) {
+      if (node === n || neighborSet.has(node) || node.homeX == null) continue;
+      if (Math.abs(node.x - node.homeX) > 0.5 || Math.abs(node.y - node.homeY) > 0.5) {
+        targets.set(node, { x: node.homeX, y: node.homeY });
+      }
+    }
 
     if (neighbors.length > 0) {
       // Ordenar vizinhos pelo ângulo natural em relação a n
@@ -1391,9 +1399,8 @@
           }
         });
       }
-
-      animatePositions(targets, 480);
     }
+    if (targets.size) animatePositions(targets, 480);
 
     if (centerCamera) {
       // Zoom suave para enquadrar n e os nós agrupados com clareza total
@@ -1433,41 +1440,25 @@
     hideTooltip();
   }
 
-  $("toggle-pos").onclick = (ev) => {
-    S.showPos = !S.showPos;
-    ev.currentTarget.classList.toggle("active", S.showPos);
+  function applyFilters() {
     resetHover();
-    aggregateEdges();
-  };
-  $("toggle-neg").onclick = (ev) => {
-    S.showNeg = !S.showNeg;
-    ev.currentTarget.classList.toggle("active", S.showNeg);
-    resetHover();
-    aggregateEdges();
-  };
+    if (S.focusNode) setFocus(S.focusNode, { centerCamera: false, refresh: true });
+    else aggregateEdges();
+  }
 
-  if ($("toggle-sent")) {
-    $("toggle-sent").onclick = (ev) => {
-      S.showSent = !S.showSent;
-      ev.currentTarget.classList.toggle("active", S.showSent);
-      resetHover();
-      aggregateEdges();
-      if (S.focusNode) {
-        setFocus(S.focusNode, { centerCamera: false });
-      }
+  const bindToggle = (id, key) => {
+    const el = $(id);
+    if (!el) return;
+    el.onclick = () => {
+      S[key] = !S[key];
+      el.classList.toggle("active", S[key]);
+      applyFilters();
     };
-  }
-  if ($("toggle-recv")) {
-    $("toggle-recv").onclick = (ev) => {
-      S.showRecv = !S.showRecv;
-      ev.currentTarget.classList.toggle("active", S.showRecv);
-      resetHover();
-      aggregateEdges();
-      if (S.focusNode) {
-        setFocus(S.focusNode, { centerCamera: false });
-      }
-    };
-  }
+  };
+  bindToggle("toggle-pos", "showPos");
+  bindToggle("toggle-neg", "showNeg");
+  bindToggle("toggle-sent", "showSent");
+  bindToggle("toggle-recv", "showRecv");
 
   // ---------- Busca ----------
   const searchInput = $("search-input");
@@ -1729,16 +1720,12 @@
       return;
     }
 
-    const star = useWeights ? "★" : "";
+    const star = "";
     rmTbody.innerHTML = data
       .map((item, idx) => {
         const rank = idx + 1;
         const isFocused = S.focusNode === item.node;
-        const rankBadge =
-          rank === 1 ? `<span class="rank-badge top-1">🥇</span>` :
-          rank === 2 ? `<span class="rank-badge top-2">🥈</span>` :
-          rank === 3 ? `<span class="rank-badge top-3">🥉</span>` :
-          `#${rank}`;
+        const rankBadge = rank <= 3 ? `<span class="rank-badge top-${rank}">${rank}</span>` : `${rank}`;
 
         const netClass = item.net > 0 ? "pos" : item.net < 0 ? "neg" : "zero";
         const netSign = item.net > 0 ? `+${item.net}${star}` : `${item.net}${star}`;
@@ -1773,7 +1760,7 @@
               </div>
             </td>
             <td class="td-action">
-              <button class="btn-focus-row" type="button" title="Ver no Grafo">Focar no Grafo ↗</button>
+              <button class="btn-focus-row" type="button">Focar</button>
             </td>
           </tr>
         `;
