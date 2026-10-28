@@ -295,6 +295,7 @@ html, body {
 .toggle .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; opacity: 0.5; }
 .toggle.pos.active { color: var(--pos); border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.1); }
 .toggle.neg.active { color: var(--neg); border-color: rgba(251, 113, 133, 0.4); background: rgba(251, 113, 133, 0.1); }
+.toggle.dir.active { color: #c5c7ff; border-color: rgba(139, 140, 248, 0.45); background: rgba(139, 140, 248, 0.14); }
 .toggle.active .dot { opacity: 1; box-shadow: 0 0 8px currentColor; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }

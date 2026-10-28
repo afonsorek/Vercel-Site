@@ -20,6 +20,8 @@
     activeCats: new Set(),
     showPos: true,
     showNeg: true,
+    showSent: true,
+    showRecv: true,
     maxCount: 1,
     transform: d3.zoomIdentity,
     hoverEdge: null,
@@ -1424,26 +1426,6 @@
       <div class="stat neg"><b>${sum(neg)}</b><span>Menções negativas</span></div>`;
   }
 
-  function renderChips() {
-    const wrap = $("cat-chips");
-    wrap.innerHTML = "";
-    S.categories.forEach((c, i) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.id = `cat-chip-${i}`;
-      b.className = "chip-btn" + (S.activeCats.has(c) ? " active" : "");
-      b.textContent = c;
-      b.onclick = () => {
-        if (S.activeCats.has(c)) S.activeCats.delete(c);
-        else S.activeCats.add(c);
-        b.classList.toggle("active");
-        resetHover();
-        aggregateEdges();
-      };
-      wrap.appendChild(b);
-    });
-  }
-
   function resetHover() {
     S.hoverEdge = null;
     S.hoverNode = null;
@@ -1463,6 +1445,29 @@
     resetHover();
     aggregateEdges();
   };
+
+  if ($("toggle-sent")) {
+    $("toggle-sent").onclick = (ev) => {
+      S.showSent = !S.showSent;
+      ev.currentTarget.classList.toggle("active", S.showSent);
+      resetHover();
+      aggregateEdges();
+      if (S.focusNode) {
+        setFocus(S.focusNode, { centerCamera: false });
+      }
+    };
+  }
+  if ($("toggle-recv")) {
+    $("toggle-recv").onclick = (ev) => {
+      S.showRecv = !S.showRecv;
+      ev.currentTarget.classList.toggle("active", S.showRecv);
+      resetHover();
+      aggregateEdges();
+      if (S.focusNode) {
+        setFocus(S.focusNode, { centerCamera: false });
+      }
+    };
+  }
 
   // ---------- Busca ----------
   const searchInput = $("search-input");
@@ -1937,8 +1942,11 @@
     Object.assign(S, data);
     S.activeCats = new Set(S.categories);
     S.showPos = S.showNeg = true;
+    S.showSent = S.showRecv = true;
     $("toggle-pos").classList.add("active");
     $("toggle-neg").classList.add("active");
+    if ($("toggle-sent")) $("toggle-sent").classList.add("active");
+    if ($("toggle-recv")) $("toggle-recv").classList.add("active");
     $("file-name").textContent = fileName;
     searchInput.value = "";
     searchHits = [];
@@ -1952,7 +1960,6 @@
     $("controls").classList.remove("hidden");
     if ($("top-nav")) $("top-nav").classList.remove("hidden");
 
-    renderChips();
     aggregateEdges();
 
     const maxW = d3.max(S.pairLinks, (l) => l.w) || 1;
