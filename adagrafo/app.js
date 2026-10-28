@@ -368,9 +368,7 @@
         matchedNodes.set(node.id, bestEntry.file);
         const url = "fotos_de_perfil/" + encodeURIComponent(bestEntry.file);
         node.photo = url;
-        const img = new Image();
-        img.src = url;
-        node.photoImg = img;
+        
       }
     }
 
@@ -389,9 +387,7 @@
           matchedNodes.set(node.id, entry.file);
           const url = "fotos_de_perfil/" + encodeURIComponent(entry.file);
           node.photo = url;
-          const img = new Image();
-          img.src = url;
-          node.photoImg = img;
+          
           break;
         }
       }
@@ -604,7 +600,7 @@
 
   function distToEdge(g, px, py) {
     let best = Infinity, lx = g.sx, ly = g.sy;
-    const N = 16;
+    const N = 8;
     for (let i = 1; i <= N; i++) {
       const t = i / N, mt = 1 - t;
       const x = mt * mt * g.sx + 2 * mt * t * g.cx + t * t * g.ex;
@@ -618,9 +614,11 @@
   function segDist(px, py, x1, y1, x2, y2) {
     const dx = x2 - x1, dy = y2 - y1;
     const l2 = dx * dx + dy * dy;
-    let t = l2 ? ((px - x1) * dx + (py - y1) * dy) / l2 : 0;
-    t = Math.max(0, Math.min(1, t));
-    return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    if (!l2) return Math.hypot(px - x1, py - y1);
+    let t = ((px - x1) * dx + (py - y1) * dy) / l2;
+    if (t < 0) t = 0;
+    else if (t > 1) t = 1;
+    return Math.hypot(x1 + t * dx - px, y1 + t * dy - py);
   }
 
   // ---------- Renderização ----------
@@ -666,88 +664,41 @@
     aggregateEdges();
   }
 
-  // ---------- Paletas e Sprites dos Nós ----------
+  // ---------- Paletas dos Nós (Cores Sólidas em Paleta Cinza) ----------
   const THEMES = {
     default: {
-      hl: { c0: "#e4e5ff", c1: "#8f92ff", c2: "#3d3fb0", glow: "rgba(139,140,248,0.9)" },
-      normal: { c0: "#c9cbff", c1: "#7376e6", c2: "#2d2f86" },
-      ring: "rgba(255,255,255,0.18)",
+      hl: "#a1a1aa",
+      normal: "#52525b",
+      ring: "rgba(255,255,255,0.22)",
     },
-    // Verde Vibrante para Saldo Positivo
     pos_high: {
-      hl: { c0: "#ecfdf5", c1: "#34d399", c2: "#047857", glow: "rgba(52,211,153,0.95)" },
-      normal: { c0: "#6ee7b7", c1: "#10b981", c2: "#065f46" },
+      hl: "#34d399",
+      normal: "#10b981",
       ring: "rgba(52,211,153,0.55)",
     },
     pos_mid: {
-      hl: { c0: "#f0fdf4", c1: "#4ade80", c2: "#15803d", glow: "rgba(74,222,128,0.9)" },
-      normal: { c0: "#86efac", c1: "#22c55e", c2: "#166534" },
+      hl: "#4ade80",
+      normal: "#22c55e",
       ring: "rgba(74,222,128,0.45)",
     },
-    // Roxo/Índigo Neutro para Saldo Zero
     neutral: {
-      hl: { c0: "#e0e7ff", c1: "#818cf8", c2: "#312e81", glow: "rgba(129,140,248,0.9)" },
-      normal: { c0: "#c7d2fe", c1: "#6366f1", c2: "#3730a3" },
-      ring: "rgba(129,140,248,0.35)",
+      hl: "#9ca3af",
+      normal: "#52525b",
+      ring: "rgba(156,163,175,0.35)",
     },
-    // Vermelho/Rubi Vibrante para Saldo Negativo
     neg_mid: {
-      hl: { c0: "#fff1f2", c1: "#fb7185", c2: "#9f1239", glow: "rgba(251,113,133,0.95)" },
-      normal: { c0: "#fda4af", c1: "#f43f5e", c2: "#881337" },
+      hl: "#fb7185",
+      normal: "#f43f5e",
       ring: "rgba(251,113,133,0.45)",
     },
     neg_high: {
-      hl: { c0: "#fff1f2", c1: "#f43f5e", c2: "#881337", glow: "rgba(239,68,68,1.0)" },
-      normal: { c0: "#fca5a5", c1: "#ef4444", c2: "#7f1d1d" },
+      hl: "#f43f5e",
+      normal: "#ef4444",
       ring: "rgba(239,68,68,0.6)",
     },
   };
 
-  function getNodeTier(n) {
-    if (S.nodeColorMode === "default") return "default";
-    if (S.nodeColorMode === "ratio") {
-      const r = n.ratio ?? 0.5;
-      if (r > 0.6) return "pos_high";
-      if (r > 0.5) return "pos_mid";
-      if (r === 0.5) return "neutral";
-      if (r >= 0.4) return "neg_mid";
-      return "neg_high";
-    }
-    // "balance" (Saldo de avaliações: Verde = Positivo, Vermelho = Negativo, Neutro = 0)
-    const net = n.net ?? 0;
-    if (net >= 3) return "pos_high";
-    if (net >= 1) return "pos_mid";
-    if (net === 0) return "neutral";
-    if (net >= -2) return "neg_mid";
-    return "neg_high";
-  }
-
-  function makeThemeSprite(colors, highlighted, r) {
-    // Cor sólida, sem gradiente nem brilho
-    const pad = 2;
-    const c = document.createElement("canvas");
-    c.width = c.height = Math.ceil((r + pad) * 2);
-    const g = c.getContext("2d");
-    const o = c.width / 2;
-    g.beginPath();
-    g.arc(o, o, r, 0, Math.PI * 2);
-    g.fillStyle = colors.c1;
-    g.fill();
-    return { img: c, r, k: o / r };
-  }
-
-  const SPRITE_SIZES = [8, 16, 32, 64, 128, 256];
-  const SPRITES = {};
-  for (const [key, theme] of Object.entries(THEMES)) {
-    SPRITES[key] = {
-      normal: SPRITE_SIZES.map((r) => makeThemeSprite(theme.normal, false, r)),
-      hl: SPRITE_SIZES.map((r) => makeThemeSprite(theme.hl, true, r)),
-    };
-  }
-
-  const spriteFor = (set, screenR) => set.find((s) => s.r >= screenR) || set[set.length - 1];
-
-  const DIM_COLOR = { pos: edgeColor("pos", 0.5, 0.09), neg: edgeColor("neg", 0.5, 0.09) };
+  const DIM_COLOR = { pos: "rgba(52, 211, 153, 0.08)", neg: "rgba(251, 113, 133, 0.08)" };
 
   function viewBounds(pad) {
     const T = S.transform;
@@ -826,7 +777,12 @@
     const activeEdges = [];
 
     for (const e of S.edges) {
-      const g = (e.g = edgeGeom(e));
+      const s = e.source, t = e.target;
+      let g = e.g;
+      if (!g || e._sx !== s.x || e._sy !== s.y || e._tx !== t.x || e._ty !== t.y || e._foc !== S.focusNode) {
+        g = e.g = edgeGeom(e);
+        e._sx = s.x; e._sy = s.y; e._tx = t.x; e._ty = t.y; e._foc = S.focusNode;
+      }
       if (
         Math.max(g.sx, g.cx, g.ex) < vb.x0 || Math.min(g.sx, g.cx, g.ex) > vb.x1 ||
         Math.max(g.sy, g.cy, g.ey) < vb.y0 || Math.min(g.sy, g.cy, g.ey) > vb.y1
@@ -884,7 +840,7 @@
         const badgeH = fsBadge + padY * 2;
         const rx = mx - badgeW / 2, ry = my - badgeH / 2, r = badgeH / 2;
 
-        ctx.fillStyle = "rgba(10, 13, 24, 0.96)";
+        ctx.fillStyle = "rgba(24, 24, 27, 0.96)";
         ctx.strokeStyle = e.type === "pos" ? "rgba(52, 211, 153, 0.95)" : "rgba(251, 113, 133, 0.95)";
         ctx.lineWidth = 1.4 / T.k;
         ctx.beginPath();
@@ -904,12 +860,12 @@
       paintBucket(b);
     }
 
-    // Nós (sprites) + contornos agrupados
+    // Nós (renderização direta ultrarrápida com cores sólidas)
     const nb = viewBounds(40 / T.k);
-    const scale = T.k * dpr;
     const ringN = new Path2D(), ringF = new Path2D(), ringH = new Path2D(), ringS = new Path2D();
     const addCircle = (p, x, y, r) => { p.moveTo(x + r, y); p.arc(x, y, r, 0, Math.PI * 2); };
     const visible = [];
+
     for (const n of S.nodes) {
       if (n.x + n.r < nb.x0 || n.x - n.r > nb.x1 || n.y + n.r < nb.y0 || n.y - n.r > nb.y1) continue;
       visible.push(n);
@@ -919,13 +875,14 @@
       const hl = n === S.hoverNode || n === focus || isFocal;
 
       const tier = getNodeTier(n);
-      const themeSet = SPRITES[tier] || SPRITES.default;
-      const sp = spriteFor(hl ? themeSet.hl : themeSet.normal, n.r * scale);
-      const d = n.r * sp.k;
+      const theme = THEMES[tier] || THEMES.default;
+      const fillColor = hl ? theme.hl : theme.normal;
 
-      // No modo foco: nós desconectados ficam com opacidade quase invisível (0.025)
       ctx.globalAlpha = faded ? (isFocused ? 0.025 : 0.18) : 1;
-      ctx.drawImage(sp.img, n.x - d, n.y - d, d * 2, d * 2);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = fillColor;
+      ctx.fill();
 
       if (!faded || !isFocused) {
         addCircle(hl ? ringH : faded ? ringF : ringN, n.x, n.y, n.r);
@@ -934,34 +891,33 @@
     }
     ctx.globalAlpha = 1;
     ctx.lineWidth = 1 / T.k;
-    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.strokeStyle = "rgba(255,255,255,0.12)";
     ctx.stroke(ringN);
-    ctx.strokeStyle = "rgba(255,255,255,0.035)";
+    ctx.strokeStyle = "rgba(255,255,255,0.03)";
     ctx.stroke(ringF);
     ctx.lineWidth = 2.2 / T.k;
-    ctx.strokeStyle = "rgba(255,255,255,0.95)";
+    ctx.strokeStyle = "rgba(255,255,255,0.92)";
     ctx.stroke(ringH);
     ctx.lineWidth = 1.6 / T.k;
-    ctx.strokeStyle = "rgba(167,169,255,0.95)";
+    ctx.strokeStyle = "rgba(212,212,216,0.92)";
     ctx.stroke(ringS);
 
-    // Rótulos (fonte definida uma vez por grupo)
+    // Rótulos
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.lineJoin = "round";
     ctx.lineWidth = 3.5 / T.k;
-    ctx.strokeStyle = "rgba(11,14,23,0.92)";
+    ctx.strokeStyle = "rgba(18,18,20,0.96)";
     const fs = 11.5 / Math.min(T.k, 1.5);
     const off = 4 / T.k;
     const isLit = (n) => !!lit && lit.has(n);
 
     if (isFocused) {
-      // Modo Foco: máxima clareza - SOMENTE o estudante em foco e seus vizinhos têm rótulos
       for (const n of visible) {
         if (!isLit(n)) continue;
         const isFocal = n === S.focusNode;
         ctx.font = `${isFocal ? 700 : 600} ${isFocal ? fs * 1.15 : fs}px Inter, sans-serif`;
-        ctx.fillStyle = isFocal ? "#ffffff" : "#f1f3fd";
+        ctx.fillStyle = isFocal ? "#ffffff" : "#f4f4f5";
         const y = n.y + n.r + off;
         ctx.strokeText(n.short, n.x, y);
         ctx.fillText(n.short, n.x, y);
@@ -977,7 +933,7 @@
           ctx.fillText(n.short, n.x, y);
         }
       };
-      if (T.k > 0.55) labels(500, dimming ? "rgba(200,205,225,0.15)" : "rgba(220,224,240,0.85)", (n) => !isLit(n));
+      if (T.k > 0.55) labels(500, dimming ? "rgba(161,161,170,0.18)" : "rgba(212,212,216,0.85)", (n) => !isLit(n));
       if (lit) labels(600, "#ffffff", isLit);
     }
   }
@@ -989,9 +945,12 @@
   }
 
   function findNode(x, y) {
+    const hitPad = 2 / S.transform.k;
     for (let i = S.nodes.length - 1; i >= 0; i--) {
       const n = S.nodes[i];
-      if (Math.hypot(n.x - x, n.y - y) <= n.r + 2 / S.transform.k) return n;
+      const r = n.r + hitPad;
+      const dx = n.x - x, dy = n.y - y;
+      if (dx * dx + dy * dy <= r * r) return n;
     }
     return null;
   }
@@ -1056,7 +1015,7 @@
   function nodeTooltipHTML(n) {
     const rep = getAuthorReputation(n.id);
     const repInfo = S.weightsEnabled
-      ? `<div class="muted" style="font-size:11.5px;margin-top:3px;">Peso como avaliador: <b style="color:#c5c7ff;">${rep.weight.toFixed(1)}x</b> (${rep.level === 'high' ? 'Alta reputação' : rep.level === 'low' ? 'Baixa reputação' : 'Reputação média'})</div>`
+      ? `<div class="muted" style="font-size:11.5px;margin-top:3px;">Peso como avaliador: <b style="color:#e4e4e7;">${rep.weight.toFixed(1)}x</b> (${rep.level === 'high' ? 'Alta reputação' : rep.level === 'low' ? 'Baixa reputação' : 'Reputação média'})</div>`
       : "";
     const netSign = n.net > 0 ? `+${n.net}` : `${n.net}`;
     const netColor = n.net > 0 ? "var(--pos)" : n.net < 0 ? "var(--neg)" : "var(--muted)";
@@ -1902,7 +1861,7 @@
     out.width = canvas.width;
     out.height = canvas.height;
     const o = out.getContext("2d");
-    o.fillStyle = "#0b0e17";
+    o.fillStyle = "#121214";
     o.fillRect(0, 0, out.width, out.height);
     o.drawImage(canvas, 0, 0);
     const a = document.createElement("a");
@@ -1953,12 +1912,12 @@
     S.sim = d3
       .forceSimulation(S.nodes)
       .force("link", d3.forceLink(S.pairLinks).id((d) => d.id).distance(110).strength((l) => 0.08 + 0.25 * (l.w / maxW)))
-      .force("charge", d3.forceManyBody().strength(-320).distanceMax(900))
-      .force("collide", d3.forceCollide().radius((d) => d.r + 16))
+      .force("charge", d3.forceManyBody().strength(-300).distanceMax(750).theta(0.9))
+      .force("collide", d3.forceCollide().radius((d) => d.r + 14).iterations(1))
       .force("x", d3.forceX().strength(0.04))
       .force("y", d3.forceY().strength(0.04))
       .stop();
-    S.sim.tick(220);
+    S.sim.tick(120);
 
     // Gravar posições naturais/originais de todos os nós após o layout da simulação
     for (const node of S.nodes) {
