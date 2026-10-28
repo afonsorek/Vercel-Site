@@ -664,12 +664,12 @@
     aggregateEdges();
   }
 
-  // ---------- Paletas dos Nós (Cores Sólidas em Paleta Cinza) ----------
+  // ---------- Paletas dos Nós (Cores Sólidas 2D - Paleta Original) ----------
   const THEMES = {
     default: {
-      hl: "#a1a1aa",
-      normal: "#52525b",
-      ring: "rgba(255,255,255,0.22)",
+      hl: "#8f92ff",
+      normal: "#7376e6",
+      ring: "rgba(255,255,255,0.25)",
     },
     pos_high: {
       hl: "#34d399",
@@ -677,14 +677,14 @@
       ring: "rgba(52,211,153,0.55)",
     },
     pos_mid: {
-      hl: "#4ade80",
-      normal: "#22c55e",
-      ring: "rgba(74,222,128,0.45)",
+      hl: "#5eead4",
+      normal: "#2dd4bf",
+      ring: "rgba(45,212,191,0.45)",
     },
     neutral: {
-      hl: "#9ca3af",
-      normal: "#52525b",
-      ring: "rgba(156,163,175,0.35)",
+      hl: "#818cf8",
+      normal: "#6366f1",
+      ring: "rgba(129,140,248,0.35)",
     },
     neg_mid: {
       hl: "#fb7185",
@@ -692,11 +692,30 @@
       ring: "rgba(251,113,133,0.45)",
     },
     neg_high: {
-      hl: "#f43f5e",
+      hl: "#f87171",
       normal: "#ef4444",
       ring: "rgba(239,68,68,0.6)",
     },
   };
+
+  function getNodeTier(n) {
+    if (S.nodeColorMode === "default") return "default";
+    if (S.nodeColorMode === "ratio") {
+      const r = n.ratio ?? 0.5;
+      if (r >= 0.75) return "pos_high";
+      if (r >= 0.55) return "pos_mid";
+      if (r >= 0.45) return "neutral";
+      if (r >= 0.25) return "neg_mid";
+      return "neg_high";
+    }
+    // "balance" (Saldo de avaliações: padrão)
+    const net = n.net ?? 0;
+    if (net >= 4) return "pos_high";
+    if (net >= 1) return "pos_mid";
+    if (net === 0) return "neutral";
+    if (net >= -4) return "neg_mid";
+    return "neg_high";
+  }
 
   const DIM_COLOR = { pos: "rgba(52, 211, 153, 0.08)", neg: "rgba(251, 113, 133, 0.08)" };
 
