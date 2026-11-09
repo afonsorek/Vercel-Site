@@ -379,7 +379,65 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 240px;
+  max-width: 260px;
+}
+
+/* Indicador minimalista de áudio tocando (visível apenas no #1 atual) */
+.now-playing-badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--idv-text-muted);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.15rem;
+}
+
+.ranking-item[data-rank="1"] .now-playing-badge {
+  display: inline-flex;
+}
+
+.ranking-item[data-rank="1"] .ranking-song-inline,
+.ranking-item[data-rank="1"] .ranking-sep-inline {
+  display: none;
+}
+
+.eq-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+
+.eq-bar {
+  width: 2px;
+  background-color: var(--idv-text);
+  animation: eqPulse 0.9s ease-in-out infinite;
+}
+
+.eq-bar:nth-child(1) {
+  height: 4px;
+  animation-delay: 0s;
+}
+
+.eq-bar:nth-child(2) {
+  height: 10px;
+  animation-delay: 0.2s;
+}
+
+.eq-bar:nth-child(3) {
+  height: 6px;
+  animation-delay: 0.4s;
+}
+
+@keyframes eqPulse {
+  0%, 100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
 }
 
 /* Estado durante o efeito de desintegração em poeira (Thanos Snap) */

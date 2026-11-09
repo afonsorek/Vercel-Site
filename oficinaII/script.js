@@ -578,6 +578,21 @@ document.addEventListener('DOMContentLoaded', () => {
     li.dataset.entryId = entry.id;
     li.dataset.rank = String(rankPosition);
 
+    // Indicador minimalista de que o #1 atual está tocando + nome da música
+    const playingBadge = document.createElement('div');
+    playingBadge.className = 'now-playing-badge';
+    playingBadge.innerHTML = `
+      <span class="eq-bars" aria-hidden="true">
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+      </span>
+    `;
+    const badgeSongTitle = document.createElement('span');
+    badgeSongTitle.className = 'ranking-song';
+    badgeSongTitle.textContent = entry.song.title;
+    playingBadge.appendChild(badgeSongTitle);
+
     const meaningEl = document.createElement('p');
     meaningEl.className = 'ranking-meaning';
     meaningEl.textContent = `“${entry.meaning}”`;
@@ -590,16 +605,18 @@ document.addEventListener('DOMContentLoaded', () => {
     nameEl.textContent = entry.name;
 
     const sepEl = document.createElement('span');
+    sepEl.className = 'ranking-sep-inline';
     sepEl.textContent = '·';
 
     const songEl = document.createElement('span');
-    songEl.className = 'ranking-song';
+    songEl.className = 'ranking-song ranking-song-inline';
     songEl.textContent = entry.song.title;
 
     metaEl.appendChild(nameEl);
     metaEl.appendChild(sepEl);
     metaEl.appendChild(songEl);
 
+    li.appendChild(playingBadge);
     li.appendChild(meaningEl);
     li.appendChild(metaEl);
 
