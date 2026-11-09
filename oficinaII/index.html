@@ -5,17 +5,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Oficina II — Experiência de Cocriação Sonora | afonso.io</title>
-  <meta name="description"
-    content="Enquanto uns são aplaudidos no palco, outros são abafados pela platéia. Plataforma de cocriação sonora e memória efêmera." />
+  <title>Oficina II</title>
+  <meta name="description" content="Enquanto uns são aplaudidos no palco, outros são abafados pela platéia." />
   <meta name="author" content="Afonso Rekbaim" />
   <link rel="canonical" href="https://www.afonso.io/oficinaII/" />
 
-  <!-- Tipografia sóbria (pronta para substituição de IDV futura) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Inter:wght@300;400;500&display=swap"
     rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
@@ -23,256 +21,101 @@
 
 <body>
 
-  <main class="app-shell">
+  <main class="screen">
 
-    <!-- Navegação discreta -->
-    <nav class="top-nav" aria-label="Navegação principal">
-      <a href="../" class="back-link">← afonso.io</a>
-      <span class="nav-tag">oficina II · cocriação</span>
-    </nav>
-
-    <!-- Frase Conceitual Obrigatória no Topo -->
-    <header class="epigraph-header">
-      <blockquote class="epigraph-quote">
+    <!-- Frase no topo -->
+    <header class="top-quote-wrap">
+      <p class="top-quote">
         “Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.”
-      </blockquote>
+      </p>
     </header>
 
-    <!-- Layout Principal: Formulário de Participação + Jukebox & Ranking -->
-    <div class="workspace-grid">
+    <!-- Centro: Campos de texto -->
+    <section class="center-stage">
+      <form id="cocreationForm" class="clean-form" autocomplete="off" novalidate>
 
-      <!-- COLUNA 1: Formulário de Cocriação -->
-      <section class="panel form-panel" aria-labelledby="formTitle">
-        <div class="panel-header">
-          <span class="section-index">01</span>
-          <h1 id="formTitle" class="section-title">Subir ao palco</h1>
-        </div>
+        <!-- Música (Input + Dropdown) -->
+        <div class="field">
+          <label for="songSearchInput" class="field-label">Música</label>
 
-        <form id="cocreationForm" class="cocreation-form" autocomplete="off" novalidate>
-
-          <!-- Busca de Música no YouTube com Dropdown -->
-          <div class="field-group">
-            <label for="songSearchInput" class="field-label">Escolha uma música</label>
-
-            <div class="search-combobox" id="searchCombobox">
-              <div class="search-input-wrap">
-                <input
-                  type="text"
-                  id="songSearchInput"
-                  class="text-input"
-                  placeholder="Pesquisar música ou artista no YouTube..."
-                  aria-autocomplete="list"
-                  aria-controls="searchResultsDropdown"
-                  aria-expanded="false"
-                />
-                <span id="searchSpinner" class="search-spinner" hidden aria-hidden="true"></span>
-              </div>
-
-              <!-- Dropdown de resultados da busca -->
-              <ul
-                id="searchResultsDropdown"
-                class="search-dropdown"
-                role="listbox"
-                aria-label="Resultados do YouTube"
-                hidden
-              ></ul>
-            </div>
-
-            <!-- Card da música selecionada -->
-            <div id="selectedSongCard" class="selected-song-card" hidden>
-              <img id="selectedSongThumb" class="selected-song-thumb" src="" alt="" />
-              <div class="selected-song-meta">
-                <span id="selectedSongTitle" class="selected-song-title"></span>
-                <span id="selectedSongChannel" class="selected-song-channel"></span>
-              </div>
-              <button type="button" id="clearSongBtn" class="clear-song-btn" aria-label="Trocar música">
-                trocar
-              </button>
-            </div>
-          </div>
-
-          <!-- Nome da Pessoa -->
-          <div class="field-group">
-            <label for="participantName" class="field-label">Seu nome</label>
+          <div class="search-combobox" id="searchCombobox">
             <input
               type="text"
-              id="participantName"
-              class="text-input"
-              placeholder="Como você quer ser chamado(a)?"
-              maxlength="80"
-              required
+              id="songSearchInput"
+              class="clean-input"
+              placeholder="Buscar no YouTube..."
+              aria-autocomplete="list"
+              aria-controls="searchResultsDropdown"
+              aria-expanded="false"
             />
+            <span id="searchSpinner" class="search-spinner" hidden aria-hidden="true"></span>
+
+            <ul
+              id="searchResultsDropdown"
+              class="search-dropdown"
+              role="listbox"
+              hidden
+            ></ul>
           </div>
 
-          <!-- Pergunta: O que essa música significa para você? -->
-          <div class="field-group">
-            <label for="songMeaning" class="field-label">O que essa música significa para você?</label>
-            <textarea
-              id="songMeaning"
-              class="text-input textarea-input"
-              rows="4"
-              placeholder="Escreva sua memória, sensação ou significado..."
-              maxlength="600"
-              required
-            ></textarea>
-          </div>
-
-          <!-- Mensagem de erro de validação -->
-          <p id="formError" class="form-error" role="alert" hidden></p>
-
-          <!-- Botão Enviar -->
-          <button type="submit" id="submitBtn" class="submit-btn">
-            <span>Enviar para o palco</span>
-            <span class="submit-arrow">→</span>
-          </button>
-        </form>
-      </section>
-
-      <!-- COLUNA 2: Jukebox (No Palco) & Ranking Efêmero -->
-      <section class="stage-column" aria-label="Palco e Ranking">
-
-        <!-- JUKEBOX: Última pessoa no palco em looping -->
-        <div class="panel jukebox-panel" id="jukeboxPanel">
-          <div class="panel-header jukebox-header">
-            <div class="panel-title-wrap">
-              <span class="section-index">02</span>
-              <h2 class="section-title">No palco · Jukebox</h2>
-            </div>
-            <div class="loop-indicator" id="loopIndicator" hidden>
-              <span class="pulse-dot"></span>
-              <span>em looping</span>
-            </div>
-          </div>
-
-          <!-- Estado Vazio (Ninguém enviou ainda) -->
-          <div id="jukeboxEmpty" class="jukebox-empty">
-            <p class="empty-text">O palco está em silêncio.</p>
-            <p class="empty-subtext">Escolha a primeira música para iniciar a jukebox em looping.</p>
-          </div>
-
-          <!-- Estado Ativo (Tocando a última música enviada) -->
-          <div id="jukeboxActive" class="jukebox-active" hidden>
-            <div class="stage-spotlight">
-              <div class="stage-meta-top">
-                <span class="stage-rank-badge">#1 · Agora no palco</span>
-                <span id="stageTimestamp" class="stage-timestamp"></span>
-              </div>
-
-              <blockquote id="stageMeaning" class="stage-meaning"></blockquote>
-
-              <div class="stage-author-row">
-                <span class="stage-author-dash">—</span>
-                <span id="stageParticipantName" class="stage-participant-name"></span>
-              </div>
-            </div>
-
-            <!-- Player / Controles da Jukebox -->
-            <div class="jukebox-player-bar">
-              <button
-                type="button"
-                id="jukeboxPlayPauseBtn"
-                class="jukebox-ctrl-btn"
-                aria-label="Pausar ou tocar jukebox"
-                title="Pausar / Tocar"
-              >
-                <svg id="jukeboxPlayIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display: none;">
-                  <polygon points="6,4 20,12 6,20"></polygon>
-                </svg>
-                <svg id="jukeboxPauseIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <rect x="6" y="4" width="4" height="16"></rect>
-                  <rect x="14" y="4" width="4" height="16"></rect>
-                </svg>
-              </button>
-
-              <div class="jukebox-track-info">
-                <span id="stageSongTitle" class="jukebox-track-title"></span>
-                <span id="stageSongChannel" class="jukebox-track-channel"></span>
-              </div>
-
-              <button
-                type="button"
-                id="toggleVideoBtn"
-                class="jukebox-text-btn"
-                title="Mostrar ou ocultar vídeo do YouTube"
-              >
-                vídeo
-              </button>
-            </div>
-
-            <!-- Container do YouTube IFrame API (visível opcionalmente ou discreto) -->
-            <div id="ytPlayerWrapper" class="yt-player-wrapper">
-              <div id="ytPlayerContainer"></div>
-            </div>
+          <div id="selectedSongCard" class="selected-song" hidden>
+            <span id="selectedSongTitle" class="selected-song-title"></span>
+            <button type="button" id="clearSongBtn" class="clear-song-btn" aria-label="Trocar música">×</button>
           </div>
         </div>
 
-        <!-- RANKING: Máximo de 5 pessoas (a partir da 5ª, as anteriores são empurradas e apagadas) -->
-        <div class="panel ranking-panel">
-          <div class="panel-header ranking-header">
-            <div class="panel-title-wrap">
-              <span class="section-index">03</span>
-              <h2 class="section-title">Ranking · Platéia</h2>
-            </div>
-            <span class="ranking-rule-hint" id="rankingCounter">0 / 5 visíveis</span>
-          </div>
-
-          <div id="rankingEmpty" class="ranking-empty">
-            <p>As participações aparecerão aqui. A partir da 5ª pessoa, cada nova voz empurra e apaga a mais antiga da vista.</p>
-          </div>
-
-          <!-- Lista visual limitada a 5 posições -->
-          <ol id="rankingList" class="ranking-list" aria-live="polite"></ol>
-
-          <!-- Indicador sutil de quantas vozes já foram abafadas/apagadas visualmente -->
-          <div id="muffledNotice" class="muffled-notice" hidden>
-            <span id="muffledCountText"></span>
-          </div>
+        <!-- Nome -->
+        <div class="field">
+          <label for="participantName" class="field-label">Nome</label>
+          <input
+            type="text"
+            id="participantName"
+            class="clean-input"
+            maxlength="80"
+            required
+          />
         </div>
 
-      </section>
+        <!-- O que essa música significa para você? -->
+        <div class="field">
+          <label for="songMeaning" class="field-label">O que essa música significa para você?</label>
+          <textarea
+            id="songMeaning"
+            class="clean-input clean-textarea"
+            rows="2"
+            maxlength="320"
+            required
+          ></textarea>
+        </div>
 
-    </div>
+        <p id="formError" class="form-error" role="alert" hidden></p>
 
-    <!-- Rodapé Minimalista: Arquivo JSON com todas as entradas salvas -->
-    <footer class="archive-footer">
-      <div class="archive-status">
-        <span class="archive-dot"></span>
-        <span id="totalSavedCount">0 entradas salvas no JSON</span>
-      </div>
+        <button type="submit" id="submitBtn" class="submit-btn">Enviar</button>
+      </form>
 
-      <div class="archive-actions">
-        <button type="button" id="viewJsonBtn" class="footer-action-btn">
-          Ver JSON
-        </button>
-        <button type="button" id="downloadJsonBtn" class="footer-action-btn primary-footer-btn">
-          Baixar JSON (<span id="downloadCountBadge">0</span>)
-        </button>
-        <button type="button" id="resetArchiveBtn" class="footer-action-btn danger-footer-btn" title="Apagar histórico salvo neste navegador">
-          Reiniciar
-        </button>
-      </div>
-    </footer>
+      <!-- Ranking do histórico (máximo 3 visíveis; #1 toca em looping) -->
+      <ol id="rankingList" class="ranking-list" aria-live="polite"></ol>
+    </section>
 
   </main>
 
-  <!-- Modal Sóbrio para Inspecionar / Copiar o JSON Completo -->
-  <div id="jsonModal" class="json-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="jsonModalTitle" hidden>
-    <div class="json-modal">
-      <div class="json-modal-header">
-        <h3 id="jsonModalTitle" class="json-modal-title">Arquivo Completo (JSON)</h3>
-        <div class="json-modal-actions">
-          <button type="button" id="copyJsonBtn" class="footer-action-btn">Copiar</button>
-          <button type="button" id="closeJsonModalBtn" class="footer-action-btn">Fechar ✕</button>
-        </div>
-      </div>
-      <pre id="jsonModalPre" class="json-modal-pre"></pre>
-    </div>
+  <!-- Botão ultra discreto no canto para baixar o JSON salvo no final -->
+  <button
+    type="button"
+    id="downloadJsonBtn"
+    class="corner-json-btn"
+    title="Baixar JSON com todas as entradas"
+  >
+    json (<span id="downloadCountBadge">0</span>)
+  </button>
+
+  <!-- Player de áudio oculto (apenas som em looping, sem mostrar vídeo) -->
+  <div class="hidden-audio-engine" aria-hidden="true">
+    <div id="ytPlayerContainer"></div>
   </div>
 
-  <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="script.js"></script>
 </body>
 
 </html>
-

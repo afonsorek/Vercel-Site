@@ -1,34 +1,30 @@
 // ==========================================================================
-// OFICINA II — Plataforma de Cocriação Sonora, Jukebox em Looping & Ranking
+// OFICINA II — Tela Única, Áudio em Looping e Desintegração (Thanos Snap)
 // ==========================================================================
 
 const STORAGE_KEY = 'oficinaII_entries_v1';
-const MAX_VISIBLE_RANKING = 5;
+const MAX_VISIBLE_RANKING = 3;
 
-// Estado Global
-let allEntries = []; // Todas as entradas salvas (nunca apagadas no envio; exportáveis em JSON)
+let allEntries = [];
 let selectedSong = null;
 let searchResults = [];
 let activeDropdownIndex = -1;
 let searchDebounceTimer = null;
 
-// YouTube IFrame Player
+// YouTube Audio-Only Loop Engine
 let ytPlayer = null;
 let ytApiReady = false;
 let currentPlayingVideoId = null;
-let isPlayerPlaying = false;
 
-// Callback global exigida pela YouTube IFrame API
 window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   if (allEntries.length > 0) {
     const latest = allEntries[allEntries.length - 1];
-    loadAndLoopVideo(latest.song.videoId);
+    loadAndLoopAudio(latest.song.videoId);
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Referências de DOM
   const form = document.getElementById('cocreationForm');
   const songSearchInput = document.getElementById('songSearchInput');
   const searchSpinner = document.getElementById('searchSpinner');
@@ -36,50 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchCombobox = document.getElementById('searchCombobox');
 
   const selectedSongCard = document.getElementById('selectedSongCard');
-  const selectedSongThumb = document.getElementById('selectedSongThumb');
   const selectedSongTitle = document.getElementById('selectedSongTitle');
-  const selectedSongChannel = document.getElementById('selectedSongChannel');
   const clearSongBtn = document.getElementById('clearSongBtn');
 
   const participantNameInput = document.getElementById('participantName');
   const songMeaningInput = document.getElementById('songMeaning');
   const formError = document.getElementById('formError');
 
-  // Jukebox DOM
-  const jukeboxEmpty = document.getElementById('jukeboxEmpty');
-  const jukeboxActive = document.getElementById('jukeboxActive');
-  const loopIndicator = document.getElementById('loopIndicator');
-  const stageTimestamp = document.getElementById('stageTimestamp');
-  const stageMeaning = document.getElementById('stageMeaning');
-  const stageParticipantName = document.getElementById('stageParticipantName');
-  const stageSongTitle = document.getElementById('stageSongTitle');
-  const stageSongChannel = document.getElementById('stageSongChannel');
-  const jukeboxPlayPauseBtn = document.getElementById('jukeboxPlayPauseBtn');
-  const jukeboxPlayIcon = document.getElementById('jukeboxPlayIcon');
-  const jukeboxPauseIcon = document.getElementById('jukeboxPauseIcon');
-  const toggleVideoBtn = document.getElementById('toggleVideoBtn');
-  const ytPlayerWrapper = document.getElementById('ytPlayerWrapper');
-
-  // Ranking DOM
-  const rankingCounter = document.getElementById('rankingCounter');
-  const rankingEmpty = document.getElementById('rankingEmpty');
   const rankingList = document.getElementById('rankingList');
-  const muffledNotice = document.getElementById('muffledNotice');
-  const muffledCountText = document.getElementById('muffledCountText');
-
-  // Arquivo JSON DOM
-  const totalSavedCount = document.getElementById('totalSavedCount');
-  const downloadCountBadge = document.getElementById('downloadCountBadge');
-  const viewJsonBtn = document.getElementById('viewJsonBtn');
   const downloadJsonBtn = document.getElementById('downloadJsonBtn');
-  const resetArchiveBtn = document.getElementById('resetArchiveBtn');
-  const jsonModal = document.getElementById('jsonModal');
-  const jsonModalPre = document.getElementById('jsonModalPre');
-  const copyJsonBtn = document.getElementById('copyJsonBtn');
-  const closeJsonModalBtn = document.getElementById('closeJsonModalBtn');
+  const downloadCountBadge = document.getElementById('downloadCountBadge');
 
   // --------------------------------------------------------------------------
-  // 1. Inicialização & Persistência
+  // 1. Armazenamento & JSON Completo
   // --------------------------------------------------------------------------
 
   function loadStoredEntries() {
@@ -92,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
-      console.warn('Erro ao ler entradas salvas:', err);
       allEntries = [];
     }
   }
@@ -101,39 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(allEntries));
     } catch (err) {
-      console.warn('Erro ao salvar entradas no localStorage:', err);
+      console.warn('Erro ao salvar no localStorage:', err);
     }
-    updateArchiveCounters();
-  }
-
-  function buildExportPayload() {
-    return {
-      projeto: 'Oficina II — Experiência de Cocriação Sonora',
-      epigrafe: 'Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.',
-      exportadoEm: new Date().toISOString(),
-      totalEntradas: allEntries.length,
-      visiveisNoPalcoERanking: Math.min(allEntries.length, MAX_VISIBLE_RANKING),
-      abafadosPelaPlateia: Math.max(0, allEntries.length - MAX_VISIBLE_RANKING),
-      entradas: allEntries.map((entry, idx) => {
-        const posicaoAtualNoRanking = allEntries.length - idx;
-        return {
-          ...entry,
-          posicaoAtualNoRanking,
-          visivelNaTela: posicaoAtualNoRanking <= MAX_VISIBLE_RANKING,
-        };
-      }),
-    };
-  }
-
-  function updateArchiveCounters() {
-    const total = allEntries.length;
-    totalSavedCount.textContent =
-      total === 1 ? '1 entrada salva no JSON' : `${total} entradas salvas no JSON`;
-    downloadCountBadge.textContent = String(total);
+    downloadCountBadge.textContent = String(allEntries.length);
   }
 
   // --------------------------------------------------------------------------
-  // 2. Busca no YouTube (API + Fallbacks)
+  // 2. Busca no YouTube
   // --------------------------------------------------------------------------
 
   function extractYouTubeId(input) {
@@ -179,9 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
             videos.push({ videoId, title, channel, duration, thumbnail });
           }
         }
-        if (videos.length >= 8) break;
+        if (videos.length >= 6) break;
       }
-      if (videos.length >= 8) break;
+      if (videos.length >= 6) break;
     }
     return videos;
   }
@@ -190,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const trimmed = query.trim();
     if (!trimmed) return [];
 
-    // Caso 1: O usuário colou um link direto do YouTube
     const directVideoId = extractYouTubeId(trimmed);
     if (directVideoId) {
       try {
@@ -212,21 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
             },
           ];
         }
-      } catch (_) {
-        // Continua com dados básicos do ID
-      }
+      } catch (_) {}
       return [
         {
           videoId: directVideoId,
           title: `YouTube (${directVideoId})`,
-          channel: 'Link direto',
+          channel: '',
           duration: '',
           thumbnail: `https://i.ytimg.com/vi/${directVideoId}/hqdefault.jpg`,
         },
       ];
     }
 
-    // Caso 2: Endpoint Serverless local/Vercel (/api/youtube-search)
     const apiCandidates = [
       `/api/youtube-search/?q=${encodeURIComponent(trimmed)}`,
       `/api/youtube-search?q=${encodeURIComponent(trimmed)}`,
@@ -241,18 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return data.results;
           }
         }
-      } catch (_) {
-        // Tenta próximo fallback
-      }
+      } catch (_) {}
     }
 
-    // Caso 3: Fallback via /api/fetch-html (já existente no domínio afonso.io)
     const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
       trimmed
     )}&hl=pt-BR`;
 
-    const fetchHtmlEndpoints = ['/api/fetch-html/', 'https://www.afonso.io/api/fetch-html/'];
-    for (const proxyEndpoint of fetchHtmlEndpoints) {
+    for (const proxyEndpoint of ['/api/fetch-html/', 'https://www.afonso.io/api/fetch-html/']) {
       try {
         const res = await fetch(proxyEndpoint, {
           method: 'POST',
@@ -266,9 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (parsed.length > 0) return parsed;
           }
         }
-      } catch (_) {
-        // Continua
-      }
+      } catch (_) {}
     }
 
     return [];
@@ -283,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
       songSearchInput.setAttribute('aria-expanded', 'true');
       const li = document.createElement('li');
       li.className = 'dropdown-empty';
-      li.textContent = 'Buscando no YouTube...';
+      li.textContent = 'Buscando...';
       searchResultsDropdown.appendChild(li);
       return;
     }
@@ -297,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       songSearchInput.setAttribute('aria-expanded', 'true');
       const li = document.createElement('li');
       li.className = 'dropdown-empty';
-      li.textContent = 'Nenhum resultado encontrado. Tente outro termo ou cole o link do YouTube.';
+      li.textContent = 'Nenhum resultado encontrado.';
       searchResultsDropdown.appendChild(li);
       return;
     }
@@ -330,10 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.appendChild(thumb);
       li.appendChild(meta);
 
-      li.addEventListener('click', () => {
-        selectSong(item);
-      });
-
+      li.addEventListener('click', () => selectSong(item));
       searchResultsDropdown.appendChild(li);
     });
 
@@ -357,12 +282,9 @@ document.addEventListener('DOMContentLoaded', () => {
       url: `https://www.youtube.com/watch?v=${song.videoId}`,
     };
 
-    selectedSongThumb.src = selectedSong.thumbnail;
-    selectedSongTitle.textContent = selectedSong.title;
-    selectedSongChannel.textContent = [selectedSong.channel, selectedSong.duration]
+    selectedSongTitle.textContent = [selectedSong.title, selectedSong.channel]
       .filter(Boolean)
-      .join(' · ');
-
+      .join(' — ');
     selectedSongCard.hidden = false;
     searchCombobox.hidden = true;
     closeDropdown();
@@ -374,10 +296,12 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedSongCard.hidden = true;
     searchCombobox.hidden = false;
     songSearchInput.value = '';
-    songSearchInput.focus();
   }
 
-  clearSongBtn.addEventListener('click', clearSelectedSong);
+  clearSongBtn.addEventListener('click', () => {
+    clearSelectedSong();
+    songSearchInput.focus();
+  });
 
   songSearchInput.addEventListener('input', (e) => {
     const q = e.target.value;
@@ -397,10 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
       searchResults = results;
       searchSpinner.hidden = true;
       renderDropdownResults(results, false, q.trim());
-    }, 340);
+    }, 320);
   });
 
-  // Navegação por teclado no dropdown
   songSearchInput.addEventListener('keydown', (e) => {
     if (searchResultsDropdown.hidden || searchResults.length === 0) return;
     const items = searchResultsDropdown.querySelectorAll('.search-dropdown-item');
@@ -438,10 +361,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 3. Jukebox em Looping (YouTube IFrame API)
+  // 3. Áudio da Jukebox em Looping (Oculto, Sem Mostrar Vídeo)
   // --------------------------------------------------------------------------
 
-  function loadAndLoopVideo(videoId) {
+  function loadAndLoopAudio(videoId) {
     if (!videoId) return;
     currentPlayingVideoId = videoId;
 
@@ -450,21 +373,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-      ytPlayer.loadVideoById({
-        videoId: videoId,
-        startSeconds: 0,
-      });
+      ytPlayer.loadVideoById({ videoId, startSeconds: 0 });
       ytPlayer.playVideo();
       return;
     }
 
     ytPlayer = new YT.Player('ytPlayerContainer', {
-      width: '100%',
-      height: '100%',
+      width: '1',
+      height: '1',
       videoId: videoId,
       playerVars: {
         autoplay: 1,
-        controls: 1,
+        controls: 0,
         rel: 0,
         modestbranding: 1,
         loop: 1,
@@ -473,85 +393,181 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       events: {
         onReady: (event) => {
+          event.target.unMute();
+          event.target.setVolume(100);
           event.target.playVideo();
-          setJukeboxPlayingUI(true);
         },
         onStateChange: (event) => {
-          // Garante looping infinito da última música enviada
           if (event.data === YT.PlayerState.ENDED) {
             event.target.seekTo(0);
             event.target.playVideo();
-          } else if (event.data === YT.PlayerState.PLAYING) {
-            setJukeboxPlayingUI(true);
-          } else if (event.data === YT.PlayerState.PAUSED) {
-            setJukeboxPlayingUI(false);
           }
         },
       },
     });
   }
 
-  function setJukeboxPlayingUI(playing) {
-    isPlayerPlaying = playing;
-    if (playing) {
-      jukeboxPlayIcon.style.display = 'none';
-      jukeboxPauseIcon.style.display = 'block';
-    } else {
-      jukeboxPlayIcon.style.display = 'block';
-      jukeboxPauseIcon.style.display = 'none';
-    }
-  }
-
-  jukeboxPlayPauseBtn.addEventListener('click', () => {
-    if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
-    const state = ytPlayer.getPlayerState();
-    if (state === YT.PlayerState.PLAYING) {
-      ytPlayer.pauseVideo();
-    } else {
-      ytPlayer.playVideo();
-    }
-  });
-
-  toggleVideoBtn.addEventListener('click', () => {
-    ytPlayerWrapper.classList.toggle('is-collapsed');
-  });
-
   // --------------------------------------------------------------------------
-  // 4. Renderização do Palco (#1) e Ranking Efêmero (até 5 pessoas)
+  // 4. Efeito Thanos Snap (Desintegração em Partículas de Poeira)
   // --------------------------------------------------------------------------
 
-  function formatShortTime(isoString) {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    } catch (_) {
-      return '';
-    }
-  }
+  function triggerThanosSnap(itemEl, entryData) {
+    if (itemEl.classList.contains('snapping')) return;
+    itemEl.classList.add('snapping');
 
-  function renderStageSpotlight() {
-    if (allEntries.length === 0) {
-      jukeboxEmpty.hidden = false;
-      jukeboxActive.hidden = true;
-      loopIndicator.hidden = true;
+    const rect = itemEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      itemEl.remove();
       return;
     }
 
-    const latest = allEntries[allEntries.length - 1];
-    jukeboxEmpty.hidden = true;
-    jukeboxActive.hidden = false;
-    loopIndicator.hidden = false;
+    // Cria um canvas sobreposto com margem extra para as partículas voarem
+    const padX = 120;
+    const padTop = 90;
+    const padBottom = 60;
+    const canvasWidth = rect.width + padX * 2;
+    const canvasHeight = rect.height + padTop + padBottom;
 
-    stageMeaning.textContent = `“${latest.meaning}”`;
-    stageParticipantName.textContent = latest.name;
-    stageTimestamp.textContent = formatShortTime(latest.createdAt);
-    stageSongTitle.textContent = latest.song.title;
-    stageSongChannel.textContent = latest.song.channel;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dustCanvas = document.createElement('canvas');
+    dustCanvas.className = 'snap-dust-canvas';
+    dustCanvas.style.left = `${rect.left - padX}px`;
+    dustCanvas.style.top = `${rect.top - padTop}px`;
+    dustCanvas.style.width = `${canvasWidth}px`;
+    dustCanvas.style.height = `${canvasHeight}px`;
+    dustCanvas.width = canvasWidth * dpr;
+    dustCanvas.height = canvasHeight * dpr;
+    document.body.appendChild(dustCanvas);
 
-    if (currentPlayingVideoId !== latest.song.videoId) {
-      loadAndLoopVideo(latest.song.videoId);
+    const ctx = dustCanvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // Renderiza o texto exato do item em um canvas offscreen para extrair os pixels reais
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = Math.ceil(rect.width);
+    offCanvas.height = Math.ceil(rect.height);
+    const offCtx = offCanvas.getContext('2d');
+
+    offCtx.textAlign = 'center';
+    offCtx.textBaseline = 'middle';
+
+    // Linha 1: Significado
+    offCtx.font = 'italic 300 15.5px "Newsreader", Georgia, serif';
+    offCtx.fillStyle = 'rgba(242, 242, 242, 0.72)';
+    const meaningText = `“${entryData.meaning}”`;
+    offCtx.fillText(meaningText, rect.width / 2, rect.height * 0.36, rect.width - 16);
+
+    // Linha 2: Nome e Música
+    offCtx.font = '400 11.5px "Inter", sans-serif';
+    offCtx.fillStyle = 'rgba(180, 180, 180, 0.65)';
+    const metaText = `${entryData.name}  ·  ${entryData.song.title}`;
+    offCtx.fillText(metaText, rect.width / 2, rect.height * 0.72, rect.width - 16);
+
+    // Amostra os pixels visíveis do texto e gera partículas de poeira
+    const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
+    const particles = [];
+
+    for (let y = 0; y < offCanvas.height; y += 1) {
+      for (let x = 0; x < offCanvas.width; x += 1) {
+        const idx = (y * offCanvas.width + x) * 4;
+        const alpha = imgData[idx + 3];
+        if (alpha > 25 && Math.random() < 0.68) {
+          const normX = x / offCanvas.width;
+          particles.push({
+            x: padX + x,
+            y: padTop + y,
+            // A onda de desintegração varre da esquerda para a direita com leve ruído orgânico
+            triggerAt: normX * 0.55 + (Math.random() - 0.5) * 0.12,
+            vx: (Math.random() * 1.4 + 0.35) * (Math.random() < 0.8 ? 1 : -0.4),
+            vy: -(Math.random() * 1.35 + 0.25),
+            size: Math.random() * 1.6 + 0.7,
+            alpha: (alpha / 255) * 0.9,
+            life: 0,
+            maxLife: 0.45 + Math.random() * 0.45,
+            turbulenceSeed: Math.random() * Math.PI * 2,
+          });
+        }
+      }
     }
+
+    // Também adiciona partículas extras de "cinza/poeira" ao longo da largura do item
+    for (let i = 0; i < 240; i++) {
+      const rx = Math.random() * offCanvas.width;
+      const ry = Math.random() * (offCanvas.height * 0.7) + offCanvas.height * 0.15;
+      particles.push({
+        x: padX + rx,
+        y: padTop + ry,
+        triggerAt: (rx / offCanvas.width) * 0.55 + (Math.random() - 0.5) * 0.1,
+        vx: Math.random() * 1.8 - 0.2,
+        vy: -(Math.random() * 1.5 + 0.3),
+        size: Math.random() * 1.9 + 0.6,
+        alpha: Math.random() * 0.55 + 0.25,
+        life: 0,
+        maxLife: 0.5 + Math.random() * 0.45,
+        turbulenceSeed: Math.random() * Math.PI * 2,
+      });
+    }
+
+    const duration = 1750; // ms
+    const startTime = performance.now();
+
+    function animateFrame(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+
+      // Máscara progressiva que "apaga" o elemento DOM da esquerda para a direita enquanto vira pó
+      const wavePct = Math.min(120, (progress / 0.62) * 120);
+      const maskGrad = `linear-gradient(102deg, transparent ${Math.max(
+        0,
+        wavePct - 18
+      )}%, rgba(0,0,0,0.3) ${wavePct}%, black ${wavePct + 14}%)`;
+      itemEl.style.webkitMaskImage = maskGrad;
+      itemEl.style.maskImage = maskGrad;
+
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        if (progress < p.triggerAt) continue;
+
+        p.life += 0.016;
+        const lifeRatio = p.life / p.maxLife;
+        if (lifeRatio >= 1) continue;
+
+        // Movimento orgânico de poeira ao vento (subindo e derivando)
+        p.x += p.vx + Math.sin(p.life * 6 + p.turbulenceSeed) * 0.45;
+        p.y += p.vy + Math.cos(p.life * 5 + p.turbulenceSeed) * 0.25;
+        p.vx *= 1.008;
+        p.vy *= 1.01;
+
+        const currentAlpha = p.alpha * (1 - lifeRatio * lifeRatio);
+        ctx.fillStyle = `rgba(242, 242, 242, ${currentAlpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animateFrame);
+      } else {
+        dustCanvas.remove();
+        // Recolhe suavemente o espaço residual e remove do DOM
+        itemEl.style.transition = 'max-height 260ms ease, padding 260ms ease, margin 260ms ease';
+        itemEl.style.maxHeight = '0px';
+        itemEl.style.paddingTop = '0px';
+        itemEl.style.paddingBottom = '0px';
+        itemEl.style.margin = '0px';
+        itemEl.style.overflow = 'hidden';
+        setTimeout(() => itemEl.remove(), 270);
+      }
+    }
+
+    requestAnimationFrame(animateFrame);
   }
+
+  // --------------------------------------------------------------------------
+  // 5. Renderização do Ranking (Máximo 3 visíveis; a partir de 3 é apagado)
+  // --------------------------------------------------------------------------
 
   function createRankingItemElement(entry, rankPosition, isNewTop = false) {
     const li = document.createElement('li');
@@ -562,116 +578,80 @@ document.addEventListener('DOMContentLoaded', () => {
     li.dataset.entryId = entry.id;
     li.dataset.rank = String(rankPosition);
 
-    const topRow = document.createElement('div');
-    topRow.className = 'ranking-item-top';
+    const meaningEl = document.createElement('p');
+    meaningEl.className = 'ranking-meaning';
+    meaningEl.textContent = `“${entry.meaning}”`;
 
-    const personWrap = document.createElement('div');
-    personWrap.className = 'ranking-person';
-
-    const posBadge = document.createElement('span');
-    posBadge.className = 'ranking-pos';
-    posBadge.textContent = `#${rankPosition}`;
+    const metaEl = document.createElement('div');
+    metaEl.className = 'ranking-meta';
 
     const nameEl = document.createElement('span');
     nameEl.className = 'ranking-name';
     nameEl.textContent = entry.name;
 
-    personWrap.appendChild(posBadge);
-    personWrap.appendChild(nameEl);
+    const sepEl = document.createElement('span');
+    sepEl.textContent = '·';
 
-    const songTag = document.createElement('span');
-    songTag.className = 'ranking-song-tag';
-    songTag.textContent = `♪ ${entry.song.title}`;
+    const songEl = document.createElement('span');
+    songEl.className = 'ranking-song';
+    songEl.textContent = entry.song.title;
 
-    topRow.appendChild(personWrap);
-    topRow.appendChild(songTag);
+    metaEl.appendChild(nameEl);
+    metaEl.appendChild(sepEl);
+    metaEl.appendChild(songEl);
 
-    const meaningEl = document.createElement('p');
-    meaningEl.className = 'ranking-meaning';
-    meaningEl.textContent = entry.meaning;
-
-    li.appendChild(topRow);
     li.appendChild(meaningEl);
+    li.appendChild(metaEl);
+
+    // Guarda os dados no próprio elemento para o efeito Thanos Snap usar ao desintegrar
+    li._entryData = entry;
 
     return li;
   }
 
-  /**
-   * Atualiza o ranking visual.
-   * A partir da 5ª pessoa, quando uma nova pessoa envia, a que estava na 5ª posição
-   * é empurrada para baixo e apagada visualmente (com animação .pushed-out).
-   */
-  function renderRanking(animateNewSubmission = false) {
-    const total = allEntries.length;
+  function renderInitialState() {
+    rankingList.innerHTML = '';
+    if (allEntries.length === 0) return;
 
-    if (total === 0) {
-      rankingEmpty.hidden = false;
-      rankingList.innerHTML = '';
-      rankingCounter.textContent = `0 / ${MAX_VISIBLE_RANKING} visíveis`;
-      muffledNotice.hidden = true;
-      return;
-    }
-
-    rankingEmpty.hidden = true;
-
-    // As últimas 5 pessoas (em ordem reversa: mais recente no topo #1)
     const visibleEntries = allEntries.slice(-MAX_VISIBLE_RANKING).reverse();
-    const muffledCount = Math.max(0, total - MAX_VISIBLE_RANKING);
+    visibleEntries.forEach((entry, idx) => {
+      rankingList.appendChild(createRankingItemElement(entry, idx + 1, false));
+    });
 
-    rankingCounter.textContent = `${visibleEntries.length} / ${MAX_VISIBLE_RANKING} visíveis`;
-
-    if (muffledCount > 0) {
-      muffledNotice.hidden = false;
-      muffledCountText.textContent =
-        muffledCount === 1
-          ? '1 voz anterior já foi abafada pela platéia (preservada no JSON)'
-          : `${muffledCount} vozes anteriores já foram abafadas pela platéia (preservadas no JSON)`;
-    } else {
-      muffledNotice.hidden = true;
+    const latest = visibleEntries[0];
+    if (latest && currentPlayingVideoId !== latest.song.videoId) {
+      loadAndLoopAudio(latest.song.videoId);
     }
+  }
 
-    if (!animateNewSubmission) {
-      rankingList.innerHTML = '';
-      visibleEntries.forEach((entry, index) => {
-        const rankPos = index + 1;
-        rankingList.appendChild(createRankingItemElement(entry, rankPos, false));
-      });
-      return;
-    }
+  function addNewEntryToStage(newEntry) {
+    // Toca em looping a música da última pessoa a colocar
+    loadAndLoopAudio(newEntry.song.videoId);
 
-    // Se estamos animando uma nova submissão:
-    // 1. Insere a nova entrada no topo (#1)
-    const newestEntry = visibleEntries[0];
-    const newTopEl = createRankingItemElement(newestEntry, 1, true);
+    // Insere no topo do ranking (#1)
+    const newTopEl = createRankingItemElement(newEntry, 1, true);
     rankingList.prepend(newTopEl);
 
-    // 2. Atualiza as posições dos itens existentes e empurra/apaga quem passar de 5
-    const allDomItems = Array.from(rankingList.querySelectorAll('.ranking-item:not(.pushed-out)'));
-    allDomItems.forEach((itemEl, index) => {
+    // Atualiza posições e aplica o Thanos Snap em quem passar de 3
+    const activeItems = Array.from(rankingList.querySelectorAll('.ranking-item:not(.snapping)'));
+    activeItems.forEach((itemEl, index) => {
       const newRank = index + 1;
-      const posBadge = itemEl.querySelector('.ranking-pos');
-      if (posBadge) {
-        posBadge.textContent = `#${newRank}`;
-      }
-
       if (newRank <= MAX_VISIBLE_RANKING) {
         itemEl.dataset.rank = String(newRank);
       } else {
-        // Passou da 5ª pessoa -> empurrada para baixo e apagada!
-        itemEl.classList.add('pushed-out');
-        itemEl.addEventListener(
-          'animationend',
-          () => {
-            itemEl.remove();
-          },
-          { once: true }
-        );
+        // Empurrado além da 3ª posição -> efeito Thanos Snap!
+        const entryData = itemEl._entryData || {
+          name: itemEl.querySelector('.ranking-name')?.textContent || '',
+          meaning: (itemEl.querySelector('.ranking-meaning')?.textContent || '').replace(/[“”]/g, ''),
+          song: { title: itemEl.querySelector('.ranking-song')?.textContent || '' },
+        };
+        triggerThanosSnap(itemEl, entryData);
       }
     });
   }
 
   // --------------------------------------------------------------------------
-  // 5. Submissão do Formulário
+  // 6. Envio do Formulário & Download do JSON
   // --------------------------------------------------------------------------
 
   function showError(msg) {
@@ -689,28 +669,28 @@ document.addEventListener('DOMContentLoaded', () => {
     hideError();
 
     if (!selectedSong) {
-      showError('Por favor, pesquise e selecione uma música na lista.');
+      showError('Escolha uma música.');
       songSearchInput.focus();
       return;
     }
 
     const name = participantNameInput.value.trim();
     if (!name) {
-      showError('Por favor, informe seu nome.');
+      showError('Informe seu nome.');
       participantNameInput.focus();
       return;
     }
 
     const meaning = songMeaningInput.value.trim();
     if (!meaning) {
-      showError('Por favor, conte o que essa música significa para você.');
+      showError('Responda o que essa música significa para você.');
       songMeaningInput.focus();
       return;
     }
 
     const newEntry = {
       id: `entry_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      sequenceNumber: allEntries.length + 1,
+      order: allEntries.length + 1,
       name,
       meaning,
       song: { ...selectedSong },
@@ -719,88 +699,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     allEntries.push(newEntry);
     saveEntriesToStorage();
+    addNewEntryToStage(newEntry);
 
-    // Atualiza Jukebox (#1 em looping) e Ranking (empurrando/apagando a partir da 5ª)
-    renderStageSpotlight();
-    renderRanking(true);
-
-    // Limpa o formulário para a próxima pessoa da fila
     clearSelectedSong();
     participantNameInput.value = '';
     songMeaningInput.value = '';
   });
 
-  // --------------------------------------------------------------------------
-  // 6. Exportação e Visualização do JSON Completo
-  // --------------------------------------------------------------------------
-
   downloadJsonBtn.addEventListener('click', () => {
-    const payload = buildExportPayload();
-    const jsonString = JSON.stringify(payload, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+    const payload = {
+      epigrafe: 'Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.',
+      exportadoEm: new Date().toISOString(),
+      totalEntradas: allEntries.length,
+      entradas: allEntries,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json;charset=utf-8',
+    });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement('a');
-    const dateStamp = new Date().toISOString().slice(0, 10);
     a.href = url;
-    a.download = `oficinaII-entradas-${dateStamp}.json`;
+    a.download = 'oficinaII-entradas.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   });
 
-  viewJsonBtn.addEventListener('click', () => {
-    const payload = buildExportPayload();
-    jsonModalPre.textContent = JSON.stringify(payload, null, 2);
-    jsonModal.hidden = false;
-  });
-
-  closeJsonModalBtn.addEventListener('click', () => {
-    jsonModal.hidden = true;
-  });
-
-  jsonModal.addEventListener('click', (e) => {
-    if (e.target === jsonModal) {
-      jsonModal.hidden = true;
-    }
-  });
-
-  copyJsonBtn.addEventListener('click', async () => {
-    const payload = buildExportPayload();
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-      const original = copyJsonBtn.textContent;
-      copyJsonBtn.textContent = 'Copiado ✓';
-      setTimeout(() => {
-        copyJsonBtn.textContent = original;
-      }, 1800);
-    } catch (_) {
-      // Fallback
-    }
-  });
-
-  resetArchiveBtn.addEventListener('click', () => {
-    if (allEntries.length === 0) return;
-    const confirmed = window.confirm(
-      `Tem certeza que deseja apagar as ${allEntries.length} entradas salvas neste navegador? Recomendamos clicar em "Baixar JSON" antes de reiniciar.`
-    );
-    if (!confirmed) return;
-
-    allEntries = [];
-    saveEntriesToStorage();
-    currentPlayingVideoId = null;
-    if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
-      ytPlayer.stopVideo();
-    }
-    renderStageSpotlight();
-    renderRanking(false);
-  });
-
-  // Inicialização da página
   loadStoredEntries();
-  updateArchiveCounters();
-  renderStageSpotlight();
-  renderRanking(false);
+  downloadCountBadge.textContent = String(allEntries.length);
+  renderInitialState();
 });
-
