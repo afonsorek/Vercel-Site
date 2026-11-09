@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Inter:wght@300;400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Share+Tech+Mono&display=swap"
     rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
@@ -21,95 +21,135 @@
 
 <body>
 
-  <main class="screen">
+  <!-- Ambiente (sala escura, luz quente, piso) -->
+  <div class="room" aria-hidden="true">
+    <div class="room-wall"></div>
+    <div class="room-spot"></div>
+    <div class="room-floor"></div>
+  </div>
 
-    <!-- Frase no topo -->
-    <header class="top-quote-wrap">
-      <p class="top-quote">
-        “Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.”
-      </p>
-    </header>
+  <!-- Palco escalável: tudo cabe em uma única tela -->
+  <div id="stage" class="stage">
 
-    <!-- Centro: Campos de texto -->
-    <section class="center-stage">
-      <form id="cocreationForm" class="clean-form" autocomplete="off" novalidate>
+    <p class="room-quote">“Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.”</p>
 
-        <!-- Música (Input + Dropdown) -->
-        <div class="field">
-          <label for="songSearchInput" class="field-label">Música</label>
+    <div class="jukebox">
 
-          <div class="search-combobox" id="searchCombobox">
-            <input
-              type="text"
-              id="songSearchInput"
-              class="clean-input"
-              placeholder="Buscar no YouTube..."
-              aria-autocomplete="list"
-              aria-controls="searchResultsDropdown"
-              aria-expanded="false"
-            />
-            <span id="searchSpinner" class="search-spinner" hidden aria-hidden="true"></span>
+      <!-- Brasão cromado -->
+      <div class="jb-crown" aria-hidden="true">
+        <span class="crown-text">OFICINA<em>II</em></span>
+      </div>
 
-            <ul
-              id="searchResultsDropdown"
-              class="search-dropdown"
-              role="listbox"
-              hidden
-            ></ul>
+      <!-- Arco de neon com bolhas -->
+      <div class="jb-neon" aria-hidden="true"><div class="jb-bubbles"></div></div>
+      <div class="jb-chrome" aria-hidden="true"></div>
+
+      <!-- Frisos cromados laterais -->
+      <div class="side-ribs side-ribs--left" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="side-ribs side-ribs--right" aria-hidden="true"><i></i><i></i><i></i></div>
+
+      <div class="jb-body">
+
+        <!-- Cúpula: vinil girando -->
+        <div class="jb-dome" aria-hidden="true">
+          <div class="dome-velvet"></div>
+          <div class="dome-rays"></div>
+          <div class="record-stack">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="turntable">
+            <div class="platter">
+              <div class="vinyl" id="vinyl">
+                <div class="vinyl-label" id="vinylLabel"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tonearm" id="tonearm">
+            <div class="tonearm-base"></div>
+            <div class="tonearm-arm"><span class="tonearm-head"></span></div>
+          </div>
+          <div class="glass-glare"></div>
+        </div>
+
+        <div class="chrome-band" aria-hidden="true"></div>
+
+        <!-- Tiras de título: os nomes aparecem aqui, acima da caixa de interação -->
+        <div class="jb-strips">
+          <div class="strip-slots" aria-hidden="true">
+            <div class="strip-slot"><span>A1</span></div>
+            <div class="strip-slot"><span>A2</span></div>
+            <div class="strip-slot"><span>A3</span></div>
+          </div>
+          <ol id="rankingList" class="ranking-list" aria-live="polite"></ol>
+          <div class="glass-glare glass-glare--flat" aria-hidden="true"></div>
+        </div>
+
+        <!-- Display: indicador do que está tocando -->
+        <div class="jb-display">
+          <button type="button" id="playPauseBtn" class="chrome-btn" aria-label="Tocar / pausar">
+            <svg class="icon-play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="7,4 20,12 7,20"></polygon></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          </button>
+          <div class="vfd">
+            <span class="vfd-lamp"></span>
+            <div class="vfd-marquee" id="vfdMarquee">
+              <span id="nowPlayingTitle">INSIRA UMA MÚSICA</span>
+            </div>
+            <div class="vfd-eq" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Painel de interação -->
+        <form id="cocreationForm" class="jb-panel" autocomplete="off" novalidate>
+          <span class="screw screw--tl"></span><span class="screw screw--tr"></span>
+          <span class="screw screw--bl"></span><span class="screw screw--br"></span>
+
+          <div class="field">
+            <label for="songSearchInput" class="field-label">Música</label>
+            <div class="search-combobox" id="searchCombobox">
+              <input type="text" id="songSearchInput" class="paper-input" placeholder="buscar no youtube..."
+                aria-autocomplete="list" aria-controls="searchResultsDropdown" aria-expanded="false" />
+              <span id="searchSpinner" class="search-spinner" hidden aria-hidden="true"></span>
+              <ul id="searchResultsDropdown" class="search-dropdown" role="listbox" hidden></ul>
+            </div>
+            <div id="selectedSongCard" class="paper-input selected-song" hidden>
+              <span id="selectedSongTitle" class="selected-song-title"></span>
+              <button type="button" id="clearSongBtn" class="clear-song-btn" aria-label="Trocar música">×</button>
+            </div>
           </div>
 
-          <div id="selectedSongCard" class="selected-song" hidden>
-            <span id="selectedSongTitle" class="selected-song-title"></span>
-            <button type="button" id="clearSongBtn" class="clear-song-btn" aria-label="Trocar música">×</button>
+          <div class="field">
+            <label for="participantName" class="field-label">Nome</label>
+            <input type="text" id="participantName" class="paper-input" maxlength="60" required />
           </div>
-        </div>
 
-        <!-- Nome -->
-        <div class="field">
-          <label for="participantName" class="field-label">Nome</label>
-          <input
-            type="text"
-            id="participantName"
-            class="clean-input"
-            maxlength="80"
-            required
-          />
-        </div>
+          <div class="field">
+            <label for="songMeaning" class="field-label">O que essa música significa para você?</label>
+            <textarea id="songMeaning" class="paper-input paper-textarea" rows="2" maxlength="280" required></textarea>
+          </div>
 
-        <!-- O que essa música significa para você? -->
-        <div class="field">
-          <label for="songMeaning" class="field-label">O que essa música significa para você?</label>
-          <textarea
-            id="songMeaning"
-            class="clean-input clean-textarea"
-            rows="2"
-            maxlength="320"
-            required
-          ></textarea>
-        </div>
+          <div class="panel-actions">
+            <p id="formError" class="form-error" role="alert" hidden></p>
+            <button type="submit" id="submitBtn" class="arcade-btn">Enviar</button>
+          </div>
+        </form>
 
-        <p id="formError" class="form-error" role="alert" hidden></p>
+        <!-- Grade do alto-falante -->
+        <div class="jb-grille" aria-hidden="true"><div class="grille-glow"></div></div>
+      </div>
+    </div>
 
-        <button type="submit" id="submitBtn" class="submit-btn">Enviar</button>
-      </form>
+    <div class="floor-reflection" aria-hidden="true"></div>
+  </div>
 
-      <!-- Ranking do histórico (máximo 3 visíveis; #1 toca em looping) -->
-      <ol id="rankingList" class="ranking-list" aria-live="polite"></ol>
-    </section>
-
-  </main>
-
-  <!-- Botão ultra discreto no canto para baixar o JSON salvo no final -->
-  <button
-    type="button"
-    id="downloadJsonBtn"
-    class="corner-json-btn"
-    title="Baixar JSON com todas as entradas"
-  >
+  <!-- Exportação discreta do JSON -->
+  <button type="button" id="downloadJsonBtn" class="corner-json-btn" title="Baixar JSON com todas as entradas">
     json (<span id="downloadCountBadge">0</span>)
   </button>
 
-  <!-- Player de áudio oculto (apenas som em looping, sem mostrar vídeo) -->
+  <!-- Motor de áudio oculto (somente som) -->
   <div class="hidden-audio-engine" aria-hidden="true">
     <div id="ytPlayerContainer"></div>
   </div>

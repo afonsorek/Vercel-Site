@@ -1,22 +1,26 @@
 /* ==========================================================================
-   OFICINA II — UI/UX Minimalista em Tela Única (Pronta para futura IDV)
+   OFICINA II — Jukebox Diegética & Hiper-Realista (Tela Única Sem Scroll)
    ========================================================================== */
 
 :root {
-  --idv-bg: #050505;
-  --idv-surface: #0e0e0e;
-  --idv-surface-hover: #171717;
-  --idv-border: #262626;
-  --idv-border-focus: #555555;
-  --idv-text: #f2f2f2;
-  --idv-text-muted: #8a8a8a;
-  --idv-text-faint: #444444;
-  --idv-accent: #ffffff;
-  --idv-accent-contrast: #050505;
-  --idv-danger: #d45b5b;
+  --neon-pink: #ff4fd8;
+  --neon-magenta: #d91b8f;
+  --neon-amber: #ffae34;
+  --neon-gold: #ffd97d;
+  --wood-dark: #1d0f09;
+  --wood-mid: #381d11;
+  --chrome-light: #f7f9fc;
+  --chrome-mid: #9ea5b0;
+  --chrome-dark: #2c3038;
+  --paper-cream: #f7edd4;
+  --paper-aged: #e5d2a7;
+  --ink-dark: #1b130c;
+  --ink-muted: #5c4632;
 
-  --idv-font-serif: 'Newsreader', Georgia, serif;
-  --idv-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Oswald', sans-serif;
+  --font-typewriter: 'Special Elite', monospace;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-mono: 'Share Tech Mono', monospace;
 }
 
 *,
@@ -32,104 +36,1009 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--idv-bg);
-  color: var(--idv-text);
-  font-family: var(--idv-font-sans);
+  background-color: #09060d;
+  color: #f5efe6;
+  font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
 }
 
-/* Tela Única Centralizada */
-.screen {
-  width: 100%;
-  height: 100vh;
-  max-width: 560px;
+/* ==========================================================================
+   AMBIENTE (SALA / LUZ DE FUNDO / PISO)
+   ========================================================================== */
+
+.room {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.room-wall {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(217, 27, 143, 0.28) 0%, rgba(74, 24, 92, 0.22) 38%, rgba(8, 5, 14, 0.96) 78%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.012) 0px,
+      rgba(255, 255, 255, 0.012) 2px,
+      transparent 2px,
+      transparent 48px
+    ),
+    linear-gradient(180deg, #120b1d 0%, #09050e 82%, #050307 100%);
+}
+
+.room-spot {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 174, 52, 0.18) 0%,
+    rgba(255, 79, 216, 0.12) 35%,
+    transparent 70%
+  );
+  filter: blur(25px);
+}
+
+.room-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 79, 216, 0.26) 0%, rgba(255, 174, 52, 0.1) 35%, transparent 70%),
+    linear-gradient(180deg, #0c0610 0%, #040206 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ==========================================================================
+   PALCO ESCALÁVEL (CABE INTEIRO EM 100VH SEM SCROLL)
+   ========================================================================== */
+
+.stage {
+  position: relative;
+  z-index: 2;
+  width: 580px;
   margin: 0 auto;
-  padding: 2.25rem 1.5rem 1.75rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
+  transform-origin: top center;
+  padding-top: 10px;
 }
 
-/* Frase no Topo */
-.top-quote-wrap {
-  width: 100%;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.top-quote {
-  font-family: var(--idv-font-serif);
+.room-quote {
+  font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
-  line-height: 1.35;
-  color: var(--idv-text);
-  opacity: 0.9;
+  font-size: 1.08rem;
+  letter-spacing: 0.01em;
+  color: rgba(255, 240, 220, 0.92);
+  text-align: center;
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.95),
+    0 0 22px rgba(255, 174, 52, 0.35);
+  max-width: 540px;
 }
 
-/* Palco Central (Formulário + Ranking) */
-.center-stage {
+/* ==========================================================================
+   ESTRUTURA EXTERNA DA JUKEBOX (ARCO DE NEON, CROMO E FRISOS)
+   ========================================================================== */
+
+.jukebox {
+  position: relative;
+  width: 530px;
+  padding: 36px 38px 18px;
+  border-radius: 265px 265px 22px 22px;
+  background:
+    linear-gradient(180deg, #2a1215 0%, #14080a 100%);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.95),
+    0 0 65px rgba(255, 79, 216, 0.35),
+    0 0 120px rgba(255, 140, 40, 0.18),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35);
+}
+
+/* Tubo de Neon Arqueado (inspirado nas referências) */
+.jb-neon {
+  position: absolute;
+  inset: 6px;
+  border-radius: 260px 260px 18px 18px;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      #ff55d8 0%,
+      #ffb84d 18%,
+      #ff4fd8 50%,
+      #ffb84d 82%,
+      #ff55d8 100%
+    );
+  padding: 24px;
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.85),
+    inset 0 0 32px rgba(255, 45, 165, 0.9),
+    0 0 25px rgba(255, 79, 216, 0.65);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.jb-bubbles {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.75) 1.5px, transparent 3px),
+    radial-gradient(circle at 80% 45%, rgba(255, 255, 255, 0.7) 2px, transparent 4px),
+    radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.65) 1.5px, transparent 3px),
+    radial-gradient(circle at 65% 20%, rgba(255, 255, 255, 0.8) 2px, transparent 4px);
+  background-size: 60px 60px;
+  animation: bubblesRise 4.5s linear infinite;
+  opacity: 0.75;
+}
+
+@keyframes bubblesRise {
+  from {
+    background-position: 0 60px;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Moldura Cromada Interna ao Neon */
+.jb-chrome {
+  position: absolute;
+  inset: 28px;
+  border-radius: 238px 238px 14px 14px;
+  pointer-events: none;
+  border: 8px solid transparent;
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #8d96a3 22%,
+      #272b33 45%,
+      #f0f4f8 52%,
+      #59606b 75%,
+      #d9e0e8 100%
+    ) border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  box-shadow:
+    0 0 12px rgba(0, 0, 0, 0.85),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* Brasão / Coroa Cromada no Topo do Arco */
+.jb-crown {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  padding: 5px 26px 6px;
+  border-radius: 18px 18px 12px 12px;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #c6cdd6 35%, #464c56 68%, #d7dde5 100%);
+  border: 2px solid #f7f9fc;
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.crown-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.22em;
+  color: #16181d;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.crown-text em {
+  font-style: normal;
+  color: #a8134b;
+  margin-left: 3px;
+}
+
+/* Frisos Cromados Laterais (3 garras horizontais de cada lado como na foto 2) */
+.side-ribs {
+  position: absolute;
+  top: 195px;
+  width: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 7;
+  pointer-events: none;
+}
+
+.side-ribs--left {
+  left: -6px;
+}
+
+.side-ribs--right {
+  right: -6px;
+}
+
+.side-ribs i {
+  display: block;
+  height: 18px;
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #f8fafc 0px,
+      #f8fafc 4px,
+      #3a404a 4px,
+      #3a404a 8px,
+      #9ca4b0 8px,
+      #9ca4b0 12px
+    ),
+    linear-gradient(180deg, #ffffff 0%, #525864 55%, #1c1f24 100%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.85),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* ==========================================================================
+   CORPO INTERNO DA JUKEBOX (MADEIRA ESCURA & AÇO ESCOVADO)
+   ========================================================================== */
+
+.jb-body {
+  position: relative;
+  z-index: 3;
+  border-radius: 228px 228px 12px 12px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.015) 0px,
+      rgba(255, 255, 255, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    linear-gradient(180deg, #26140d 0%, #190d08 48%, #120906 100%);
+  padding: 14px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow:
+    inset 0 10px 28px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 2px rgba(255, 210, 150, 0.12);
+}
+
+/* ==========================================================================
+   1. CÚPULA SUPERIOR: PILHA DE VINIS, VITROLA E RAIOS DE LUZ QUENTE
+   ========================================================================== */
+
+.jb-dome {
+  position: relative;
+  height: 142px;
+  border-radius: 215px 215px 8px 8px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 92%, #ffdf85 0%, #ff9824 38%, #6e1c14 74%, #1f0708 100%);
+  border: 3px solid #3c261a;
+  box-shadow:
+    inset 0 14px 32px rgba(0, 0, 0, 0.85),
+    inset 0 -6px 16px rgba(0, 0, 0, 0.7),
+    0 2px 4px rgba(255, 255, 255, 0.15);
+}
+
+.dome-rays {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 180deg at 50% 85%,
+    transparent 0deg,
+    rgba(255, 240, 175, 0.35) 15deg,
+    transparent 32deg,
+    rgba(255, 230, 140, 0.42) 52deg,
+    transparent 70deg,
+    rgba(255, 245, 190, 0.45) 90deg,
+    transparent 110deg,
+    rgba(255, 230, 140, 0.42) 128deg,
+    transparent 148deg,
+    rgba(255, 240, 175, 0.35) 165deg,
+    transparent 180deg
+  );
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+/* Pilha de discos horizontais (igual à imagem 2) */
+.record-stack {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+}
+
+.record-stack::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  bottom: -14px;
+  width: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #d8dee6, #4b525d, #ffffff);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+}
+
+.record-stack span {
+  display: block;
   width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    #09090b 0%,
+    #353840 25%,
+    #0a0a0d 50%,
+    #454852 78%,
+    #09090b 100%
+  );
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.record-stack span:nth-child(odd) {
+  width: 94%;
+}
+
+/* Disco ativo na base da cúpula */
+.turntable {
+  position: absolute;
+  bottom: -36px;
+  left: 50%;
+  transform: translateX(-50%) perspective(300px) rotateX(58deg);
+  width: 180px;
+  height: 180px;
+  z-index: 3;
+}
+
+.platter {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 6px;
+  background: linear-gradient(135deg, #d4dae2, #464c56, #f1f5f9);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9);
+}
+
+.vinyl {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  background:
+    conic-gradient(
+      from 0deg,
+      #101014 0deg,
+      #2d3039 25deg,
+      #0c0c0f 55deg,
+      #343842 90deg,
+      #101014 140deg,
+      #2c2f38 180deg,
+      #0d0d11 215deg,
+      #353944 265deg,
+      #0e0e12 315deg,
+      #101014 360deg
+    );
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vinyl.is-spinning {
+  animation: spinVinyl 2.8s linear infinite;
+}
+
+@keyframes spinVinyl {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vinyl-label {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffdf80 0%, #d93829 35%, #8c1717 100%);
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+
+.vinyl-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Braço da agulha (Tonearm) */
+.tonearm {
+  position: absolute;
+  right: 54px;
+  bottom: 10px;
+  width: 70px;
+  height: 95px;
+  z-index: 4;
+}
+
+.tonearm-base {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 44px;
+  height: 28px;
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, #4a4e58 0%, #181a1f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+.tonearm-arm {
+  position: absolute;
+  right: 18px;
+  bottom: 22px;
+  width: 5px;
+  height: 62px;
+  background: linear-gradient(90deg, #ffffff, #68707d);
+  transform-origin: bottom center;
+  transform: rotate(-28deg);
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: 3px;
+}
+
+.tonearm.is-active .tonearm-arm {
+  transform: rotate(-48deg);
+}
+
+.tonearm-head {
+  position: absolute;
+  top: -6px;
+  left: -18px;
+  width: 24px;
+  height: 8px;
+  background: #1f2229;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+}
+
+.glass-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.05) 28%,
+    transparent 45%,
+    transparent 80%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  pointer-events: none;
+  z-index: 6;
+}
+
+.chrome-band {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #4c525c 0%,
+    #f5f7fa 22%,
+    #636b78 50%,
+    #f5f7fa 78%,
+    #4c525c 100%
+  );
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.85),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* ==========================================================================
+   2. TIRAS DE TÍTULO (OS NOMES APARECEM AQUI, POR CIMA DA CAIXA DE INTERAÇÃO)
+   ========================================================================== */
+
+.jb-strips {
+  position: relative;
+  height: 178px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 198, 105, 0.22), rgba(15, 8, 5, 0.95)),
+    #120a06;
+  border: 3px solid #6b727e;
+  box-shadow:
+    inset 0 4px 16px rgba(0, 0, 0, 0.95),
+    0 2px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+/* Slots vazios de fundo (A1, A2, A3) visíveis quando ainda não há 3 pessoas */
+.strip-slots {
+  position: absolute;
+  inset: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.strip-slot {
   flex: 1;
+  border-radius: 3px;
+  border: 1px dashed rgba(255, 214, 153, 0.16);
+  background: rgba(255, 230, 185, 0.03);
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
+
+.strip-slot span {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: rgba(255, 214, 153, 0.2);
+  letter-spacing: 0.08em;
+}
+
+/* Lista das 3 pessoas (sobreposta aos slots) */
+.ranking-list {
+  position: relative;
+  z-index: 3;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  height: 100%;
+}
+
+/* Tira de papel iluminada de Jukebox */
+.ranking-item {
+  position: relative;
+  height: 48px;
+  min-height: 48px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, #fff8e6 0%, #f3dfba 52%, #e2c792 100%);
+  border: 1px solid #966b3b;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.75),
+    inset 0 0 10px rgba(255, 166, 48, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-dark);
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease,
+    filter 420ms ease;
+}
+
+/* #1 no palco: tira acesa com brilho quente de lâmpada incandescente */
+.ranking-item[data-rank="1"] {
+  background:
+    linear-gradient(180deg, #fffdf5 0%, #ffefc8 55%, #f5d693 100%);
+  border-color: #ffae34;
+  box-shadow:
+    0 0 16px rgba(255, 174, 52, 0.55),
+    inset 0 0 12px rgba(255, 195, 75, 0.45);
+}
+
+.ranking-item[data-rank="2"] {
+  opacity: 0.84;
+  filter: sepia(0.15) brightness(0.92);
+}
+
+.ranking-item[data-rank="3"] {
+  opacity: 0.64;
+  filter: sepia(0.3) brightness(0.8);
+}
+
+.ranking-item.entering-stage {
+  animation: stripInsert 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes stripInsert {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Código lateral tipo Jukebox (A1, A2, A3) */
+.strip-code {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #9e1b1b 0%, #5e0d0d 100%);
+  color: #fff5d6;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.ranking-item[data-rank="1"] .strip-code {
+  background: linear-gradient(180deg, #d92626 0%, #8a1111 100%);
+}
+
+/* Conteúdo principal da tira: Nome em destaque absoluto no topo + Significado */
+.strip-main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1.6rem;
-  min-height: 0;
+  min-width: 0;
+  line-height: 1.15;
 }
 
-/* Formulário Limpo */
-.clean-form {
-  width: 100%;
+.ranking-name {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #160e07;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranking-item[data-rank="1"] .ranking-name {
+  font-size: 1.08rem;
+  color: #0d0703;
+}
+
+.ranking-meaning {
+  font-family: var(--font-typewriter);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* Lado direito da tira: nome da música + indicador quando for #1 */
+.strip-right {
   display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+  align-items: center;
+  gap: 6px;
+  max-width: 155px;
+}
+
+.ranking-song {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #6b4c2b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.strip-eq {
+  display: none;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
   flex-shrink: 0;
 }
+
+.ranking-item[data-rank="1"] .strip-eq {
+  display: inline-flex;
+}
+
+.strip-eq i {
+  width: 2px;
+  background: #b81d1d;
+  animation: eqBounce 0.8s ease-in-out infinite;
+}
+
+.strip-eq i:nth-child(1) {
+  height: 5px;
+  animation-delay: 0s;
+}
+.strip-eq i:nth-child(2) {
+  height: 11px;
+  animation-delay: 0.18s;
+}
+.strip-eq i:nth-child(3) {
+  height: 7px;
+  animation-delay: 0.36s;
+}
+
+@keyframes eqBounce {
+  0%, 100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.ranking-item.snapping {
+  pointer-events: none;
+}
+
+.snap-dust-canvas {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ==========================================================================
+   3. DISPLAY DE ÁUDIO (INDICADOR QUE O ATUAL ESTÁ TOCANDO + NOME DA MÚSICA)
+   ========================================================================== */
+
+.jb-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, #3c424c 0%, #1d2026 50%, #2c313a 100%);
+  border: 2px solid #8c95a4;
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.85),
+    0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.chrome-btn {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #8f98a6 55%, #2b3038 100%);
+  color: #15181e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  transition: transform 120ms ease;
+}
+
+.chrome-btn:active {
+  transform: scale(0.93);
+}
+
+.chrome-btn .icon-pause {
+  display: none;
+}
+
+.chrome-btn.is-playing .icon-play {
+  display: none;
+}
+
+.chrome-btn.is-playing .icon-pause {
+  display: block;
+}
+
+/* Visor retroiluminado (inspirado na janela de equalizador da imagem 2) */
+.vfd {
+  flex: 1;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 4px;
+  background:
+    radial-gradient(circle at 50% 50%, #182a2e 0%, #091114 100%);
+  border: 1px solid #4a5564;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.vfd-lamp {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #475569;
+  flex-shrink: 0;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.vfd.is-active .vfd-lamp {
+  background: #ffae34;
+  box-shadow: 0 0 8px #ffae34, 0 0 14px #ff55d8;
+}
+
+.vfd-marquee {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: #ffd996;
+  text-shadow: 0 0 8px rgba(255, 174, 52, 0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vfd-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 18px;
+  opacity: 0.25;
+  transition: opacity 250ms ease;
+}
+
+.vfd.is-active .vfd-eq {
+  opacity: 1;
+}
+
+.vfd-eq i {
+  width: 3px;
+  height: 14px;
+  background: linear-gradient(180deg, #ff55d8 0%, #ffae34 60%, #ffe699 100%);
+  transform-origin: bottom;
+  transform: scaleY(0.2);
+}
+
+.vfd.is-active .vfd-eq i {
+  animation: vfdSpectrum 0.75s ease-in-out infinite alternate;
+}
+
+.vfd-eq i:nth-child(1) { animation-delay: 0.05s; }
+.vfd-eq i:nth-child(2) { animation-delay: 0.2s; }
+.vfd-eq i:nth-child(3) { animation-delay: 0.35s; }
+.vfd-eq i:nth-child(4) { animation-delay: 0.12s; }
+.vfd-eq i:nth-child(5) { animation-delay: 0.45s; }
+.vfd-eq i:nth-child(6) { animation-delay: 0.28s; }
+.vfd-eq i:nth-child(7) { animation-delay: 0.08s; }
+.vfd-eq i:nth-child(8) { animation-delay: 0.38s; }
+.vfd-eq i:nth-child(9) { animation-delay: 0.18s; }
+.vfd-eq i:nth-child(10) { animation-delay: 0.42s; }
+
+@keyframes vfdSpectrum {
+  0% {
+    transform: scaleY(0.2);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* ==========================================================================
+   4. PAINEL METÁLICO DE INTERAÇÃO (CAMPOS DE TEXTO)
+   ========================================================================== */
+
+.jb-panel {
+  position: relative;
+  padding: 12px 16px 12px;
+  border-radius: 6px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(180deg, #2d323b 0%, #1d2027 100%);
+  border: 2px solid #8a93a2;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    0 6px 14px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Parafusos nos 4 cantos do painel */
+.screw {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e2e8f0, #475569);
+  border: 1px solid #1e293b;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+.screw--tl { top: 5px; left: 5px; }
+.screw--tr { top: 5px; right: 5px; }
+.screw--bl { bottom: 5px; left: 5px; }
+.screw--br { bottom: 5px; right: 5px; }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.32rem;
+  gap: 3px;
   position: relative;
 }
 
 .field-label {
-  font-size: 0.74rem;
-  font-weight: 400;
-  color: var(--idv-text-muted);
-  letter-spacing: 0.02em;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #d6dde6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
-.clean-input {
+.paper-input {
   width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--idv-border);
-  color: var(--idv-text);
-  font-family: var(--idv-font-sans);
-  font-size: 0.9rem;
-  padding: 0.45rem 0;
+  background: linear-gradient(180deg, #121418 0%, #181b21 100%);
+  border: 1px solid #525b69;
+  border-radius: 3px;
+  padding: 6px 10px;
+  color: #ffebba;
+  font-family: var(--font-typewriter);
+  font-size: 0.84rem;
   outline: none;
-  transition: border-color 180ms ease;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.clean-input::placeholder {
-  color: var(--idv-text-faint);
+.paper-input::placeholder {
+  color: rgba(255, 235, 186, 0.3);
 }
 
-.clean-input:focus {
-  border-bottom-color: var(--idv-border-focus);
+.paper-input:focus {
+  border-color: #ffae34;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.9),
+    0 0 8px rgba(255, 174, 52, 0.35);
 }
 
-.clean-textarea {
+.paper-textarea {
   resize: none;
-  line-height: 1.45;
+  line-height: 1.35;
 }
 
-/* Busca YouTube e Dropdown */
+/* Busca YouTube e Dropdown Diegético */
 .search-combobox {
   position: relative;
   width: 100%;
@@ -139,42 +1048,37 @@ body {
 
 .search-spinner {
   position: absolute;
-  right: 0.2rem;
+  right: 9px;
   width: 13px;
   height: 13px;
-  border: 1.5px solid var(--idv-border);
-  border-top-color: var(--idv-text);
+  border: 2px solid rgba(255, 174, 52, 0.25);
+  border-top-color: #ffae34;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: spinVinyl 0.7s linear infinite;
 }
 
 .search-dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  bottom: calc(100% + 4px);
   left: 0;
   right: 0;
-  z-index: 60;
-  background-color: var(--idv-surface);
-  border: 1px solid var(--idv-border-focus);
+  z-index: 80;
+  background: #171a20;
+  border: 2px solid #9da6b4;
+  border-radius: 4px;
   list-style: none;
-  max-height: 210px;
+  max-height: 195px;
   overflow-y: auto;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.95);
 }
 
 .search-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.55rem 0.7rem;
+  gap: 8px;
+  padding: 6px 8px;
   cursor: pointer;
-  border-bottom: 1px solid var(--idv-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   transition: background-color 120ms ease;
 }
 
@@ -184,14 +1088,15 @@ body {
 
 .search-dropdown-item:hover,
 .search-dropdown-item.is-active {
-  background-color: var(--idv-surface-hover);
+  background-color: #292f3a;
 }
 
 .dropdown-thumb {
   width: 38px;
   height: 28px;
   object-fit: cover;
-  filter: grayscale(60%);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
 }
 
@@ -203,250 +1108,169 @@ body {
 }
 
 .dropdown-title {
-  font-size: 0.8rem;
-  color: var(--idv-text);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: #fff3d6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .dropdown-sub {
-  font-size: 0.68rem;
-  color: var(--idv-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: #9ba3b0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .dropdown-empty {
-  padding: 0.75rem;
-  font-size: 0.76rem;
-  color: var(--idv-text-muted);
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: #9ba3b0;
   text-align: center;
 }
 
-/* Música Selecionada */
 .selected-song {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.6rem;
-  padding: 0.45rem 0;
-  border-bottom: 1px solid var(--idv-border-focus);
+  gap: 8px;
+  background: linear-gradient(180deg, #24190e 0%, #181008 100%);
+  border-color: #ffae34;
 }
 
 .selected-song-title {
-  font-size: 0.88rem;
-  color: var(--idv-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.8rem;
+  color: #ffd98a;
 }
 
 .clear-song-btn {
   background: none;
   border: none;
-  color: var(--idv-text-muted);
-  font-size: 1.1rem;
+  color: #ffae34;
+  font-size: 1.05rem;
   line-height: 1;
   cursor: pointer;
-  padding: 0 0.25rem;
+  padding: 0 4px;
 }
 
-.clear-song-btn:hover {
-  color: var(--idv-text);
+/* Rodapé do painel: erro + botão físico iluminado */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 2px;
 }
 
 .form-error {
-  font-size: 0.74rem;
-  color: var(--idv-danger);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #ff6b6b;
 }
 
-.submit-btn {
-  margin-top: 0.25rem;
-  align-self: center;
-  background-color: var(--idv-accent);
-  color: var(--idv-accent-contrast);
-  border: none;
-  padding: 0.6rem 2.2rem;
-  font-family: var(--idv-font-sans);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+.arcade-btn {
+  margin-left: auto;
+  padding: 7px 26px;
+  border-radius: 4px;
+  border: 2px solid #ffd485;
+  background:
+    linear-gradient(180deg, #ff5e36 0%, #c91e10 55%, #8f0f06 100%);
+  color: #fff9eb;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 150ms ease, transform 120ms ease;
+  box-shadow:
+    0 4px 0 #4d0803,
+    0 6px 14px rgba(0, 0, 0, 0.85),
+    0 0 16px rgba(255, 94, 54, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.65);
+  transition: transform 90ms ease, box-shadow 90ms ease;
 }
 
-.submit-btn:hover {
-  opacity: 0.88;
+.arcade-btn:hover {
+  filter: brightness(1.08);
 }
 
-.submit-btn:active {
-  transform: scale(0.98);
+.arcade-btn:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 #4d0803,
+    0 3px 8px rgba(0, 0, 0, 0.85),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 /* ==========================================================================
-   RANKING DO HISTÓRICO (MÁXIMO 3 VISÍVEIS + EFEITO THANOS SNAP)
+   5. GRADE DO ALTO-FALANTE INFERIOR (COM TRELIÇA CROMADA E NEON ROSA)
    ========================================================================== */
 
-.ranking-list {
-  list-style: none;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.jb-grille {
   position: relative;
+  height: 36px;
+  border-radius: 4px 4px 10px 10px;
+  border: 2px solid #8c95a4;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(235, 240, 248, 0.32) 0px,
+      rgba(235, 240, 248, 0.32) 2px,
+      transparent 2px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(235, 240, 248, 0.32) 0px,
+      rgba(235, 240, 248, 0.32) 2px,
+      transparent 2px,
+      transparent 10px
+    ),
+    radial-gradient(circle at 50% 50%, #ff55d8 0%, #9c146e 55%, #24071d 100%);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.85);
 }
 
-.ranking-item {
-  position: relative;
-  padding: 0.65rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.22rem;
-  transition:
-    transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 450ms ease;
+.grille-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 210, 130, 0.35), transparent 70%);
+  animation: grillePulse 2s ease-in-out infinite alternate;
 }
 
-/* #1: Última pessoa (tocando em looping na jukebox) */
-.ranking-item[data-rank="1"] {
-  opacity: 1;
-}
-
-.ranking-item[data-rank="1"] .ranking-name {
-  font-size: 1.28rem;
-  font-weight: 500;
-  color: var(--idv-text);
-}
-
-/* #2 e #3: Pessoas anteriores sendo empurradas para baixo */
-.ranking-item[data-rank="2"] {
-  opacity: 0.62;
-}
-
-.ranking-item[data-rank="3"] {
-  opacity: 0.36;
-}
-
-.ranking-item.entering-stage {
-  animation: slideInTop 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes slideInTop {
+@keyframes grillePulse {
   from {
-    opacity: 0;
-    transform: translateY(-12px);
+    opacity: 0.45;
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 0.95;
   }
 }
 
-.ranking-name {
-  font-family: var(--idv-font-sans);
-  font-size: 1.12rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--idv-text);
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.floor-reflection {
+  width: 440px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 79, 216, 0.45) 0%,
+    rgba(255, 174, 52, 0.2) 45%,
+    transparent 75%
+  );
+  filter: blur(6px);
 }
 
-.ranking-meaning {
-  font-family: var(--idv-font-serif);
-  font-style: italic;
-  font-size: 0.92rem;
-  line-height: 1.35;
-  color: var(--idv-text-muted);
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+/* ==========================================================================
+   MOTOR DE ÁUDIO OCULTO E BOTÃO JSON DISCRETO
+   ========================================================================== */
 
-.ranking-song {
-  font-size: 0.72rem;
-  color: var(--idv-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 260px;
-}
-
-/* Indicador minimalista de áudio tocando (visível apenas no #1 atual) */
-.now-playing-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  font-size: 0.7rem;
-  color: var(--idv-text-muted);
-  letter-spacing: 0.03em;
-  margin-top: 0.1rem;
-}
-
-.ranking-item:not([data-rank="1"]) .eq-bars {
-  display: none;
-}
-
-.eq-bars {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 10px;
-}
-
-.eq-bar {
-  width: 2px;
-  background-color: var(--idv-text);
-  animation: eqPulse 0.9s ease-in-out infinite;
-}
-
-.eq-bar:nth-child(1) {
-  height: 4px;
-  animation-delay: 0s;
-}
-
-.eq-bar:nth-child(2) {
-  height: 10px;
-  animation-delay: 0.2s;
-}
-
-.eq-bar:nth-child(3) {
-  height: 6px;
-  animation-delay: 0.4s;
-}
-
-@keyframes eqPulse {
-  0%, 100% {
-    transform: scaleY(0.35);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-}
-
-/* Estado durante o efeito de desintegração em poeira (Thanos Snap) */
-.ranking-item.snapping {
-  pointer-events: none;
-  border-bottom-color: transparent;
-}
-
-.snap-dust-canvas {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* Player de áudio invisível (apenas som) */
 .hidden-audio-engine {
   position: fixed;
   bottom: 0;
@@ -459,24 +1283,21 @@ body {
   z-index: -1;
 }
 
-/* Botão discreto no canto inferior direito para exportar o JSON no final */
 .corner-json-btn {
   position: fixed;
-  bottom: 0.85rem;
-  right: 1rem;
+  bottom: 10px;
+  right: 14px;
   background: transparent;
   border: none;
-  color: var(--idv-text-faint);
-  font-family: var(--idv-font-sans);
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
+  color: rgba(255, 235, 200, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  opacity: 0.45;
-  transition: opacity 180ms ease, color 180ms ease;
-  z-index: 20;
+  z-index: 30;
+  transition: color 180ms ease;
 }
 
 .corner-json-btn:hover {
-  opacity: 1;
-  color: var(--idv-text-muted);
+  color: rgba(255, 235, 200, 0.85);
 }

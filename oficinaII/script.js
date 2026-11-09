@@ -1,5 +1,5 @@
 // ==========================================================================
-// OFICINA II — Tela Única, Áudio em Looping e Desintegração (Thanos Snap)
+// OFICINA II — Jukebox Diegética, Áudio em Looping & Efeito Thanos Snap
 // ==========================================================================
 
 const STORAGE_KEY = 'oficinaII_entries_v1';
@@ -25,6 +25,7 @@ window.onYouTubeIframeAPIReady = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  const stage = document.getElementById('stage');
   const form = document.getElementById('cocreationForm');
   const songSearchInput = document.getElementById('songSearchInput');
   const searchSpinner = document.getElementById('searchSpinner');
@@ -43,6 +44,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadJsonBtn = document.getElementById('downloadJsonBtn');
   const downloadCountBadge = document.getElementById('downloadCountBadge');
 
+  // Elementos diegéticos da Jukebox
+  const vinyl = document.getElementById('vinyl');
+  const vinylLabel = document.getElementById('vinylLabel');
+  const tonearm = document.getElementById('tonearm');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const vfd = document.querySelector('.vfd');
+  const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+
+  // --------------------------------------------------------------------------
+  // 0. Escala Automática de Tela Única (Sem Scroll em Qualquer Resolução)
+  // --------------------------------------------------------------------------
+
+  function fitStageToViewport() {
+    if (!stage) return;
+    stage.style.transform = 'scale(1)';
+    const naturalHeight = stage.offsetHeight + 16;
+    const naturalWidth = stage.offsetWidth + 24;
+    const scaleY = window.innerHeight / naturalHeight;
+    const scaleX = window.innerWidth / naturalWidth;
+    const scale = Math.min(1, scaleY, scaleX);
+    stage.style.transform = `scale(${scale.toFixed(3)})`;
+  }
+
+  window.addEventListener('resize', fitStageToViewport);
+  fitStageToViewport();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitStageToViewport);
+  }
+
   // --------------------------------------------------------------------------
   // 1. Armazenamento & JSON Completo
   // --------------------------------------------------------------------------
@@ -56,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
           allEntries = parsed;
         }
       }
-    } catch (err) {
+    } catch (_) {
       allEntries = [];
     }
   }
@@ -211,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
       songSearchInput.setAttribute('aria-expanded', 'true');
       const li = document.createElement('li');
       li.className = 'dropdown-empty';
-      li.textContent = 'Buscando...';
+      li.textContent = 'Buscando no catálogo...';
       searchResultsDropdown.appendChild(li);
       return;
     }
@@ -225,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
       songSearchInput.setAttribute('aria-expanded', 'true');
       const li = document.createElement('li');
       li.className = 'dropdown-empty';
-      li.textContent = 'Nenhum resultado encontrado.';
+      li.textContent = 'Nenhum disco encontrado.';
       searchResultsDropdown.appendChild(li);
       return;
     }
@@ -361,12 +391,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 3. Áudio da Jukebox em Looping (Oculto, Sem Mostrar Vídeo)
+  // 3. Motor de Áudio da Jukebox (Oculto, Em Looping) + Mecânica do Vinil
   // --------------------------------------------------------------------------
+
+  function setMechanicsPlaying(isPlaying, songObj) {
+    if (songObj) {
+      nowPlayingTitle.textContent = songObj.title;
+      if (songObj.thumbnail) {
+        vinylLabel.style.backgroundImage = `url("${songObj.thumbnail}")`;
+      }
+    }
+
+    if (isPlaying) {
+      vinyl.classList.add('is-spinning');
+      tonearm.classList.add('is-active');
+      playPauseBtn.classList.add('is-playing');
+      vfd.classList.add('is-active');
+    } else {
+      vinyl.classList.remove('is-spinning');
+      playPauseBtn.classList.remove('is-playing');
+      vfd.classList.remove('is-active');
+    }
+  }
 
   function loadAndLoopAudio(videoId) {
     if (!videoId) return;
     currentPlayingVideoId = videoId;
+
+    const latest = allEntries[allEntries.length - 1];
+    if (latest && latest.song) {
+      setMechanicsPlaying(true, latest.song);
+    }
 
     if (!ytApiReady || typeof YT === 'undefined' || !YT.Player) {
       return;
@@ -396,19 +451,34 @@ document.addEventListener('DOMContentLoaded', () => {
           event.target.unMute();
           event.target.setVolume(100);
           event.target.playVideo();
+          setMechanicsPlaying(true, allEntries[allEntries.length - 1]?.song);
         },
         onStateChange: (event) => {
           if (event.data === YT.PlayerState.ENDED) {
             event.target.seekTo(0);
             event.target.playVideo();
+          } else if (event.data === YT.PlayerState.PLAYING) {
+            setMechanicsPlaying(true);
+          } else if (event.data === YT.PlayerState.PAUSED) {
+            setMechanicsPlaying(false);
           }
         },
       },
     });
   }
 
+  playPauseBtn.addEventListener('click', () => {
+    if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+    const state = ytPlayer.getPlayerState();
+    if (state === YT.PlayerState.PLAYING) {
+      ytPlayer.pauseVideo();
+    } else {
+      ytPlayer.playVideo();
+    }
+  });
+
   // --------------------------------------------------------------------------
-  // 4. Efeito Thanos Snap (Desintegração em Partículas de Poeira)
+  // 4. Efeito Thanos Snap (Desintegração da Tira em Poeira Dourada/Cinzas)
   // --------------------------------------------------------------------------
 
   function triggerThanosSnap(itemEl, entryData) {
@@ -421,10 +491,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Cria um canvas sobreposto com margem extra para as partículas voarem
-    const padX = 120;
-    const padTop = 90;
-    const padBottom = 60;
+    const padX = 90;
+    const padTop = 75;
+    const padBottom = 55;
     const canvasWidth = rect.width + padX * 2;
     const canvasHeight = rect.height + padTop + padBottom;
 
@@ -442,89 +511,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = dustCanvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // Renderiza o texto exato do item em um canvas offscreen para extrair os pixels reais
+    // Desenha a tira de papel + texto em um canvas offscreen para extrair partículas reais
     const offCanvas = document.createElement('canvas');
     offCanvas.width = Math.ceil(rect.width);
     offCanvas.height = Math.ceil(rect.height);
     const offCtx = offCanvas.getContext('2d');
 
-    offCtx.textAlign = 'center';
+    // Fundo de papel envelhecido da tira
+    offCtx.fillStyle = '#e5cf9e';
+    offCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
+
+    // Etiqueta vermelha lateral
+    offCtx.fillStyle = '#7d1414';
+    offCtx.fillRect(6, 5, 28, offCanvas.height - 10);
+
+    // Texto: Nome (em destaque) + Significado
+    offCtx.textAlign = 'left';
     offCtx.textBaseline = 'middle';
+    offCtx.font = '700 15px "Oswald", sans-serif';
+    offCtx.fillStyle = '#1b1108';
+    offCtx.fillText(entryData.name.toUpperCase(), 44, offCanvas.height * 0.35, offCanvas.width - 60);
 
-    // Linha 1 (Topo e maior destaque): Nome da pessoa
-    offCtx.font = '500 18px "Inter", sans-serif';
-    offCtx.fillStyle = 'rgba(242, 242, 242, 0.85)';
-    offCtx.fillText(entryData.name, rect.width / 2, rect.height * 0.28, rect.width - 16);
+    offCtx.font = '12px "Special Elite", monospace';
+    offCtx.fillStyle = '#5c4632';
+    offCtx.fillText(`“${entryData.meaning}”`, 44, offCanvas.height * 0.72, offCanvas.width - 60);
 
-    // Linha 2: Significado
-    offCtx.font = 'italic 300 14.5px "Newsreader", Georgia, serif';
-    offCtx.fillStyle = 'rgba(180, 180, 180, 0.72)';
-    const meaningText = `“${entryData.meaning}”`;
-    offCtx.fillText(meaningText, rect.width / 2, rect.height * 0.58, rect.width - 16);
-
-    // Linha 3: Nome da música
-    offCtx.font = '400 11.5px "Inter", sans-serif';
-    offCtx.fillStyle = 'rgba(140, 140, 140, 0.6)';
-    offCtx.fillText(entryData.song.title, rect.width / 2, rect.height * 0.82, rect.width - 16);
-
-    // Amostra os pixels visíveis do texto e gera partículas de poeira
     const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
     const particles = [];
 
-    for (let y = 0; y < offCanvas.height; y += 1) {
-      for (let x = 0; x < offCanvas.width; x += 1) {
+    // Amostra pixels da tira e do texto para formar uma nuvem densa e nítida
+    for (let y = 0; y < offCanvas.height; y += 2) {
+      for (let x = 0; x < offCanvas.width; x += 2) {
+        if (Math.random() > 0.52) continue;
         const idx = (y * offCanvas.width + x) * 4;
-        const alpha = imgData[idx + 3];
-        if (alpha > 25 && Math.random() < 0.68) {
-          const normX = x / offCanvas.width;
-          particles.push({
-            x: padX + x,
-            y: padTop + y,
-            // A onda de desintegração varre da esquerda para a direita com leve ruído orgânico
-            triggerAt: normX * 0.55 + (Math.random() - 0.5) * 0.12,
-            vx: (Math.random() * 1.4 + 0.35) * (Math.random() < 0.8 ? 1 : -0.4),
-            vy: -(Math.random() * 1.35 + 0.25),
-            size: Math.random() * 1.6 + 0.7,
-            alpha: (alpha / 255) * 0.9,
-            life: 0,
-            maxLife: 0.45 + Math.random() * 0.45,
-            turbulenceSeed: Math.random() * Math.PI * 2,
-          });
-        }
+        const r = imgData[idx];
+        const g = imgData[idx + 1];
+        const b = imgData[idx + 2];
+        const normX = x / offCanvas.width;
+
+        particles.push({
+          x: padX + x,
+          y: padTop + y,
+          r,
+          g,
+          b,
+          triggerAt: normX * 0.55 + (Math.random() - 0.5) * 0.12,
+          vx: (Math.random() * 1.9 + 0.4) * (Math.random() < 0.85 ? 1 : -0.35),
+          vy: -(Math.random() * 1.65 + 0.3),
+          size: Math.random() * 2.1 + 0.8,
+          alpha: 0.92,
+          life: 0,
+          maxLife: 0.45 + Math.random() * 0.45,
+          seed: Math.random() * Math.PI * 2,
+        });
       }
     }
 
-    // Também adiciona partículas extras de "cinza/poeira" ao longo da largura do item
-    for (let i = 0; i < 240; i++) {
-      const rx = Math.random() * offCanvas.width;
-      const ry = Math.random() * (offCanvas.height * 0.7) + offCanvas.height * 0.15;
-      particles.push({
-        x: padX + rx,
-        y: padTop + ry,
-        triggerAt: (rx / offCanvas.width) * 0.55 + (Math.random() - 0.5) * 0.1,
-        vx: Math.random() * 1.8 - 0.2,
-        vy: -(Math.random() * 1.5 + 0.3),
-        size: Math.random() * 1.9 + 0.6,
-        alpha: Math.random() * 0.55 + 0.25,
-        life: 0,
-        maxLife: 0.5 + Math.random() * 0.45,
-        turbulenceSeed: Math.random() * Math.PI * 2,
-      });
-    }
-
-    const duration = 1750; // ms
+    const duration = 1650;
     const startTime = performance.now();
 
     function animateFrame(now) {
       const elapsed = now - startTime;
       const progress = Math.min(1, elapsed / duration);
 
-      // Máscara progressiva que "apaga" o elemento DOM da esquerda para a direita enquanto vira pó
-      const wavePct = Math.min(120, (progress / 0.62) * 120);
-      const maskGrad = `linear-gradient(102deg, transparent ${Math.max(
+      // Onda que corrói a tira da esquerda para a direita
+      const wavePct = Math.min(125, (progress / 0.6) * 125);
+      const maskGrad = `linear-gradient(104deg, transparent ${Math.max(
         0,
-        wavePct - 18
-      )}%, rgba(0,0,0,0.3) ${wavePct}%, black ${wavePct + 14}%)`;
+        wavePct - 16
+      )}%, rgba(0,0,0,0.3) ${wavePct}%, black ${wavePct + 12}%)`;
       itemEl.style.webkitMaskImage = maskGrad;
       itemEl.style.maskImage = maskGrad;
 
@@ -538,31 +593,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const lifeRatio = p.life / p.maxLife;
         if (lifeRatio >= 1) continue;
 
-        // Movimento orgânico de poeira ao vento (subindo e derivando)
-        p.x += p.vx + Math.sin(p.life * 6 + p.turbulenceSeed) * 0.45;
-        p.y += p.vy + Math.cos(p.life * 5 + p.turbulenceSeed) * 0.25;
-        p.vx *= 1.008;
-        p.vy *= 1.01;
+        p.x += p.vx + Math.sin(p.life * 6 + p.seed) * 0.55;
+        p.y += p.vy + Math.cos(p.life * 5 + p.seed) * 0.3;
+        p.vx *= 1.01;
+        p.vy *= 1.012;
 
         const currentAlpha = p.alpha * (1 - lifeRatio * lifeRatio);
-        ctx.fillStyle = `rgba(242, 242, 242, ${currentAlpha.toFixed(3)})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${currentAlpha.toFixed(3)})`;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
       }
 
       if (progress < 1) {
         requestAnimationFrame(animateFrame);
       } else {
         dustCanvas.remove();
-        // Recolhe suavemente o espaço residual e remove do DOM
-        itemEl.style.transition = 'max-height 260ms ease, padding 260ms ease, margin 260ms ease';
-        itemEl.style.maxHeight = '0px';
-        itemEl.style.paddingTop = '0px';
-        itemEl.style.paddingBottom = '0px';
-        itemEl.style.margin = '0px';
-        itemEl.style.overflow = 'hidden';
-        setTimeout(() => itemEl.remove(), 270);
+        itemEl.remove();
       }
     }
 
@@ -570,7 +615,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 5. Renderização do Ranking (Máximo 3 visíveis; a partir de 3 é apagado)
+  // 5. Renderização das Tiras de Título (Acima da Caixa de Interação)
   // --------------------------------------------------------------------------
 
   function createRankingItemElement(entry, rankPosition, isNewTop = false) {
@@ -582,38 +627,47 @@ document.addEventListener('DOMContentLoaded', () => {
     li.dataset.entryId = entry.id;
     li.dataset.rank = String(rankPosition);
 
-    // 1. Primeira informação e com maior destaque: Nome da pessoa
+    // Código de Jukebox (A1, A2, A3)
+    const codeEl = document.createElement('div');
+    codeEl.className = 'strip-code';
+    codeEl.textContent = `A${rankPosition}`;
+
+    // Centro: 1º Nome com maior destaque + 2º Significado
+    const mainEl = document.createElement('div');
+    mainEl.className = 'strip-main';
+
     const nameEl = document.createElement('span');
     nameEl.className = 'ranking-name';
     nameEl.textContent = entry.name;
 
-    // 2. O que a música significa para a pessoa
     const meaningEl = document.createElement('p');
     meaningEl.className = 'ranking-meaning';
     meaningEl.textContent = `“${entry.meaning}”`;
 
-    // 3. Indicador de áudio tocando (no #1) + Nome da música
-    const playingBadge = document.createElement('div');
-    playingBadge.className = 'now-playing-badge';
-    playingBadge.innerHTML = `
-      <span class="eq-bars" aria-hidden="true">
-        <span class="eq-bar"></span>
-        <span class="eq-bar"></span>
-        <span class="eq-bar"></span>
-      </span>
-    `;
-    const badgeSongTitle = document.createElement('span');
-    badgeSongTitle.className = 'ranking-song';
-    badgeSongTitle.textContent = entry.song.title;
-    playingBadge.appendChild(badgeSongTitle);
+    mainEl.appendChild(nameEl);
+    mainEl.appendChild(meaningEl);
 
-    li.appendChild(nameEl);
-    li.appendChild(meaningEl);
-    li.appendChild(playingBadge);
+    // Direita: Indicador tocando (no #1) + Nome da música
+    const rightEl = document.createElement('div');
+    rightEl.className = 'strip-right';
 
-    // Guarda os dados no próprio elemento para o efeito Thanos Snap usar ao desintegrar
+    const eqEl = document.createElement('span');
+    eqEl.className = 'strip-eq';
+    eqEl.setAttribute('aria-hidden', 'true');
+    eqEl.innerHTML = '<i></i><i></i><i></i>';
+
+    const songEl = document.createElement('span');
+    songEl.className = 'ranking-song';
+    songEl.textContent = entry.song.title;
+
+    rightEl.appendChild(eqEl);
+    rightEl.appendChild(songEl);
+
+    li.appendChild(codeEl);
+    li.appendChild(mainEl);
+    li.appendChild(rightEl);
+
     li._entryData = entry;
-
     return li;
   }
 
@@ -627,27 +681,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const latest = visibleEntries[0];
-    if (latest && currentPlayingVideoId !== latest.song.videoId) {
-      loadAndLoopAudio(latest.song.videoId);
+    if (latest) {
+      setMechanicsPlaying(true, latest.song);
+      if (currentPlayingVideoId !== latest.song.videoId) {
+        loadAndLoopAudio(latest.song.videoId);
+      }
     }
   }
 
   function addNewEntryToStage(newEntry) {
-    // Toca em looping a música da última pessoa a colocar
     loadAndLoopAudio(newEntry.song.videoId);
 
-    // Insere no topo do ranking (#1)
     const newTopEl = createRankingItemElement(newEntry, 1, true);
     rankingList.prepend(newTopEl);
 
-    // Atualiza posições e aplica o Thanos Snap em quem passar de 3
     const activeItems = Array.from(rankingList.querySelectorAll('.ranking-item:not(.snapping)'));
     activeItems.forEach((itemEl, index) => {
       const newRank = index + 1;
+      const codeEl = itemEl.querySelector('.strip-code');
+      if (codeEl && newRank <= MAX_VISIBLE_RANKING) {
+        codeEl.textContent = `A${newRank}`;
+      }
+
       if (newRank <= MAX_VISIBLE_RANKING) {
         itemEl.dataset.rank = String(newRank);
       } else {
-        // Empurrado além da 3ª posição -> efeito Thanos Snap!
+        // Passou de 3 -> desintegra com efeito Thanos Snap!
         const entryData = itemEl._entryData || {
           name: itemEl.querySelector('.ranking-name')?.textContent || '',
           meaning: (itemEl.querySelector('.ranking-meaning')?.textContent || '').replace(/[“”]/g, ''),
@@ -691,7 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const meaning = songMeaningInput.value.trim();
     if (!meaning) {
-      showError('Responda o que essa música significa para você.');
+      showError('Responda o que essa música significa.');
       songMeaningInput.focus();
       return;
     }
