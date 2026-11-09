@@ -318,8 +318,9 @@ body {
   opacity: 1;
 }
 
-.ranking-item[data-rank="1"] .ranking-meaning {
-  font-size: 1.08rem;
+.ranking-item[data-rank="1"] .ranking-name {
+  font-size: 1.28rem;
+  font-weight: 500;
   color: var(--idv-text);
 }
 
@@ -347,11 +348,11 @@ body {
   }
 }
 
-.ranking-meaning {
-  font-family: var(--idv-font-serif);
-  font-style: italic;
-  font-size: 0.96rem;
-  line-height: 1.35;
+.ranking-name {
+  font-family: var(--idv-font-sans);
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   color: var(--idv-text);
   max-width: 100%;
   white-space: nowrap;
@@ -359,22 +360,20 @@ body {
   text-overflow: ellipsis;
 }
 
-.ranking-meta {
-  font-size: 0.72rem;
+.ranking-meaning {
+  font-family: var(--idv-font-serif);
+  font-style: italic;
+  font-size: 0.92rem;
+  line-height: 1.35;
   color: var(--idv-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
   max-width: 100%;
-}
-
-.ranking-name {
-  color: var(--idv-text);
-  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ranking-song {
+  font-size: 0.72rem;
   color: var(--idv-text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -384,22 +383,17 @@ body {
 
 /* Indicador minimalista de áudio tocando (visível apenas no #1 atual) */
 .now-playing-badge {
-  display: none;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   font-size: 0.7rem;
   color: var(--idv-text-muted);
   letter-spacing: 0.03em;
-  margin-bottom: 0.15rem;
+  margin-top: 0.1rem;
 }
 
-.ranking-item[data-rank="1"] .now-playing-badge {
-  display: inline-flex;
-}
-
-.ranking-item[data-rank="1"] .ranking-song-inline,
-.ranking-item[data-rank="1"] .ranking-sep-inline {
+.ranking-item:not([data-rank="1"]) .eq-bars {
   display: none;
 }
 

@@ -451,17 +451,21 @@ document.addEventListener('DOMContentLoaded', () => {
     offCtx.textAlign = 'center';
     offCtx.textBaseline = 'middle';
 
-    // Linha 1: Significado
-    offCtx.font = 'italic 300 15.5px "Newsreader", Georgia, serif';
-    offCtx.fillStyle = 'rgba(242, 242, 242, 0.72)';
-    const meaningText = `“${entryData.meaning}”`;
-    offCtx.fillText(meaningText, rect.width / 2, rect.height * 0.36, rect.width - 16);
+    // Linha 1 (Topo e maior destaque): Nome da pessoa
+    offCtx.font = '500 18px "Inter", sans-serif';
+    offCtx.fillStyle = 'rgba(242, 242, 242, 0.85)';
+    offCtx.fillText(entryData.name, rect.width / 2, rect.height * 0.28, rect.width - 16);
 
-    // Linha 2: Nome e Música
+    // Linha 2: Significado
+    offCtx.font = 'italic 300 14.5px "Newsreader", Georgia, serif';
+    offCtx.fillStyle = 'rgba(180, 180, 180, 0.72)';
+    const meaningText = `“${entryData.meaning}”`;
+    offCtx.fillText(meaningText, rect.width / 2, rect.height * 0.58, rect.width - 16);
+
+    // Linha 3: Nome da música
     offCtx.font = '400 11.5px "Inter", sans-serif';
-    offCtx.fillStyle = 'rgba(180, 180, 180, 0.65)';
-    const metaText = `${entryData.name}  ·  ${entryData.song.title}`;
-    offCtx.fillText(metaText, rect.width / 2, rect.height * 0.72, rect.width - 16);
+    offCtx.fillStyle = 'rgba(140, 140, 140, 0.6)';
+    offCtx.fillText(entryData.song.title, rect.width / 2, rect.height * 0.82, rect.width - 16);
 
     // Amostra os pixels visíveis do texto e gera partículas de poeira
     const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
@@ -578,7 +582,17 @@ document.addEventListener('DOMContentLoaded', () => {
     li.dataset.entryId = entry.id;
     li.dataset.rank = String(rankPosition);
 
-    // Indicador minimalista de que o #1 atual está tocando + nome da música
+    // 1. Primeira informação e com maior destaque: Nome da pessoa
+    const nameEl = document.createElement('span');
+    nameEl.className = 'ranking-name';
+    nameEl.textContent = entry.name;
+
+    // 2. O que a música significa para a pessoa
+    const meaningEl = document.createElement('p');
+    meaningEl.className = 'ranking-meaning';
+    meaningEl.textContent = `“${entry.meaning}”`;
+
+    // 3. Indicador de áudio tocando (no #1) + Nome da música
     const playingBadge = document.createElement('div');
     playingBadge.className = 'now-playing-badge';
     playingBadge.innerHTML = `
@@ -593,32 +607,9 @@ document.addEventListener('DOMContentLoaded', () => {
     badgeSongTitle.textContent = entry.song.title;
     playingBadge.appendChild(badgeSongTitle);
 
-    const meaningEl = document.createElement('p');
-    meaningEl.className = 'ranking-meaning';
-    meaningEl.textContent = `“${entry.meaning}”`;
-
-    const metaEl = document.createElement('div');
-    metaEl.className = 'ranking-meta';
-
-    const nameEl = document.createElement('span');
-    nameEl.className = 'ranking-name';
-    nameEl.textContent = entry.name;
-
-    const sepEl = document.createElement('span');
-    sepEl.className = 'ranking-sep-inline';
-    sepEl.textContent = '·';
-
-    const songEl = document.createElement('span');
-    songEl.className = 'ranking-song ranking-song-inline';
-    songEl.textContent = entry.song.title;
-
-    metaEl.appendChild(nameEl);
-    metaEl.appendChild(sepEl);
-    metaEl.appendChild(songEl);
-
-    li.appendChild(playingBadge);
+    li.appendChild(nameEl);
     li.appendChild(meaningEl);
-    li.appendChild(metaEl);
+    li.appendChild(playingBadge);
 
     // Guarda os dados no próprio elemento para o efeito Thanos Snap usar ao desintegrar
     li._entryData = entry;
