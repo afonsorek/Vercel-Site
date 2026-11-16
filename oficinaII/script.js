@@ -4,6 +4,13 @@
 
 const STORAGE_KEY = 'oficinaII_entries_v1';
 const MAX_VISIBLE_RANKING = 3;
+const SYNC_CHANNEL_NAME = 'oficinaII_sync_v1';
+
+const urlParams = new URLSearchParams(window.location.search);
+const isTvWindow = urlParams.get('mode') === 'tv';
+let currentViewMode = isTvWindow ? 'tv' : 'unified';
+const syncChannel =
+  typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(SYNC_CHANNEL_NAME) : null;
 
 let allEntries = [];
 let selectedSong = null;
@@ -17,12 +24,12 @@ let pendingSubmission = null;
 let ytPlayer = null;
 let ytApiReady = false;
 let currentPlayingVideoId = null;
+let onYtApiReadyCallback = null;
 
 window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
-  if (allEntries.length > 0) {
-    const latest = allEntries[allEntries.length - 1];
-    loadAndLoopAudio(latest.song.videoId);
+  if (typeof onYtApiReadyCallback === 'function') {
+    onYtApiReadyCallback();
   }
 };
 
@@ -47,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadJsonBtn = document.getElementById('downloadJsonBtn');
   const downloadCountBadge = document.getElementById('downloadCountBadge');
   const shatteredCountText = document.getElementById('shatteredCountText');
+  const tvModeBtn = document.getElementById('tvModeBtn');
+  const tvModeLabel = document.getElementById('tvModeLabel');
 
   // Popup de Confirmação
   const confirmModal = document.getElementById('confirmModal');
@@ -73,7 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function fitStageToViewport() {
     if (!stage) return;
     stage.style.transform = 'scale(1)';
-    const naturalHeight = stage.offsetHeight + 70;
+    const extraH = currentViewMode === 'controller' ? 24 : 70;
+    const naturalHeight = stage.offsetHeight + extraH;
     const naturalWidth = stage.offsetWidth + 32;
     const scaleY = window.innerHeight / naturalHeight;
     const scaleX = window.innerWidth / naturalWidth;
@@ -500,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loadAndLoopAudio(videoId) {
     if (!videoId) return;
+    if (currentViewMode === 'controller') return;
     currentPlayingVideoId = videoId;
 
     const latest = allEntries[allEntries.length - 1];
@@ -1213,7 +1224,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     allEntries.push(newEntry);
     saveEntriesToStorage();
-    addNewEntryToStage(newEntry);
+
+    if (currentViewMode === 'controller' && syncChannel) {
+      syncChannel.postMessage({
+        type: 'NEW_ENTRY',
+        entry: newEntry,
+        allEntries,
+      });
+    } else {
+      addNewEntryToStage(newEntry);
+    }
+
     resetFormForNextPerson();
   }
 
@@ -1300,7 +1321,195 @@ document.addEventListener('DOMContentLoaded', () => {
     resetFormForNextPerson();
   });
 
+  // --------------------------------------------------------------------------
+  // 8. Modo HDMI / Segunda Tela (BroadcastChannel + Heartbeat Automático)
+  // --------------------------------------------------------------------------
+
+  let tvWindowRef = null;
+  let tvHeartbeatWatchdog = null;
+  let tvHeartbeatInterval = null;
+
+  function updateTvButtonLabel() {
+    if (!tvModeLabel) return;
+    if (currentViewMode === 'tv') {
+      tvModeLabel.textContent = document.fullscreenElement ? 'sair da tela cheia' : 'tela cheia';
+    } else if (currentViewMode === 'controller') {
+      tvModeLabel.textContent = 'TV conectada (encerrar)';
+    } else {
+      tvModeLabel.textContent = 'projetar na TV';
+    }
+  }
+
+  function setViewMode(mode) {
+    const prevMode = currentViewMode;
+    currentViewMode = mode;
+    document.body.dataset.viewMode = mode;
+    updateTvButtonLabel();
+
+    if (mode === 'controller') {
+      if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+        ytPlayer.pauseVideo();
+      }
+    } else if (mode === 'unified' && prevMode === 'controller') {
+      renderInitialState();
+      if (allEntries.length > 0) {
+        loadAndLoopAudio(allEntries[allEntries.length - 1].song.videoId);
+      }
+    } else if (mode === 'tv') {
+      resizePhysicsCanvas();
+    }
+
+    requestAnimationFrame(fitStageToViewport);
+  }
+
+  function resetTvWatchdog() {
+    clearTimeout(tvHeartbeatWatchdog);
+    tvHeartbeatWatchdog = setTimeout(() => {
+      tvWindowRef = null;
+      if (currentViewMode === 'controller') {
+        setViewMode('unified');
+      }
+    }, 3200);
+  }
+
+  if (syncChannel) {
+    if (isTvWindow) {
+      syncChannel.postMessage({ type: 'TV_READY' });
+      tvHeartbeatInterval = setInterval(() => {
+        syncChannel.postMessage({ type: 'TV_HEARTBEAT' });
+      }, 1200);
+
+      const notifyTvClosed = () => {
+        clearInterval(tvHeartbeatInterval);
+        syncChannel.postMessage({ type: 'TV_CLOSED' });
+      };
+      window.addEventListener('beforeunload', notifyTvClosed);
+      window.addEventListener('pagehide', notifyTvClosed);
+
+      syncChannel.onmessage = (event) => {
+        const msg = event.data;
+        if (!msg || !msg.type) return;
+
+        if (msg.type === 'SYNC_STATE' && Array.isArray(msg.allEntries)) {
+          const prevCount = allEntries.length;
+          allEntries = msg.allEntries;
+          saveEntriesToStorage();
+          if (prevCount !== allEntries.length) {
+            renderInitialState();
+          }
+        } else if (msg.type === 'NEW_ENTRY' && msg.entry) {
+          allEntries = Array.isArray(msg.allEntries)
+            ? msg.allEntries
+            : [...allEntries, msg.entry];
+          saveEntriesToStorage();
+          addNewEntryToStage(msg.entry);
+        } else if (msg.type === 'TOGGLE_PLAY') {
+          if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
+            if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+              ytPlayer.pauseVideo();
+            } else {
+              ytPlayer.playVideo();
+            }
+          }
+        } else if (msg.type === 'CLOSE_TV_REQUEST') {
+          clearInterval(tvHeartbeatInterval);
+          window.close();
+        }
+      };
+    } else {
+      syncChannel.onmessage = (event) => {
+        const msg = event.data;
+        if (!msg || !msg.type) return;
+
+        if (msg.type === 'TV_READY') {
+          if (currentViewMode !== 'controller') {
+            setViewMode('controller');
+          }
+          resetTvWatchdog();
+          syncChannel.postMessage({ type: 'SYNC_STATE', allEntries });
+        } else if (msg.type === 'TV_HEARTBEAT') {
+          if (currentViewMode !== 'controller') {
+            setViewMode('controller');
+          }
+          resetTvWatchdog();
+        } else if (msg.type === 'TV_CLOSED') {
+          clearTimeout(tvHeartbeatWatchdog);
+          tvWindowRef = null;
+          if (currentViewMode === 'controller') {
+            setViewMode('unified');
+          }
+        }
+      };
+    }
+  }
+
+  if (tvModeBtn) {
+    tvModeBtn.addEventListener('click', async () => {
+      if (currentViewMode === 'tv') {
+        try {
+          if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+          } else {
+            await document.exitFullscreen();
+          }
+        } catch (_) {}
+        if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+          ytPlayer.unMute();
+          ytPlayer.playVideo();
+        }
+        return;
+      }
+
+      if (currentViewMode === 'controller') {
+        if (syncChannel) {
+          syncChannel.postMessage({ type: 'CLOSE_TV_REQUEST' });
+        }
+        try {
+          if (tvWindowRef && !tvWindowRef.closed) {
+            tvWindowRef.close();
+          }
+        } catch (_) {}
+        clearTimeout(tvHeartbeatWatchdog);
+        tvWindowRef = null;
+        setViewMode('unified');
+        return;
+      }
+
+      // Abre a janela dedicada da TV de forma síncrona para evitar bloqueio de popup
+      const tvUrl = `${window.location.pathname}?mode=tv`;
+      tvWindowRef = window.open(
+        tvUrl,
+        'OficinaII_TV',
+        'width=1120,height=900,menubar=no,toolbar=no,location=no,status=no'
+      );
+
+      // Tenta posicionar automaticamente na segunda tela (HDMI) caso a API seja suportada
+      if (tvWindowRef && 'getScreenDetails' in window) {
+        try {
+          const screenDetails = await window.getScreenDetails();
+          const externalScreen = screenDetails.screens.find((s) => !s.isPrimary);
+          if (externalScreen && tvWindowRef && !tvWindowRef.closed) {
+            tvWindowRef.moveTo(externalScreen.availLeft, externalScreen.availTop);
+            tvWindowRef.resizeTo(externalScreen.availWidth, externalScreen.availHeight);
+          }
+        } catch (_) {}
+      }
+    });
+  }
+
+  document.addEventListener('fullscreenchange', updateTvButtonLabel);
+
+  onYtApiReadyCallback = () => {
+    if (allEntries.length > 0 && currentViewMode !== 'controller') {
+      loadAndLoopAudio(allEntries[allEntries.length - 1].song.videoId);
+    }
+  };
+
   resetFormForNextPerson();
   loadStoredEntries();
+  setViewMode(isTvWindow ? 'tv' : 'unified');
   renderInitialState();
+  if (ytApiReady) {
+    onYtApiReadyCallback();
+  }
 });

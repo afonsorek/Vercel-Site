@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+<body data-view-mode="unified">
 
   <!-- Ambiente (sala escura, luz quente, piso) -->
   <div class="room" aria-hidden="true">
@@ -194,6 +194,12 @@
 
   <!-- Canvas de física 2D: cards caindo, quebrando e acumulando no fundo da página -->
   <canvas id="physicsCanvas" class="physics-canvas" aria-hidden="true"></canvas>
+
+  <!-- Controle discreto de Segunda Tela / HDMI -->
+  <button type="button" id="tvModeBtn" class="corner-tv-btn" title="Separar Jukebox para segunda tela (TV/HDMI)">
+    <span class="tv-dot" aria-hidden="true"></span>
+    <span id="tvModeLabel">projetar na TV</span>
+  </button>
 
   <!-- Exportação discreta do JSON -->
   <button type="button" id="downloadJsonBtn" class="corner-json-btn" title="Baixar JSON com todas as entradas">
