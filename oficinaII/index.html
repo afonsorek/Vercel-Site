@@ -33,116 +33,167 @@
 
     <p class="room-quote">“Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.”</p>
 
-    <div class="jukebox">
+    <div class="stage-layout">
 
-      <!-- Brasão cromado -->
-      <div class="jb-crown" aria-hidden="true">
-        <span class="crown-text">OFICINA<em>II</em></span>
-      </div>
+      <!-- COLUNA PRINCIPAL: JUKEBOX MAIOR -->
+      <div class="jukebox-wrap">
+        <div class="jukebox" id="jukebox">
 
-      <!-- Arco de neon com bolhas -->
-      <div class="jb-neon" aria-hidden="true"><div class="jb-bubbles"></div></div>
-      <div class="jb-chrome" aria-hidden="true"></div>
-
-      <!-- Frisos cromados laterais -->
-      <div class="side-ribs side-ribs--left" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="side-ribs side-ribs--right" aria-hidden="true"><i></i><i></i><i></i></div>
-
-      <div class="jb-body">
-
-        <!-- Cúpula: vinil girando -->
-        <div class="jb-dome" aria-hidden="true">
-          <div class="dome-velvet"></div>
-          <div class="dome-rays"></div>
-          <div class="record-stack">
-            <span></span><span></span><span></span><span></span><span></span><span></span>
+          <!-- Brasão cromado -->
+          <div class="jb-crown" aria-hidden="true">
+            <span class="crown-text">OFICINA<em>II</em></span>
           </div>
-          <div class="turntable">
-            <div class="platter">
-              <div class="vinyl" id="vinyl">
-                <div class="vinyl-label" id="vinylLabel"></div>
+
+          <!-- Arco de neon com bolhas -->
+          <div class="jb-neon" aria-hidden="true"><div class="jb-bubbles"></div></div>
+          <div class="jb-chrome" aria-hidden="true"></div>
+
+          <!-- Frisos cromados laterais -->
+          <div class="side-ribs side-ribs--left" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="side-ribs side-ribs--right" aria-hidden="true"><i></i><i></i><i></i></div>
+
+          <div class="jb-body">
+
+            <!-- Cúpula: vinil girando -->
+            <div class="jb-dome" aria-hidden="true">
+              <div class="dome-velvet"></div>
+              <div class="dome-rays"></div>
+              <div class="record-stack">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="turntable">
+                <div class="platter">
+                  <div class="vinyl" id="vinyl">
+                    <div class="vinyl-label" id="vinylLabel"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tonearm" id="tonearm">
+                <div class="tonearm-base"></div>
+                <div class="tonearm-arm"><span class="tonearm-head"></span></div>
+              </div>
+              <div class="glass-glare"></div>
+            </div>
+
+            <div class="chrome-band" aria-hidden="true"></div>
+
+            <!-- Vitrine de tiras: os nomes e textos inteiros aparecem aqui, acima da caixa de interação -->
+            <div class="jb-strips" id="jbStrips">
+              <div class="strip-slots" aria-hidden="true">
+                <div class="strip-slot"><span>A1</span></div>
+                <div class="strip-slot"><span>A2</span></div>
+                <div class="strip-slot"><span>A3</span></div>
+              </div>
+              <ol id="rankingList" class="ranking-list" aria-live="polite"></ol>
+              <div class="glass-glare glass-glare--flat" aria-hidden="true"></div>
+            </div>
+
+            <!-- Display: indicador do que está tocando -->
+            <div class="jb-display">
+              <button type="button" id="playPauseBtn" class="chrome-btn" aria-label="Tocar / pausar">
+                <svg class="icon-play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="7,4 20,12 7,20"></polygon></svg>
+                <svg class="icon-pause" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              </button>
+              <div class="vfd">
+                <span class="vfd-lamp"></span>
+                <div class="vfd-marquee" id="vfdMarquee">
+                  <span id="nowPlayingTitle">INSIRA UMA MÚSICA</span>
+                </div>
+                <div class="vfd-eq" aria-hidden="true">
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                </div>
               </div>
             </div>
+
+            <!-- Painel de interação -->
+            <form id="cocreationForm" class="jb-panel" autocomplete="off" novalidate>
+              <span class="screw screw--tl"></span><span class="screw screw--tr"></span>
+              <span class="screw screw--bl"></span><span class="screw screw--br"></span>
+
+              <div class="field">
+                <label for="songSearchInput" class="field-label">Música</label>
+                <div class="search-combobox" id="searchCombobox">
+                  <input type="text" id="songSearchInput" class="paper-input" placeholder="buscar no youtube..."
+                    autocomplete="off" aria-autocomplete="list" aria-controls="searchResultsDropdown" aria-expanded="false" />
+                  <span id="searchSpinner" class="search-spinner" hidden aria-hidden="true"></span>
+                  <ul id="searchResultsDropdown" class="search-dropdown" role="listbox" hidden></ul>
+                </div>
+                <div id="selectedSongCard" class="paper-input selected-song" hidden>
+                  <span id="selectedSongTitle" class="selected-song-title"></span>
+                  <button type="button" id="clearSongBtn" class="clear-song-btn" aria-label="Trocar música">×</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="participantName" class="field-label">Nome</label>
+                <input type="text" id="participantName" class="paper-input" autocomplete="off" maxlength="60" required />
+              </div>
+
+              <div class="field">
+                <label for="songMeaning" class="field-label">O que essa música significa para você?</label>
+                <textarea id="songMeaning" class="paper-input paper-textarea" rows="3" autocomplete="off" maxlength="320" required></textarea>
+              </div>
+
+              <div class="panel-actions">
+                <p id="formError" class="form-error" role="alert" hidden></p>
+                <button type="submit" id="submitBtn" class="arcade-btn">Enviar</button>
+              </div>
+            </form>
+
+            <!-- Grade do alto-falante -->
+            <div class="jb-grille" aria-hidden="true"><div class="grille-glow"></div></div>
           </div>
-          <div class="tonearm" id="tonearm">
-            <div class="tonearm-base"></div>
-            <div class="tonearm-arm"><span class="tonearm-head"></span></div>
-          </div>
-          <div class="glass-glare"></div>
         </div>
 
-        <div class="chrome-band" aria-hidden="true"></div>
+        <div class="floor-reflection" aria-hidden="true"></div>
+      </div>
 
-        <!-- Tiras de título: os nomes aparecem aqui, acima da caixa de interação -->
-        <div class="jb-strips">
-          <div class="strip-slots" aria-hidden="true">
-            <div class="strip-slot"><span>A1</span></div>
-            <div class="strip-slot"><span>A2</span></div>
-            <div class="strip-slot"><span>A3</span></div>
-          </div>
-          <ol id="rankingList" class="ranking-list" aria-live="polite"></ol>
-          <div class="glass-glare glass-glare--flat" aria-hidden="true"></div>
+      <!-- COLUNA LATERAL: TEXTO EXPLICATIVO DO CONCEITO -->
+      <aside class="concept-plaque" aria-label="Conceito da obra">
+        <span class="screw screw--tl"></span><span class="screw screw--tr"></span>
+        <span class="screw screw--bl"></span><span class="screw screw--br"></span>
+
+        <h2 class="concept-title">Sobre a Obra · Apagamento Social &amp; Sobreposição de Valores</h2>
+
+        <div class="concept-body">
+          <p>
+            Cada escolha musical que sobe ao palco reivindica o espaço sonoro para si, tocando em looping contínuo enquanto silencia a faixa anterior.
+          </p>
+          <p>
+            A máquina comporta apenas três presenças visíveis (<code>A1</code>, <code>A2</code>, <code>A3</code>). A partir da terceira participação, todo novo gesto de expressão empurra, fratura e descarta a memória mais antiga para o chão.
+          </p>
+          <p>
+            O ato de existir e ser aplaudido no palco nunca é neutro: inscrever o próprio valor implica sobrepor-se ao outro, transformando a memória alheia em ruína acumulada na base da página.
+          </p>
         </div>
 
-        <!-- Display: indicador do que está tocando -->
-        <div class="jb-display">
-          <button type="button" id="playPauseBtn" class="chrome-btn" aria-label="Tocar / pausar">
-            <svg class="icon-play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="7,4 20,12 7,20"></polygon></svg>
-            <svg class="icon-pause" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-          </button>
-          <div class="vfd">
-            <span class="vfd-lamp"></span>
-            <div class="vfd-marquee" id="vfdMarquee">
-              <span id="nowPlayingTitle">INSIRA UMA MÚSICA</span>
-            </div>
-            <div class="vfd-eq" aria-hidden="true">
-              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-            </div>
-          </div>
+        <div class="concept-footer">
+          <span class="concept-lamp" aria-hidden="true"></span>
+          <span id="shatteredCountText" class="concept-counter">0 vozes descartadas no chão</span>
         </div>
+      </aside>
 
-        <!-- Painel de interação -->
-        <form id="cocreationForm" class="jb-panel" autocomplete="off" novalidate>
-          <span class="screw screw--tl"></span><span class="screw screw--tr"></span>
-          <span class="screw screw--bl"></span><span class="screw screw--br"></span>
+    </div>
+  </div>
 
-          <div class="field">
-            <label for="songSearchInput" class="field-label">Música</label>
-            <div class="search-combobox" id="searchCombobox">
-              <input type="text" id="songSearchInput" class="paper-input" placeholder="buscar no youtube..."
-                aria-autocomplete="list" aria-controls="searchResultsDropdown" aria-expanded="false" />
-              <span id="searchSpinner" class="search-spinner" hidden aria-hidden="true"></span>
-              <ul id="searchResultsDropdown" class="search-dropdown" role="listbox" hidden></ul>
-            </div>
-            <div id="selectedSongCard" class="paper-input selected-song" hidden>
-              <span id="selectedSongTitle" class="selected-song-title"></span>
-              <button type="button" id="clearSongBtn" class="clear-song-btn" aria-label="Trocar música">×</button>
-            </div>
-          </div>
+  <!-- Popup de Confirmação -->
+  <div id="confirmModal" class="confirm-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle" hidden>
+    <div class="confirm-modal">
+      <span class="screw screw--tl"></span><span class="screw screw--tr"></span>
+      <span class="screw screw--bl"></span><span class="screw screw--br"></span>
 
-          <div class="field">
-            <label for="participantName" class="field-label">Nome</label>
-            <input type="text" id="participantName" class="paper-input" maxlength="60" required />
-          </div>
+      <h3 id="confirmModalTitle" class="confirm-modal-title">Tem certeza da sua atitude?</h3>
+      <p id="confirmModalSub" class="confirm-modal-sub"></p>
 
-          <div class="field">
-            <label for="songMeaning" class="field-label">O que essa música significa para você?</label>
-            <textarea id="songMeaning" class="paper-input paper-textarea" rows="2" maxlength="280" required></textarea>
-          </div>
-
-          <div class="panel-actions">
-            <p id="formError" class="form-error" role="alert" hidden></p>
-            <button type="submit" id="submitBtn" class="arcade-btn">Enviar</button>
-          </div>
-        </form>
-
-        <!-- Grade do alto-falante -->
-        <div class="jb-grille" aria-hidden="true"><div class="grille-glow"></div></div>
+      <div class="confirm-modal-actions">
+        <button type="button" id="confirmNoBtn" class="modal-btn modal-btn--no">NÃO</button>
+        <button type="button" id="confirmYesBtn" class="modal-btn modal-btn--yes">SIM</button>
       </div>
     </div>
-
-    <div class="floor-reflection" aria-hidden="true"></div>
   </div>
+
+  <!-- Canvas de física 2D: cards caindo, quebrando e acumulando no fundo da página -->
+  <canvas id="physicsCanvas" class="physics-canvas" aria-hidden="true"></canvas>
 
   <!-- Exportação discreta do JSON -->
   <button type="button" id="downloadJsonBtn" class="corner-json-btn" title="Baixar JSON com todas as entradas">

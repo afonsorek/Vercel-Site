@@ -1,5 +1,5 @@
 // ==========================================================================
-// OFICINA II — Jukebox Diegética, Áudio em Looping & Efeito Thanos Snap
+// OFICINA II — Jukebox Diegética, Confirmação & Física de Queda/Quebra 2D
 // ==========================================================================
 
 const STORAGE_KEY = 'oficinaII_entries_v1';
@@ -10,6 +10,8 @@ let selectedSong = null;
 let searchResults = [];
 let activeDropdownIndex = -1;
 let searchDebounceTimer = null;
+let latestSearchToken = 0;
+let pendingSubmission = null;
 
 // YouTube Audio-Only Loop Engine
 let ytPlayer = null;
@@ -26,6 +28,7 @@ window.onYouTubeIframeAPIReady = function () {
 
 document.addEventListener('DOMContentLoaded', () => {
   const stage = document.getElementById('stage');
+  const jukebox = document.getElementById('jukebox');
   const form = document.getElementById('cocreationForm');
   const songSearchInput = document.getElementById('songSearchInput');
   const searchSpinner = document.getElementById('searchSpinner');
@@ -43,6 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const rankingList = document.getElementById('rankingList');
   const downloadJsonBtn = document.getElementById('downloadJsonBtn');
   const downloadCountBadge = document.getElementById('downloadCountBadge');
+  const shatteredCountText = document.getElementById('shatteredCountText');
+
+  // Popup de Confirmação
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmModalSub = document.getElementById('confirmModalSub');
+  const confirmYesBtn = document.getElementById('confirmYesBtn');
+  const confirmNoBtn = document.getElementById('confirmNoBtn');
 
   // Elementos diegéticos da Jukebox
   const vinyl = document.getElementById('vinyl');
@@ -52,29 +62,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const vfd = document.querySelector('.vfd');
   const nowPlayingTitle = document.getElementById('nowPlayingTitle');
 
+  // Canvas de Física 2D
+  const physicsCanvas = document.getElementById('physicsCanvas');
+  const pCtx = physicsCanvas.getContext('2d');
+
   // --------------------------------------------------------------------------
-  // 0. Escala Automática de Tela Única (Sem Scroll em Qualquer Resolução)
+  // 0. Escala Automática de Tela Única
   // --------------------------------------------------------------------------
 
   function fitStageToViewport() {
     if (!stage) return;
     stage.style.transform = 'scale(1)';
-    const naturalHeight = stage.offsetHeight + 16;
-    const naturalWidth = stage.offsetWidth + 24;
+    const naturalHeight = stage.offsetHeight + 24;
+    const naturalWidth = stage.offsetWidth + 32;
     const scaleY = window.innerHeight / naturalHeight;
     const scaleX = window.innerWidth / naturalWidth;
     const scale = Math.min(1, scaleY, scaleX);
     stage.style.transform = `scale(${scale.toFixed(3)})`;
   }
 
-  window.addEventListener('resize', fitStageToViewport);
+  window.addEventListener('resize', () => {
+    fitStageToViewport();
+    resizePhysicsCanvas();
+  });
   fitStageToViewport();
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(fitStageToViewport);
   }
 
   // --------------------------------------------------------------------------
-  // 1. Armazenamento & JSON Completo
+  // 1. Armazenamento & Contadores
   // --------------------------------------------------------------------------
 
   function loadStoredEntries() {
@@ -97,11 +114,22 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.warn('Erro ao salvar no localStorage:', err);
     }
+    updateCounters();
+  }
+
+  function updateCounters() {
     downloadCountBadge.textContent = String(allEntries.length);
+    const discarded = Math.max(0, allEntries.length - MAX_VISIBLE_RANKING);
+    if (shatteredCountText) {
+      shatteredCountText.textContent =
+        discarded === 1
+          ? '1 voz descartada no chão'
+          : `${discarded} vozes descartadas no chão`;
+    }
   }
 
   // --------------------------------------------------------------------------
-  // 2. Busca no YouTube
+  // 2. Busca no YouTube & Dropdown Corrigido + Limpeza Garantida do Form
   // --------------------------------------------------------------------------
 
   function extractYouTubeId(input) {
@@ -229,6 +257,38 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (_) {}
     }
 
+    // Fallback via Piped API pública caso local/serverless não esteja disponível
+    const pipedEndpoints = [
+      `https://api.piped.private.coffee/search?q=${encodeURIComponent(trimmed)}&filter=music_songs`,
+      `https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(trimmed)}&filter=music_songs`,
+    ];
+    for (const pipedUrl of pipedEndpoints) {
+      try {
+        const res = await fetch(pipedUrl);
+        if (res.ok) {
+          const data = await res.json();
+          const items = (data.items || [])
+            .filter((it) => it.url && it.url.includes('v='))
+            .slice(0, 6)
+            .map((it) => {
+              const idMatch = it.url.match(/v=([^&]+)/);
+              const videoId = idMatch ? idMatch[1] : '';
+              const mins = it.duration ? Math.floor(it.duration / 60) : 0;
+              const secs = it.duration ? String(it.duration % 60).padStart(2, '0') : '';
+              return {
+                videoId,
+                title: it.title || 'Sem título',
+                channel: it.uploaderName || '',
+                duration: it.duration > 0 ? `${mins}:${secs}` : '',
+                thumbnail: it.thumbnail || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+              };
+            })
+            .filter((v) => v.videoId);
+          if (items.length > 0) return items;
+        }
+      } catch (_) {}
+    }
+
     return [];
   }
 
@@ -255,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       songSearchInput.setAttribute('aria-expanded', 'true');
       const li = document.createElement('li');
       li.className = 'dropdown-empty';
-      li.textContent = 'Nenhum disco encontrado.';
+      li.textContent = 'Nenhum disco encontrado. Tente outro termo ou cole o link.';
       searchResultsDropdown.appendChild(li);
       return;
     }
@@ -288,7 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
       li.appendChild(thumb);
       li.appendChild(meta);
 
-      li.addEventListener('click', () => selectSong(item));
+      // Usa mousedown para selecionar antes de qualquer blur do input
+      li.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        selectSong(item);
+      });
+
       searchResultsDropdown.appendChild(li);
     });
 
@@ -323,9 +388,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function clearSelectedSong() {
     selectedSong = null;
+    latestSearchToken += 1;
+    clearTimeout(searchDebounceTimer);
+    selectedSongTitle.textContent = '';
     selectedSongCard.hidden = true;
     searchCombobox.hidden = false;
     songSearchInput.value = '';
+    searchResults = [];
+    searchResultsDropdown.innerHTML = '';
+    searchSpinner.hidden = true;
+    closeDropdown();
+  }
+
+  function resetFormForNextPerson() {
+    form.reset();
+    clearSelectedSong();
+    participantNameInput.value = '';
+    songMeaningInput.value = '';
+    hideError();
   }
 
   clearSongBtn.addEventListener('click', () => {
@@ -336,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
   songSearchInput.addEventListener('input', (e) => {
     const q = e.target.value;
     clearTimeout(searchDebounceTimer);
+    const currentToken = ++latestSearchToken;
 
     if (q.trim().length < 2) {
       searchSpinner.hidden = true;
@@ -348,6 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchDebounceTimer = setTimeout(async () => {
       const results = await searchYouTube(q);
+      if (currentToken !== latestSearchToken || selectedSong !== null) {
+        return;
+      }
       searchResults = results;
       searchSpinner.hidden = true;
       renderDropdownResults(results, false, q.trim());
@@ -478,144 +562,479 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 4. Efeito Thanos Snap (Desintegração da Tira em Poeira Dourada/Cinzas)
+  // 4. Física 2D: Queda Dramática, Quebra em Estilhaços & Acúmulo no Fundo
   // --------------------------------------------------------------------------
 
-  function triggerThanosSnap(itemEl, entryData) {
-    if (itemEl.classList.contains('snapping')) return;
-    itemEl.classList.add('snapping');
+  const MAX_PILE_SHARDS = 240;
+  let physicsDpr = 1;
+  let fallingCards = [];
+  let shards = [];
+  let impactParticles = [];
+  let impactFlashes = [];
+  let physicsRafId = null;
+  let lastPhysicsTime = 0;
 
-    const rect = itemEl.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-      itemEl.remove();
-      return;
+  function resizePhysicsCanvas() {
+    physicsDpr = Math.min(window.devicePixelRatio || 1, 2);
+    physicsCanvas.width = window.innerWidth * physicsDpr;
+    physicsCanvas.height = window.innerHeight * physicsDpr;
+    pCtx.setTransform(physicsDpr, 0, 0, physicsDpr, 0, 0);
+    renderPhysicsOnce();
+  }
+
+  function wrapCanvasText(ctx, text, maxWidth) {
+    const words = String(text || '').split(/\s+/);
+    const lines = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (ctx.measureText(testLine).width <= maxWidth) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines;
+  }
+
+  function renderCardTexture(entryData, width, height) {
+    const w = Math.max(220, Math.round(width));
+    const h = Math.max(64, Math.round(height));
+    const off = document.createElement('canvas');
+    off.width = w;
+    off.height = h;
+    const ctx = off.getContext('2d');
+
+    // Fundo de papel envelhecido com leve tom avermelhado da condenação
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+    bgGrad.addColorStop(0, '#f9ebcf');
+    bgGrad.addColorStop(0.55, '#ead1a3');
+    bgGrad.addColorStop(1, '#d3b27e');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = '#7a4f25';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, w - 2, h - 2);
+
+    // Selo A3 lateral
+    ctx.fillStyle = '#8b1414';
+    ctx.fillRect(10, 10, 32, h - 20);
+    ctx.fillStyle = '#fff5d6';
+    ctx.font = '700 13px "Oswald", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('A3', 26, h / 2);
+
+    // Nome em destaque
+    const textLeft = 52;
+    const textMaxW = w - textLeft - 14;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#140c05';
+    ctx.font = '700 16px "Oswald", sans-serif';
+    ctx.fillText((entryData.name || '').toUpperCase(), textLeft, 10, textMaxW);
+
+    // Texto completo (múltiplas linhas)
+    ctx.fillStyle = '#4e3927';
+    ctx.font = '12px "Special Elite", monospace';
+    const lines = wrapCanvasText(ctx, `“${entryData.meaning || ''}”`, textMaxW);
+    lines.forEach((line, idx) => {
+      const yPos = 31 + idx * 15;
+      if (yPos < h - 12) {
+        ctx.fillText(line, textLeft, yPos, textMaxW);
+      }
+    });
+
+    // Linhas de fratura escuras na textura antes de quebrar
+    ctx.strokeStyle = 'rgba(40, 8, 8, 0.55)';
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.34, 0);
+    ctx.lineTo(w * 0.38, h * 0.52);
+    ctx.lineTo(w * 0.31, h);
+    ctx.moveTo(w * 0.68, 0);
+    ctx.lineTo(w * 0.64, h * 0.45);
+    ctx.lineTo(w * 0.72, h);
+    ctx.moveTo(0, h * 0.48);
+    ctx.lineTo(w, h * 0.54);
+    ctx.stroke();
+
+    return off;
+  }
+
+  function getFloorSurfaceAt(xPos) {
+    const baseFloor = window.innerHeight - 6;
+    let highestY = baseFloor;
+
+    for (let i = 0; i < shards.length; i++) {
+      const s = shards[i];
+      if (!s.settled) continue;
+      if (Math.abs(s.x - xPos) < s.w * 0.62) {
+        const topOfShard = s.y - s.h * 0.36;
+        if (topOfShard < highestY) {
+          highestY = topOfShard;
+        }
+      }
+    }
+    return Math.max(window.innerHeight * 0.55, highestY);
+  }
+
+  function shatterCardAtImpact(card) {
+    // Tremor da jukebox no impacto
+    jukebox.classList.remove('is-shaking');
+    void jukebox.offsetWidth;
+    jukebox.classList.add('is-shaking');
+
+    // Flash de impacto
+    impactFlashes.push({
+      x: card.x,
+      y: card.y,
+      radius: 14,
+      maxRadius: Math.max(120, card.w * 0.45),
+      alpha: 0.85,
+    });
+
+    // Explosão de fagulhas e poeira no ponto de quebra
+    for (let i = 0; i < 36; i++) {
+      const angle = -Math.PI * Math.random();
+      const speed = 110 + Math.random() * 340;
+      impactParticles.push({
+        x: card.x + (Math.random() - 0.5) * card.w * 0.6,
+        y: card.y,
+        vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 90,
+        vy: Math.sin(angle) * speed - 60,
+        size: 1.8 + Math.random() * 3.2,
+        color: i % 3 === 0 ? '255, 174, 52' : i % 3 === 1 ? '230, 57, 70' : '243, 223, 186',
+        alpha: 0.95,
+        life: 0,
+        maxLife: 0.45 + Math.random() * 0.45,
+      });
     }
 
-    const padX = 90;
-    const padTop = 75;
-    const padBottom = 55;
-    const canvasWidth = rect.width + padX * 2;
-    const canvasHeight = rect.height + padTop + padBottom;
+    // Divide a textura real do card em 6 estilhaços poligonais (3 colunas x 2 linhas com cortes irregulares)
+    const cols = 3;
+    const rows = 2;
+    const cw = card.w;
+    const ch = card.h;
+    const cellW = cw / cols;
+    const cellH = ch / rows;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const dustCanvas = document.createElement('canvas');
-    dustCanvas.className = 'snap-dust-canvas';
-    dustCanvas.style.left = `${rect.left - padX}px`;
-    dustCanvas.style.top = `${rect.top - padTop}px`;
-    dustCanvas.style.width = `${canvasWidth}px`;
-    dustCanvas.style.height = `${canvasHeight}px`;
-    dustCanvas.width = canvasWidth * dpr;
-    dustCanvas.height = canvasHeight * dpr;
-    document.body.appendChild(dustCanvas);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const localX0 = -cw / 2 + c * cellW;
+        const localY0 = -ch / 2 + r * cellH;
+        const shardW = cellW;
+        const shardH = cellH;
+        const centerX = localX0 + shardW / 2;
+        const centerY = localY0 + shardH / 2;
 
-    const ctx = dustCanvas.getContext('2d');
-    ctx.scale(dpr, dpr);
+        // Polígono irregular relativo ao centro do estilhaço
+        const jitter = () => (Math.random() - 0.5) * 10;
+        const poly = [
+          { x: -shardW / 2 + jitter(), y: -shardH / 2 + jitter() },
+          { x: shardW / 2 + jitter(), y: -shardH / 2 + jitter() },
+          { x: shardW / 2 + jitter(), y: shardH / 2 + jitter() },
+          { x: -shardW / 2 + jitter(), y: shardH / 2 + jitter() },
+        ];
 
-    // Desenha a tira de papel + texto em um canvas offscreen para extrair partículas reais
-    const offCanvas = document.createElement('canvas');
-    offCanvas.width = Math.ceil(rect.width);
-    offCanvas.height = Math.ceil(rect.height);
-    const offCtx = offCanvas.getContext('2d');
-
-    // Fundo de papel envelhecido da tira
-    offCtx.fillStyle = '#e5cf9e';
-    offCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
-
-    // Etiqueta vermelha lateral
-    offCtx.fillStyle = '#7d1414';
-    offCtx.fillRect(6, 5, 28, offCanvas.height - 10);
-
-    // Texto: Nome (em destaque) + Significado
-    offCtx.textAlign = 'left';
-    offCtx.textBaseline = 'middle';
-    offCtx.font = '700 15px "Oswald", sans-serif';
-    offCtx.fillStyle = '#1b1108';
-    offCtx.fillText(entryData.name.toUpperCase(), 44, offCanvas.height * 0.35, offCanvas.width - 60);
-
-    offCtx.font = '12px "Special Elite", monospace';
-    offCtx.fillStyle = '#5c4632';
-    offCtx.fillText(`“${entryData.meaning}”`, 44, offCanvas.height * 0.72, offCanvas.width - 60);
-
-    const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
-    const particles = [];
-
-    // Amostra pixels da tira e do texto para formar uma nuvem densa e nítida
-    for (let y = 0; y < offCanvas.height; y += 2) {
-      for (let x = 0; x < offCanvas.width; x += 2) {
-        if (Math.random() > 0.52) continue;
-        const idx = (y * offCanvas.width + x) * 4;
-        const r = imgData[idx];
-        const g = imgData[idx + 1];
-        const b = imgData[idx + 2];
-        const normX = x / offCanvas.width;
-
-        particles.push({
-          x: padX + x,
-          y: padTop + y,
-          r,
-          g,
-          b,
-          triggerAt: normX * 0.55 + (Math.random() - 0.5) * 0.12,
-          vx: (Math.random() * 1.9 + 0.4) * (Math.random() < 0.85 ? 1 : -0.35),
-          vy: -(Math.random() * 1.65 + 0.3),
-          size: Math.random() * 2.1 + 0.8,
-          alpha: 0.92,
-          life: 0,
-          maxLife: 0.45 + Math.random() * 0.45,
-          seed: Math.random() * Math.PI * 2,
+        const spreadFactor = (c - 1) * 145 + (Math.random() - 0.5) * 120;
+        shards.push({
+          texture: card.texture,
+          srcX: c * (card.texture.width / cols),
+          srcY: r * (card.texture.height / rows),
+          srcW: card.texture.width / cols,
+          srcH: card.texture.height / rows,
+          w: shardW,
+          h: shardH,
+          poly,
+          x: card.x + centerX * Math.cos(card.angle) - centerY * Math.sin(card.angle),
+          y: card.y + centerX * Math.sin(card.angle) + centerY * Math.cos(card.angle) - 6,
+          vx: card.vx * 0.4 + spreadFactor,
+          vy: -(160 + Math.random() * 260 + (1 - r) * 90),
+          angle: card.angle + (Math.random() - 0.5) * 0.3,
+          omega: (Math.random() - 0.5) * 12,
+          restitution: 0.28 + Math.random() * 0.18,
+          friction: 0.78,
+          settled: false,
+          bounces: 0,
         });
       }
     }
 
-    const duration = 1650;
-    const startTime = performance.now();
+    if (shards.length > MAX_PILE_SHARDS) {
+      shards = shards.slice(shards.length - MAX_PILE_SHARDS);
+    }
+  }
 
-    function animateFrame(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / duration);
+  function spawnPreSettledShards(entryData, indexInPile) {
+    const tex = renderCardTexture(entryData, 420, 74);
+    const cols = 3;
+    const rows = 2;
+    const shardW = 420 / cols;
+    const shardH = 74 / rows;
+    const baseCenter = window.innerWidth * 0.36 + ((indexInPile % 5) - 2) * 75 + (Math.random() - 0.5) * 40;
 
-      // Onda que corrói a tira da esquerda para a direita
-      const wavePct = Math.min(125, (progress / 0.6) * 125);
-      const maskGrad = `linear-gradient(104deg, transparent ${Math.max(
-        0,
-        wavePct - 16
-      )}%, rgba(0,0,0,0.3) ${wavePct}%, black ${wavePct + 12}%)`;
-      itemEl.style.webkitMaskImage = maskGrad;
-      itemEl.style.maskImage = maskGrad;
-
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        if (progress < p.triggerAt) continue;
-
-        p.life += 0.016;
-        const lifeRatio = p.life / p.maxLife;
-        if (lifeRatio >= 1) continue;
-
-        p.x += p.vx + Math.sin(p.life * 6 + p.seed) * 0.55;
-        p.y += p.vy + Math.cos(p.life * 5 + p.seed) * 0.3;
-        p.vx *= 1.01;
-        p.vy *= 1.012;
-
-        const currentAlpha = p.alpha * (1 - lifeRatio * lifeRatio);
-        ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${currentAlpha.toFixed(3)})`;
-        ctx.fillRect(p.x, p.y, p.size, p.size);
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(animateFrame);
-      } else {
-        dustCanvas.remove();
-        itemEl.remove();
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = Math.max(40, Math.min(window.innerWidth - 40, baseCenter + (c - 1) * (shardW * 0.8) + (Math.random() - 0.5) * 35));
+        const floorY = getFloorSurfaceAt(x);
+        const jitter = () => (Math.random() - 0.5) * 8;
+        shards.push({
+          texture: tex,
+          srcX: c * (tex.width / cols),
+          srcY: r * (tex.height / rows),
+          srcW: tex.width / cols,
+          srcH: tex.height / rows,
+          w: shardW,
+          h: shardH,
+          poly: [
+            { x: -shardW / 2 + jitter(), y: -shardH / 2 + jitter() },
+            { x: shardW / 2 + jitter(), y: -shardH / 2 + jitter() },
+            { x: shardW / 2 + jitter(), y: shardH / 2 + jitter() },
+            { x: -shardW / 2 + jitter(), y: shardH / 2 + jitter() },
+          ],
+          x,
+          y: floorY - shardH * 0.32,
+          vx: 0,
+          vy: 0,
+          angle: (Math.random() - 0.5) * 0.75,
+          omega: 0,
+          restitution: 0.3,
+          friction: 0.78,
+          settled: true,
+          bounces: 4,
+        });
       }
     }
 
-    requestAnimationFrame(animateFrame);
+    if (shards.length > MAX_PILE_SHARDS) {
+      shards = shards.slice(shards.length - MAX_PILE_SHARDS);
+    }
+  }
+
+  function renderPhysicsOnce() {
+    pCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    // 1. Estilhaços acumulados / quicando
+    for (let i = 0; i < shards.length; i++) {
+      const s = shards[i];
+      pCtx.save();
+      pCtx.translate(s.x, s.y);
+      pCtx.rotate(s.angle);
+
+      pCtx.beginPath();
+      pCtx.moveTo(s.poly[0].x, s.poly[0].y);
+      for (let k = 1; k < s.poly.length; k++) {
+        pCtx.lineTo(s.poly[k].x, s.poly[k].y);
+      }
+      pCtx.closePath();
+
+      pCtx.save();
+      pCtx.clip();
+      pCtx.globalAlpha = s.settled ? 0.88 : 1;
+      pCtx.drawImage(
+        s.texture,
+        s.srcX,
+        s.srcY,
+        s.srcW,
+        s.srcH,
+        -s.w / 2,
+        -s.h / 2,
+        s.w,
+        s.h
+      );
+      pCtx.restore();
+
+      // Borda da fratura visível
+      pCtx.strokeStyle = 'rgba(25, 10, 6, 0.75)';
+      pCtx.lineWidth = 1.2;
+      pCtx.stroke();
+      pCtx.restore();
+    }
+
+    // 2. Cards inteiros em queda livre
+    for (let i = 0; i < fallingCards.length; i++) {
+      const card = fallingCards[i];
+      pCtx.save();
+      pCtx.translate(card.x, card.y);
+      pCtx.rotate(card.angle);
+      pCtx.shadowColor = 'rgba(0, 0, 0, 0.75)';
+      pCtx.shadowBlur = 14;
+      pCtx.drawImage(card.texture, -card.w / 2, -card.h / 2, card.w, card.h);
+      pCtx.restore();
+    }
+
+    // 3. Flashes de impacto
+    for (let i = 0; i < impactFlashes.length; i++) {
+      const fl = impactFlashes[i];
+      const grad = pCtx.createRadialGradient(fl.x, fl.y, 0, fl.x, fl.y, fl.radius);
+      grad.addColorStop(0, `rgba(255, 220, 140, ${fl.alpha})`);
+      grad.addColorStop(0.45, `rgba(230, 57, 70, ${fl.alpha * 0.55})`);
+      grad.addColorStop(1, 'rgba(230, 57, 70, 0)');
+      pCtx.fillStyle = grad;
+      pCtx.beginPath();
+      pCtx.arc(fl.x, fl.y, fl.radius, 0, Math.PI * 2);
+      pCtx.fill();
+    }
+
+    // 4. Fagulhas e poeira do impacto
+    for (let i = 0; i < impactParticles.length; i++) {
+      const pt = impactParticles[i];
+      const lifeRatio = pt.life / pt.maxLife;
+      const alpha = Math.max(0, pt.alpha * (1 - lifeRatio));
+      pCtx.fillStyle = `rgba(${pt.color}, ${alpha.toFixed(3)})`;
+      pCtx.fillRect(pt.x, pt.y, pt.size, pt.size);
+    }
+  }
+
+  function stepPhysics(now) {
+    if (!lastPhysicsTime) lastPhysicsTime = now;
+    const dt = Math.min(0.032, (now - lastPhysicsTime) / 1000);
+    lastPhysicsTime = now;
+
+    const gravity = 1850;
+    let hasMotion = false;
+
+    // Atualiza cards caindo
+    for (let i = fallingCards.length - 1; i >= 0; i--) {
+      const card = fallingCards[i];
+      hasMotion = true;
+      card.vy += gravity * dt;
+      card.x += card.vx * dt;
+      card.y += card.vy * dt;
+      card.angle += card.omega * dt;
+
+      const impactY = getFloorSurfaceAt(card.x);
+      if (card.y + card.h * 0.42 >= impactY) {
+        card.y = impactY - card.h * 0.35;
+        fallingCards.splice(i, 1);
+        shatterCardAtImpact(card);
+      }
+    }
+
+    // Atualiza estilhaços com gravidade, quique e atrito até assentar no fundo
+    for (let i = 0; i < shards.length; i++) {
+      const s = shards[i];
+      if (s.settled) continue;
+      hasMotion = true;
+
+      s.vy += gravity * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.angle += s.omega * dt;
+
+      // Colisão lateral nas bordas da tela
+      const margin = s.w * 0.35;
+      if (s.x < margin) {
+        s.x = margin;
+        s.vx = Math.abs(s.vx) * 0.6;
+      } else if (s.x > window.innerWidth - margin) {
+        s.x = window.innerWidth - margin;
+        s.vx = -Math.abs(s.vx) * 0.6;
+      }
+
+      // Colisão com o fundo ou pilha já assentada
+      const surfaceY = getFloorSurfaceAt(s.x);
+      const halfThick = s.h * 0.34;
+      if (s.y + halfThick >= surfaceY) {
+        s.y = surfaceY - halfThick;
+        s.bounces += 1;
+
+        if (Math.abs(s.vy) < 95 || s.bounces >= 4) {
+          s.vy = 0;
+          s.vx = 0;
+          s.omega = 0;
+          s.settled = true;
+        } else {
+          s.vy = -s.vy * s.restitution;
+          s.vx *= s.friction;
+          s.omega *= 0.65;
+        }
+      }
+    }
+
+    // Atualiza flashes
+    for (let i = impactFlashes.length - 1; i >= 0; i--) {
+      const fl = impactFlashes[i];
+      hasMotion = true;
+      fl.radius += (fl.maxRadius - fl.radius) * 0.22;
+      fl.alpha -= dt * 2.8;
+      if (fl.alpha <= 0) impactFlashes.splice(i, 1);
+    }
+
+    // Atualiza partículas
+    for (let i = impactParticles.length - 1; i >= 0; i--) {
+      const pt = impactParticles[i];
+      hasMotion = true;
+      pt.life += dt;
+      pt.vy += 880 * dt;
+      pt.x += pt.vx * dt;
+      pt.y += pt.vy * dt;
+      if (pt.life >= pt.maxLife) impactParticles.splice(i, 1);
+    }
+
+    renderPhysicsOnce();
+
+    if (hasMotion) {
+      physicsRafId = requestAnimationFrame(stepPhysics);
+    } else {
+      physicsRafId = null;
+      lastPhysicsTime = 0;
+    }
+  }
+
+  function ensurePhysicsRunning() {
+    if (!physicsRafId) {
+      lastPhysicsTime = performance.now();
+      physicsRafId = requestAnimationFrame(stepPhysics);
+    }
+  }
+
+  function triggerDramaticFallAndShatter(itemEl, entryData) {
+    if (itemEl.classList.contains('is-condemned')) return;
+    itemEl.classList.add('is-condemned');
+
+    // Ato 1: Tremor mecânico da Jukebox + Trincas no card condenado (~420ms)
+    jukebox.classList.remove('is-shaking');
+    void jukebox.offsetWidth;
+    jukebox.classList.add('is-shaking');
+
+    setTimeout(() => {
+      const rect = itemEl.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        itemEl.remove();
+        fitStageToViewport();
+        return;
+      }
+
+      const cardTexture = renderCardTexture(entryData, rect.width, rect.height);
+
+      // Ato 2: Desprende do painel e inicia queda livre no canvas
+      itemEl.remove();
+      fitStageToViewport();
+
+      fallingCards.push({
+        texture: cardTexture,
+        w: rect.width,
+        h: rect.height,
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        vx: (Math.random() - 0.5) * 90,
+        vy: -85,
+        angle: (Math.random() - 0.5) * 0.08,
+        omega: (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.random() * 1.4),
+      });
+
+      ensurePhysicsRunning();
+    }, 420);
   }
 
   // --------------------------------------------------------------------------
-  // 5. Renderização das Tiras de Título (Acima da Caixa de Interação)
+  // 5. Renderização das Tiras de Título (Texto 100% Inteiro)
   // --------------------------------------------------------------------------
 
   function createRankingItemElement(entry, rankPosition, isNewTop = false) {
@@ -627,12 +1046,10 @@ document.addEventListener('DOMContentLoaded', () => {
     li.dataset.entryId = entry.id;
     li.dataset.rank = String(rankPosition);
 
-    // Código de Jukebox (A1, A2, A3)
     const codeEl = document.createElement('div');
     codeEl.className = 'strip-code';
     codeEl.textContent = `A${rankPosition}`;
 
-    // Centro: 1º Nome com maior destaque + 2º Significado
     const mainEl = document.createElement('div');
     mainEl.className = 'strip-main';
 
@@ -647,7 +1064,6 @@ document.addEventListener('DOMContentLoaded', () => {
     mainEl.appendChild(nameEl);
     mainEl.appendChild(meaningEl);
 
-    // Direita: Indicador tocando (no #1) + Nome da música
     const rightEl = document.createElement('div');
     rightEl.className = 'strip-right';
 
@@ -673,12 +1089,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderInitialState() {
     rankingList.innerHTML = '';
-    if (allEntries.length === 0) return;
+    shards = [];
+    if (allEntries.length === 0) {
+      updateCounters();
+      resizePhysicsCanvas();
+      fitStageToViewport();
+      return;
+    }
 
     const visibleEntries = allEntries.slice(-MAX_VISIBLE_RANKING).reverse();
     visibleEntries.forEach((entry, idx) => {
       rankingList.appendChild(createRankingItemElement(entry, idx + 1, false));
     });
+
+    // Reconstrói no fundo os cacos acumulados de entradas já descartadas
+    resizePhysicsCanvas();
+    if (allEntries.length > MAX_VISIBLE_RANKING) {
+      const discardedEntries = allEntries.slice(0, allEntries.length - MAX_VISIBLE_RANKING);
+      discardedEntries.forEach((entry, i) => {
+        spawnPreSettledShards(entry, i);
+      });
+      renderPhysicsOnce();
+    }
 
     const latest = visibleEntries[0];
     if (latest) {
@@ -687,6 +1119,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAndLoopAudio(latest.song.videoId);
       }
     }
+
+    updateCounters();
+    fitStageToViewport();
   }
 
   function addNewEntryToStage(newEntry) {
@@ -695,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newTopEl = createRankingItemElement(newEntry, 1, true);
     rankingList.prepend(newTopEl);
 
-    const activeItems = Array.from(rankingList.querySelectorAll('.ranking-item:not(.snapping)'));
+    const activeItems = Array.from(rankingList.querySelectorAll('.ranking-item:not(.is-condemned)'));
     activeItems.forEach((itemEl, index) => {
       const newRank = index + 1;
       const codeEl = itemEl.querySelector('.strip-code');
@@ -706,19 +1141,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (newRank <= MAX_VISIBLE_RANKING) {
         itemEl.dataset.rank = String(newRank);
       } else {
-        // Passou de 3 -> desintegra com efeito Thanos Snap!
         const entryData = itemEl._entryData || {
           name: itemEl.querySelector('.ranking-name')?.textContent || '',
           meaning: (itemEl.querySelector('.ranking-meaning')?.textContent || '').replace(/[“”]/g, ''),
           song: { title: itemEl.querySelector('.ranking-song')?.textContent || '' },
         };
-        triggerThanosSnap(itemEl, entryData);
+        triggerDramaticFallAndShatter(itemEl, entryData);
       }
     });
+
+    fitStageToViewport();
   }
 
   // --------------------------------------------------------------------------
-  // 6. Envio do Formulário & Download do JSON
+  // 6. Fluxo de Submissão com Popup de Confirmação ("Tem certeza da sua atitude?")
   // --------------------------------------------------------------------------
 
   function showError(msg) {
@@ -729,6 +1165,43 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideError() {
     formError.textContent = '';
     formError.hidden = true;
+  }
+
+  function openConfirmModal(submission) {
+    pendingSubmission = submission;
+
+    if (allEntries.length >= MAX_VISIBLE_RANKING) {
+      const oldestVisible = allEntries[allEntries.length - MAX_VISIBLE_RANKING];
+      confirmModalSub.textContent =
+        `Sua música assumirá o palco em looping, empurrando e quebrando a memória de “${oldestVisible.name}” (A3) no chão.`;
+    } else {
+      confirmModalSub.textContent =
+        'Sua música assumirá o palco principal (A1) e tocará em looping contínuo.';
+    }
+
+    confirmModal.hidden = false;
+    confirmYesBtn.focus();
+  }
+
+  function closeConfirmModal() {
+    confirmModal.hidden = true;
+    pendingSubmission = null;
+  }
+
+  function commitSubmission(submission) {
+    const newEntry = {
+      id: `entry_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      order: allEntries.length + 1,
+      name: submission.name,
+      meaning: submission.meaning,
+      song: { ...submission.song },
+      createdAt: new Date().toISOString(),
+    };
+
+    allEntries.push(newEntry);
+    saveEntriesToStorage();
+    addNewEntryToStage(newEntry);
+    resetFormForNextPerson();
   }
 
   form.addEventListener('submit', (e) => {
@@ -755,23 +1228,40 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const newEntry = {
-      id: `entry_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-      order: allEntries.length + 1,
+    openConfirmModal({
       name,
       meaning,
       song: { ...selectedSong },
-      createdAt: new Date().toISOString(),
-    };
-
-    allEntries.push(newEntry);
-    saveEntriesToStorage();
-    addNewEntryToStage(newEntry);
-
-    clearSelectedSong();
-    participantNameInput.value = '';
-    songMeaningInput.value = '';
+    });
   });
+
+  confirmYesBtn.addEventListener('click', () => {
+    const toCommit = pendingSubmission;
+    closeConfirmModal();
+    if (toCommit) {
+      commitSubmission(toCommit);
+    }
+  });
+
+  confirmNoBtn.addEventListener('click', () => {
+    closeConfirmModal();
+  });
+
+  confirmModal.addEventListener('click', (e) => {
+    if (e.target === confirmModal) {
+      closeConfirmModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !confirmModal.hidden) {
+      closeConfirmModal();
+    }
+  });
+
+  // --------------------------------------------------------------------------
+  // 7. Exportação do JSON Completo & Inicialização Limpa
+  // --------------------------------------------------------------------------
 
   downloadJsonBtn.addEventListener('click', () => {
     const payload = {
@@ -793,7 +1283,11 @@ document.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   });
 
+  window.addEventListener('pageshow', () => {
+    resetFormForNextPerson();
+  });
+
+  resetFormForNextPerson();
   loadStoredEntries();
-  downloadCountBadge.textContent = String(allEntries.length);
   renderInitialState();
 });

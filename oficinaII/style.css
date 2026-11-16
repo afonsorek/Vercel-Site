@@ -17,6 +17,12 @@
   --ink-dark: #1b130c;
   --ink-muted: #5c4632;
 
+  /* Raios concêntricos harmonizados */
+  --arch-r: 230px;
+  --panel-r: 10px;
+  --control-r: 6px;
+  --inner-r: 4px;
+
   --font-display: 'Oswald', sans-serif;
   --font-typewriter: 'Special Elite', monospace;
   --font-serif: 'Newsreader', Georgia, serif;
@@ -29,6 +35,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 html,
@@ -59,7 +69,7 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 42%, rgba(217, 27, 143, 0.28) 0%, rgba(74, 24, 92, 0.22) 38%, rgba(8, 5, 14, 0.96) 78%),
+    radial-gradient(circle at 42% 42%, rgba(217, 27, 143, 0.28) 0%, rgba(74, 24, 92, 0.22) 38%, rgba(8, 5, 14, 0.96) 78%),
     repeating-linear-gradient(
       90deg,
       rgba(255, 255, 255, 0.012) 0px,
@@ -72,18 +82,18 @@ body {
 
 .room-spot {
   position: absolute;
-  top: -10%;
-  left: 50%;
+  top: -12%;
+  left: 44%;
   transform: translateX(-50%);
-  width: 900px;
-  height: 900px;
+  width: 980px;
+  height: 980px;
   background: radial-gradient(
     circle,
     rgba(255, 174, 52, 0.18) 0%,
     rgba(255, 79, 216, 0.12) 35%,
     transparent 70%
   );
-  filter: blur(25px);
+  filter: blur(28px);
 }
 
 .room-floor {
@@ -91,55 +101,70 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 14vh;
+  height: 12vh;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(255, 79, 216, 0.26) 0%, rgba(255, 174, 52, 0.1) 35%, transparent 70%),
+    radial-gradient(ellipse at 44% 0%, rgba(255, 79, 216, 0.26) 0%, rgba(255, 174, 52, 0.1) 35%, transparent 70%),
     linear-gradient(180deg, #0c0610 0%, #040206 100%);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* ==========================================================================
-   PALCO ESCALÁVEL (CABE INTEIRO EM 100VH SEM SCROLL)
+   PALCO ESCALÁVEL & LAYOUT HORIZONTAL (JUKEBOX MAIOR + TEXTO CONCEITUAL)
    ========================================================================== */
 
 .stage {
   position: relative;
   z-index: 2;
-  width: 580px;
+  width: 1080px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   transform-origin: top center;
-  padding-top: 10px;
+  padding-top: 12px;
 }
 
 .room-quote {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: 1.08rem;
+  font-size: 1.24rem;
   letter-spacing: 0.01em;
-  color: rgba(255, 240, 220, 0.92);
+  color: rgba(255, 240, 220, 0.94);
   text-align: center;
   text-shadow:
     0 2px 10px rgba(0, 0, 0, 0.95),
     0 0 22px rgba(255, 174, 52, 0.35);
-  max-width: 540px;
+  max-width: 760px;
+}
+
+.stage-layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 700px 340px;
+  gap: 28px;
+  align-items: center;
+  justify-content: center;
+}
+
+.jukebox-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ==========================================================================
-   ESTRUTURA EXTERNA DA JUKEBOX (ARCO DE NEON, CROMO E FRISOS)
+   ESTRUTURA EXTERNA DA JUKEBOX (MAIOR & CORNER RADIUS CONCÊNTRICO)
    ========================================================================== */
 
 .jukebox {
   position: relative;
-  width: 530px;
-  padding: 36px 38px 18px;
-  border-radius: 265px 265px 22px 22px;
-  background:
-    linear-gradient(180deg, #2a1215 0%, #14080a 100%);
+  width: 700px;
+  padding: 34px;
+  border-radius: var(--arch-r) var(--arch-r) 24px 24px;
+  background: linear-gradient(180deg, #2a1215 0%, #14080a 100%);
   box-shadow:
     0 30px 70px rgba(0, 0, 0, 0.95),
     0 0 65px rgba(255, 79, 216, 0.35),
@@ -147,22 +172,34 @@ body {
     inset 0 2px 4px rgba(255, 255, 255, 0.35);
 }
 
-/* Tubo de Neon Arqueado (inspirado nas referências) */
+.jukebox.is-shaking {
+  animation: jukeboxImpactShake 460ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes jukeboxImpactShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  15% { transform: translate(-4px, 3px) rotate(-0.4deg); }
+  32% { transform: translate(5px, -3px) rotate(0.45deg); }
+  50% { transform: translate(-3px, 4px) rotate(-0.3deg); }
+  70% { transform: translate(3px, -2px) rotate(0.2deg); }
+  85% { transform: translate(-1px, 1px) rotate(0deg); }
+}
+
+/* Tubo de Neon Arqueado */
 .jb-neon {
   position: absolute;
   inset: 6px;
-  border-radius: 260px 260px 18px 18px;
+  border-radius: calc(var(--arch-r) - 6px) calc(var(--arch-r) - 6px) 18px 18px;
   pointer-events: none;
-  background:
-    linear-gradient(
-      90deg,
-      #ff55d8 0%,
-      #ffb84d 18%,
-      #ff4fd8 50%,
-      #ffb84d 82%,
-      #ff55d8 100%
-    );
-  padding: 24px;
+  background: linear-gradient(
+    90deg,
+    #ff55d8 0%,
+    #ffb84d 18%,
+    #ff4fd8 50%,
+    #ffb84d 82%,
+    #ff55d8 100%
+  );
+  padding: 20px;
   box-shadow:
     inset 0 0 18px rgba(255, 255, 255, 0.85),
     inset 0 0 32px rgba(255, 45, 165, 0.9),
@@ -189,19 +226,15 @@ body {
 }
 
 @keyframes bubblesRise {
-  from {
-    background-position: 0 60px;
-  }
-  to {
-    background-position: 0 0;
-  }
+  from { background-position: 0 60px; }
+  to { background-position: 0 0; }
 }
 
 /* Moldura Cromada Interna ao Neon */
 .jb-chrome {
   position: absolute;
-  inset: 28px;
-  border-radius: 238px 238px 14px 14px;
+  inset: 26px;
+  border-radius: calc(var(--arch-r) - 26px) calc(var(--arch-r) - 26px) 14px 14px;
   pointer-events: none;
   border: 8px solid transparent;
   background:
@@ -231,10 +264,9 @@ body {
   left: 50%;
   transform: translateX(-50%);
   z-index: 8;
-  padding: 5px 26px 6px;
-  border-radius: 18px 18px 12px 12px;
-  background:
-    linear-gradient(180deg, #ffffff 0%, #c6cdd6 35%, #464c56 68%, #d7dde5 100%);
+  padding: 5px 28px 6px;
+  border-radius: var(--panel-r);
+  background: linear-gradient(180deg, #ffffff 0%, #c6cdd6 35%, #464c56 68%, #d7dde5 100%);
   border: 2px solid #f7f9fc;
   box-shadow:
     0 6px 14px rgba(0, 0, 0, 0.8),
@@ -244,7 +276,7 @@ body {
 .crown-text {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   letter-spacing: 0.22em;
   color: #16181d;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -256,30 +288,25 @@ body {
   margin-left: 3px;
 }
 
-/* Frisos Cromados Laterais (3 garras horizontais de cada lado como na foto 2) */
+/* Frisos Cromados Laterais */
 .side-ribs {
   position: absolute;
-  top: 195px;
+  top: 225px;
   width: 52px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   z-index: 7;
   pointer-events: none;
 }
 
-.side-ribs--left {
-  left: -6px;
-}
-
-.side-ribs--right {
-  right: -6px;
-}
+.side-ribs--left { left: -6px; }
+.side-ribs--right { right: -6px; }
 
 .side-ribs i {
   display: block;
   height: 18px;
-  border-radius: 4px;
+  border-radius: var(--inner-r);
   background:
     repeating-linear-gradient(
       90deg,
@@ -298,13 +325,13 @@ body {
 }
 
 /* ==========================================================================
-   CORPO INTERNO DA JUKEBOX (MADEIRA ESCURA & AÇO ESCOVADO)
+   CORPO INTERNO DA JUKEBOX
    ========================================================================== */
 
 .jb-body {
   position: relative;
   z-index: 3;
-  border-radius: 228px 228px 12px 12px;
+  border-radius: calc(var(--arch-r) - 34px) calc(var(--arch-r) - 34px) 12px 12px;
   background:
     repeating-linear-gradient(
       90deg,
@@ -314,10 +341,11 @@ body {
       transparent 4px
     ),
     linear-gradient(180deg, #26140d 0%, #190d08 48%, #120906 100%);
-  padding: 14px 18px 14px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  overflow: visible;
   box-shadow:
     inset 0 10px 28px rgba(0, 0, 0, 0.9),
     inset 0 0 0 2px rgba(255, 210, 150, 0.12);
@@ -329,11 +357,10 @@ body {
 
 .jb-dome {
   position: relative;
-  height: 142px;
-  border-radius: 215px 215px 8px 8px;
+  height: 150px;
+  border-radius: calc(var(--arch-r) - 50px) calc(var(--arch-r) - 50px) 10px 10px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 92%, #ffdf85 0%, #ff9824 38%, #6e1c14 74%, #1f0708 100%);
+  background: radial-gradient(circle at 50% 92%, #ffdf85 0%, #ff9824 38%, #6e1c14 74%, #1f0708 100%);
   border: 3px solid #3c261a;
   box-shadow:
     inset 0 14px 32px rgba(0, 0, 0, 0.85),
@@ -362,13 +389,12 @@ body {
   pointer-events: none;
 }
 
-/* Pilha de discos horizontais (igual à imagem 2) */
 .record-stack {
   position: absolute;
   top: 22px;
   left: 50%;
   transform: translateX(-50%);
-  width: 210px;
+  width: 240px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -409,14 +435,13 @@ body {
   width: 94%;
 }
 
-/* Disco ativo na base da cúpula */
 .turntable {
   position: absolute;
-  bottom: -36px;
+  bottom: -40px;
   left: 50%;
-  transform: translateX(-50%) perspective(300px) rotateX(58deg);
-  width: 180px;
-  height: 180px;
+  transform: translateX(-50%) perspective(320px) rotateX(58deg);
+  width: 196px;
+  height: 196px;
   z-index: 3;
 }
 
@@ -459,14 +484,12 @@ body {
 }
 
 @keyframes spinVinyl {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 .vinyl-label {
-  width: 58px;
-  height: 58px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   background: radial-gradient(circle, #ffdf80 0%, #d93829 35%, #8c1717 100%);
   background-size: cover;
@@ -488,13 +511,12 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
-/* Braço da agulha (Tonearm) */
 .tonearm {
   position: absolute;
-  right: 54px;
+  right: 84px;
   bottom: 10px;
-  width: 70px;
-  height: 95px;
+  width: 72px;
+  height: 98px;
   z-index: 4;
 }
 
@@ -504,7 +526,7 @@ body {
   bottom: 0;
   width: 44px;
   height: 28px;
-  border-radius: 6px 6px 2px 2px;
+  border-radius: var(--control-r) var(--control-r) 2px 2px;
   background: linear-gradient(180deg, #4a4e58 0%, #181a1f 100%);
   border: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
@@ -515,7 +537,7 @@ body {
   right: 18px;
   bottom: 22px;
   width: 5px;
-  height: 62px;
+  height: 64px;
   background: linear-gradient(90deg, #ffffff, #68707d);
   transform-origin: bottom center;
   transform: rotate(-28deg);
@@ -555,7 +577,7 @@ body {
 
 .chrome-band {
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--inner-r);
   background: linear-gradient(
     90deg,
     #4c525c 0%,
@@ -570,14 +592,15 @@ body {
 }
 
 /* ==========================================================================
-   2. TIRAS DE TÍTULO (OS NOMES APARECEM AQUI, POR CIMA DA CAIXA DE INTERAÇÃO)
+   2. VITRINE DE TIRAS (MAIOR ESPAÇO PARA TEXTO COMPLETO + CONDENAÇÃO DRAMÁTICA)
    ========================================================================== */
 
 .jb-strips {
   position: relative;
-  height: 178px;
-  padding: 9px 12px;
-  border-radius: 6px;
+  min-height: 235px;
+  height: auto;
+  padding: 12px;
+  border-radius: var(--panel-r);
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 198, 105, 0.22), rgba(15, 8, 5, 0.95)),
     #120a06;
@@ -585,66 +608,63 @@ body {
   box-shadow:
     inset 0 4px 16px rgba(0, 0, 0, 0.95),
     0 2px 0 rgba(255, 255, 255, 0.2);
-  overflow: hidden;
+  overflow: visible;
 }
 
-/* Slots vazios de fundo (A1, A2, A3) visíveis quando ainda não há 3 pessoas */
 .strip-slots {
   position: absolute;
-  inset: 9px 12px;
+  inset: 12px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
   pointer-events: none;
   z-index: 1;
 }
 
 .strip-slot {
   flex: 1;
-  border-radius: 3px;
+  min-height: 64px;
+  border-radius: var(--control-r);
   border: 1px dashed rgba(255, 214, 153, 0.16);
   background: rgba(255, 230, 185, 0.03);
   display: flex;
   align-items: center;
-  padding-left: 10px;
+  padding-left: 12px;
 }
 
 .strip-slot span {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: rgba(255, 214, 153, 0.2);
   letter-spacing: 0.08em;
 }
 
-/* Lista das 3 pessoas (sobreposta aos slots) */
 .ranking-list {
   position: relative;
   z-index: 3;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  height: 100%;
+  gap: 8px;
 }
 
-/* Tira de papel iluminada de Jukebox */
+/* Tira de papel expansível para exibir 100% do texto */
 .ranking-item {
   position: relative;
-  height: 48px;
-  min-height: 48px;
-  padding: 5px 12px 5px 10px;
-  border-radius: 3px;
-  background:
-    linear-gradient(180deg, #fff8e6 0%, #f3dfba 52%, #e2c792 100%);
+  height: auto;
+  min-height: 64px;
+  padding: 10px 14px;
+  border-radius: var(--control-r);
+  background: linear-gradient(180deg, #fff8e6 0%, #f3dfba 52%, #e2c792 100%);
   border: 1px solid #966b3b;
   box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.75),
+    0 3px 8px rgba(0, 0, 0, 0.78),
     inset 0 0 10px rgba(255, 166, 48, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   display: grid;
-  grid-template-columns: 32px 1fr auto;
-  align-items: center;
-  gap: 10px;
+  grid-template-columns: 36px 1fr auto;
+  align-items: stretch;
+  gap: 12px;
   color: var(--ink-dark);
   transition:
     transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -652,28 +672,26 @@ body {
     filter 420ms ease;
 }
 
-/* #1 no palco: tira acesa com brilho quente de lâmpada incandescente */
 .ranking-item[data-rank="1"] {
-  background:
-    linear-gradient(180deg, #fffdf5 0%, #ffefc8 55%, #f5d693 100%);
+  background: linear-gradient(180deg, #fffdf5 0%, #ffefc8 55%, #f5d693 100%);
   border-color: #ffae34;
   box-shadow:
-    0 0 16px rgba(255, 174, 52, 0.55),
-    inset 0 0 12px rgba(255, 195, 75, 0.45);
+    0 0 18px rgba(255, 174, 52, 0.6),
+    inset 0 0 14px rgba(255, 195, 75, 0.45);
 }
 
 .ranking-item[data-rank="2"] {
-  opacity: 0.84;
-  filter: sepia(0.15) brightness(0.92);
+  opacity: 0.88;
+  filter: sepia(0.12) brightness(0.94);
 }
 
 .ranking-item[data-rank="3"] {
-  opacity: 0.64;
-  filter: sepia(0.3) brightness(0.8);
+  opacity: 0.72;
+  filter: sepia(0.24) brightness(0.84);
 }
 
 .ranking-item.entering-stage {
-  animation: stripInsert 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: stripInsert 440ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes stripInsert {
@@ -687,15 +705,54 @@ body {
   }
 }
 
-/* Código lateral tipo Jukebox (A1, A2, A3) */
+/* Ato 1 da queda: Condenação dramática com trincas e tremor vermelho */
+.ranking-item.is-condemned {
+  border-color: #e63946 !important;
+  background: linear-gradient(180deg, #ffe5e5 0%, #ecc0b0 55%, #d69888 100%) !important;
+  box-shadow:
+    0 0 22px rgba(230, 57, 70, 0.85),
+    inset 0 0 14px rgba(200, 30, 30, 0.45) !important;
+  animation: condemnedShake 420ms linear infinite;
+  overflow: hidden;
+}
+
+.ranking-item.is-condemned::before,
+.ranking-item.is-condemned::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.ranking-item.is-condemned::before {
+  background:
+    linear-gradient(112deg, transparent 42%, rgba(45, 5, 5, 0.85) 42.6%, transparent 43.4%),
+    linear-gradient(28deg, transparent 61%, rgba(45, 5, 5, 0.8) 61.5%, transparent 62.2%),
+    linear-gradient(154deg, transparent 27%, rgba(45, 5, 5, 0.75) 27.5%, transparent 28.1%);
+}
+
+.ranking-item.is-condemned::after {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 60, 60, 0.25), transparent 72%);
+}
+
+@keyframes condemnedShake {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-3px, 1px) rotate(-0.8deg); }
+  40% { transform: translate(3px, -2px) rotate(0.9deg); }
+  60% { transform: translate(-4px, 2px) rotate(-1deg); }
+  80% { transform: translate(3px, 1px) rotate(0.7deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
 .strip-code {
-  height: 100%;
-  border-radius: 2px;
+  min-height: 44px;
+  border-radius: var(--inner-r);
   background: linear-gradient(180deg, #9e1b1b 0%, #5e0d0d 100%);
   color: #fff5d6;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   letter-spacing: 0.06em;
   display: flex;
   align-items: center;
@@ -707,64 +764,69 @@ body {
   background: linear-gradient(180deg, #d92626 0%, #8a1111 100%);
 }
 
-/* Conteúdo principal da tira: Nome em destaque absoluto no topo + Significado */
+/* Texto completo sempre visível sem cortes */
 .strip-main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  line-height: 1.15;
+  gap: 3px;
 }
 
 .ranking-name {
   font-family: var(--font-display);
-  font-size: 1.02rem;
+  font-size: 1.08rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #160e07;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .ranking-item[data-rank="1"] .ranking-name {
-  font-size: 1.08rem;
+  font-size: 1.16rem;
   color: #0d0703;
 }
 
 .ranking-meaning {
   font-family: var(--font-typewriter);
-  font-size: 0.75rem;
+  font-size: 0.86rem;
+  line-height: 1.4;
   color: var(--ink-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: clip;
 }
 
-/* Lado direito da tira: nome da música + indicador quando for #1 */
 .strip-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
-  max-width: 155px;
+  max-width: 170px;
+  padding-left: 8px;
+  border-left: 1px dashed rgba(92, 70, 50, 0.25);
 }
 
 .ranking-song {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
+  line-height: 1.25;
   color: #6b4c2b;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: right;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .strip-eq {
   display: none;
   align-items: flex-end;
   gap: 2px;
-  height: 11px;
+  height: 12px;
   flex-shrink: 0;
 }
 
@@ -778,50 +840,26 @@ body {
   animation: eqBounce 0.8s ease-in-out infinite;
 }
 
-.strip-eq i:nth-child(1) {
-  height: 5px;
-  animation-delay: 0s;
-}
-.strip-eq i:nth-child(2) {
-  height: 11px;
-  animation-delay: 0.18s;
-}
-.strip-eq i:nth-child(3) {
-  height: 7px;
-  animation-delay: 0.36s;
-}
+.strip-eq i:nth-child(1) { height: 5px; animation-delay: 0s; }
+.strip-eq i:nth-child(2) { height: 12px; animation-delay: 0.18s; }
+.strip-eq i:nth-child(3) { height: 7px; animation-delay: 0.36s; }
 
 @keyframes eqBounce {
-  0%, 100% {
-    transform: scaleY(0.35);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-}
-
-.ranking-item.snapping {
-  pointer-events: none;
-}
-
-.snap-dust-canvas {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
 }
 
 /* ==========================================================================
-   3. DISPLAY DE ÁUDIO (INDICADOR QUE O ATUAL ESTÁ TOCANDO + NOME DA MÚSICA)
+   3. DISPLAY DE ÁUDIO
    ========================================================================== */
 
 .jb-display {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 10px;
-  border-radius: 6px;
-  background:
-    linear-gradient(180deg, #3c424c 0%, #1d2026 50%, #2c313a 100%);
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--panel-r);
+  background: linear-gradient(180deg, #3c424c 0%, #1d2026 50%, #2c313a 100%);
   border: 2px solid #8c95a4;
   box-shadow:
     inset 0 2px 5px rgba(0, 0, 0, 0.85),
@@ -829,9 +867,9 @@ body {
 }
 
 .chrome-btn {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
   border-radius: 50%;
   border: 2px solid #e2e8f0;
   background: radial-gradient(circle at 35% 30%, #ffffff 0%, #8f98a6 55%, #2b3038 100%);
@@ -846,35 +884,22 @@ body {
   transition: transform 120ms ease;
 }
 
-.chrome-btn:active {
-  transform: scale(0.93);
-}
+.chrome-btn:active { transform: scale(0.93); }
+.chrome-btn .icon-pause { display: none; }
+.chrome-btn.is-playing .icon-play { display: none; }
+.chrome-btn.is-playing .icon-pause { display: block; }
 
-.chrome-btn .icon-pause {
-  display: none;
-}
-
-.chrome-btn.is-playing .icon-play {
-  display: none;
-}
-
-.chrome-btn.is-playing .icon-pause {
-  display: block;
-}
-
-/* Visor retroiluminado (inspirado na janela de equalizador da imagem 2) */
 .vfd {
   flex: 1;
-  height: 34px;
-  padding: 0 10px;
-  border-radius: 4px;
-  background:
-    radial-gradient(circle at 50% 50%, #182a2e 0%, #091114 100%);
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--control-r);
+  background: radial-gradient(circle at 50% 50%, #182a2e 0%, #091114 100%);
   border: 1px solid #4a5564;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   overflow: hidden;
 }
 
@@ -896,7 +921,7 @@ body {
   flex: 1;
   min-width: 0;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   letter-spacing: 0.06em;
   color: #ffd996;
   text-shadow: 0 0 8px rgba(255, 174, 52, 0.65);
@@ -914,9 +939,7 @@ body {
   transition: opacity 250ms ease;
 }
 
-.vfd.is-active .vfd-eq {
-  opacity: 1;
-}
+.vfd.is-active .vfd-eq { opacity: 1; }
 
 .vfd-eq i {
   width: 3px;
@@ -942,22 +965,19 @@ body {
 .vfd-eq i:nth-child(10) { animation-delay: 0.42s; }
 
 @keyframes vfdSpectrum {
-  0% {
-    transform: scaleY(0.2);
-  }
-  100% {
-    transform: scaleY(1);
-  }
+  0% { transform: scaleY(0.2); }
+  100% { transform: scaleY(1); }
 }
 
 /* ==========================================================================
-   4. PAINEL METÁLICO DE INTERAÇÃO (CAMPOS DE TEXTO)
+   4. PAINEL METÁLICO DE INTERAÇÃO & DROPDOWN CORRIGIDO
    ========================================================================== */
 
 .jb-panel {
   position: relative;
-  padding: 12px 16px 12px;
-  border-radius: 6px;
+  z-index: 20;
+  padding: 16px 18px 14px;
+  border-radius: var(--panel-r);
   background:
     repeating-linear-gradient(
       0deg,
@@ -973,10 +993,10 @@ body {
     0 6px 14px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  overflow: visible;
 }
 
-/* Parafusos nos 4 cantos do painel */
 .screw {
   position: absolute;
   width: 7px;
@@ -986,21 +1006,21 @@ body {
   border: 1px solid #1e293b;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
 }
-.screw--tl { top: 5px; left: 5px; }
-.screw--tr { top: 5px; right: 5px; }
-.screw--bl { bottom: 5px; left: 5px; }
-.screw--br { bottom: 5px; right: 5px; }
+.screw--tl { top: 6px; left: 6px; }
+.screw--tr { top: 6px; right: 6px; }
+.screw--bl { bottom: 6px; left: 6px; }
+.screw--br { bottom: 6px; right: 6px; }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   position: relative;
 }
 
 .field-label {
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -1012,18 +1032,18 @@ body {
   width: 100%;
   background: linear-gradient(180deg, #121418 0%, #181b21 100%);
   border: 1px solid #525b69;
-  border-radius: 3px;
-  padding: 6px 10px;
+  border-radius: var(--control-r);
+  padding: 8px 12px;
   color: #ffebba;
   font-family: var(--font-typewriter);
-  font-size: 0.84rem;
+  font-size: 0.9rem;
   outline: none;
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .paper-input::placeholder {
-  color: rgba(255, 235, 186, 0.3);
+  color: rgba(255, 235, 186, 0.34);
 }
 
 .paper-input:focus {
@@ -1035,10 +1055,10 @@ body {
 
 .paper-textarea {
   resize: none;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
-/* Busca YouTube e Dropdown Diegético */
+/* Busca YouTube e Dropdown abrindo para baixo com alto contraste */
 .search-combobox {
   position: relative;
   width: 100%;
@@ -1048,9 +1068,9 @@ body {
 
 .search-spinner {
   position: absolute;
-  right: 9px;
-  width: 13px;
-  height: 13px;
+  right: 11px;
+  width: 14px;
+  height: 14px;
   border: 2px solid rgba(255, 174, 52, 0.25);
   border-top-color: #ffae34;
   border-radius: 50%;
@@ -1059,24 +1079,25 @@ body {
 
 .search-dropdown {
   position: absolute;
-  bottom: calc(100% + 4px);
+  top: calc(100% + 6px);
+  bottom: auto;
   left: 0;
   right: 0;
-  z-index: 80;
-  background: #171a20;
-  border: 2px solid #9da6b4;
-  border-radius: 4px;
+  z-index: 300;
+  background: #14171d;
+  border: 2px solid #ffae34;
+  border-radius: var(--control-r);
   list-style: none;
-  max-height: 195px;
+  max-height: 210px;
   overflow-y: auto;
-  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.96);
 }
 
 .search-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  gap: 10px;
+  padding: 8px 10px;
   cursor: pointer;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   transition: background-color 120ms ease;
@@ -1088,15 +1109,15 @@ body {
 
 .search-dropdown-item:hover,
 .search-dropdown-item.is-active {
-  background-color: #292f3a;
+  background-color: #29303d;
 }
 
 .dropdown-thumb {
-  width: 38px;
-  height: 28px;
+  width: 44px;
+  height: 32px;
   object-fit: cover;
-  border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--inner-r);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   flex-shrink: 0;
 }
 
@@ -1109,7 +1130,7 @@ body {
 
 .dropdown-title {
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   color: #fff3d6;
   white-space: nowrap;
   overflow: hidden;
@@ -1118,7 +1139,7 @@ body {
 
 .dropdown-sub {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   color: #9ba3b0;
   white-space: nowrap;
   overflow: hidden;
@@ -1126,9 +1147,9 @@ body {
 }
 
 .dropdown-empty {
-  padding: 10px;
+  padding: 12px;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   color: #9ba3b0;
   text-align: center;
 }
@@ -1146,7 +1167,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   color: #ffd98a;
 }
 
@@ -1154,13 +1175,12 @@ body {
   background: none;
   border: none;
   color: #ffae34;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
   padding: 0 4px;
 }
 
-/* Rodapé do painel: erro + botão físico iluminado */
 .panel-actions {
   display: flex;
   align-items: center;
@@ -1171,20 +1191,19 @@ body {
 
 .form-error {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   color: #ff6b6b;
 }
 
 .arcade-btn {
   margin-left: auto;
-  padding: 7px 26px;
-  border-radius: 4px;
+  padding: 8px 28px;
+  border-radius: var(--control-r);
   border: 2px solid #ffd485;
-  background:
-    linear-gradient(180deg, #ff5e36 0%, #c91e10 55%, #8f0f06 100%);
+  background: linear-gradient(180deg, #ff5e36 0%, #c91e10 55%, #8f0f06 100%);
   color: #fff9eb;
   font-family: var(--font-display);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1197,9 +1216,7 @@ body {
   transition: transform 90ms ease, box-shadow 90ms ease;
 }
 
-.arcade-btn:hover {
-  filter: brightness(1.08);
-}
+.arcade-btn:hover { filter: brightness(1.08); }
 
 .arcade-btn:active {
   transform: translateY(3px);
@@ -1210,13 +1227,14 @@ body {
 }
 
 /* ==========================================================================
-   5. GRADE DO ALTO-FALANTE INFERIOR (COM TRELIÇA CROMADA E NEON ROSA)
+   5. GRADE DO ALTO-FALANTE INFERIOR
    ========================================================================== */
 
 .jb-grille {
   position: relative;
-  height: 36px;
-  border-radius: 4px 4px 10px 10px;
+  z-index: 2;
+  height: 38px;
+  border-radius: var(--panel-r);
   border: 2px solid #8c95a4;
   overflow: hidden;
   background:
@@ -1246,17 +1264,13 @@ body {
 }
 
 @keyframes grillePulse {
-  from {
-    opacity: 0.45;
-  }
-  to {
-    opacity: 0.95;
-  }
+  from { opacity: 0.45; }
+  to { opacity: 0.95; }
 }
 
 .floor-reflection {
-  width: 440px;
-  height: 12px;
+  width: 600px;
+  height: 14px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
@@ -1268,8 +1282,193 @@ body {
 }
 
 /* ==========================================================================
-   MOTOR DE ÁUDIO OCULTO E BOTÃO JSON DISCRETO
+   6. PLACA LATERAL: TEXTO EXPLICATIVO DO CONCEITO DA OBRA
    ========================================================================== */
+
+.concept-plaque {
+  position: relative;
+  padding: 24px 22px 20px;
+  border-radius: var(--panel-r);
+  background:
+    linear-gradient(180deg, rgba(35, 22, 18, 0.94) 0%, rgba(18, 12, 14, 0.96) 100%);
+  border: 2px solid #7d715c;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.88),
+    0 0 28px rgba(255, 174, 52, 0.12),
+    inset 0 1px 0 rgba(255, 232, 185, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.concept-title {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  line-height: 1.3;
+  color: #ffd98a;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 217, 138, 0.22);
+}
+
+.concept-body {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  font-family: var(--font-serif);
+  font-size: 0.96rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(245, 237, 224, 0.86);
+}
+
+.concept-body code {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  color: #ffae34;
+  background: rgba(255, 174, 52, 0.1);
+  padding: 1px 4px;
+  border-radius: var(--inner-r);
+}
+
+.concept-footer {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 217, 138, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.concept-lamp {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e63946;
+  box-shadow: 0 0 8px rgba(230, 57, 70, 0.8);
+  flex-shrink: 0;
+}
+
+.concept-counter {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: rgba(255, 217, 138, 0.72);
+  letter-spacing: 0.04em;
+}
+
+/* ==========================================================================
+   7. POPUP DE CONFIRMAÇÃO ("TEM CERTEZA DA SUA ATITUDE? SIM / NÃO")
+   ========================================================================== */
+
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(5, 3, 9, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.confirm-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 26px 24px 22px;
+  border-radius: var(--panel-r);
+  background: linear-gradient(180deg, #272b33 0%, #15171c 100%);
+  border: 2px solid #ffae34;
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.96),
+    0 0 38px rgba(255, 174, 52, 0.24),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+  animation: modalPopIn 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.confirm-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.32rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff4dc;
+}
+
+.confirm-modal-sub {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: rgba(242, 232, 215, 0.78);
+}
+
+.confirm-modal-actions {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.modal-btn {
+  padding: 10px 16px;
+  border-radius: var(--control-r);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 90ms ease, filter 120ms ease;
+}
+
+.modal-btn:hover {
+  filter: brightness(1.1);
+}
+
+.modal-btn:active {
+  transform: translateY(2px);
+}
+
+.modal-btn--no {
+  background: linear-gradient(180deg, #3c424c 0%, #23272e 100%);
+  border: 2px solid #8a93a2;
+  color: #e2e8f0;
+  box-shadow: 0 3px 0 #121418;
+}
+
+.modal-btn--yes {
+  background: linear-gradient(180deg, #ff5e36 0%, #c91e10 60%, #8f0f06 100%);
+  border: 2px solid #ffd485;
+  color: #fff9eb;
+  box-shadow:
+    0 3px 0 #4d0803,
+    0 0 14px rgba(255, 94, 54, 0.4);
+}
+
+/* ==========================================================================
+   8. CANVAS DE FÍSICA 2D, MOTOR DE ÁUDIO & BOTÃO JSON DISCRETO
+   ========================================================================== */
+
+.physics-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 25;
+}
 
 .hidden-audio-engine {
   position: fixed;
@@ -1289,9 +1488,9 @@ body {
   right: 14px;
   background: transparent;
   border: none;
-  color: rgba(255, 235, 200, 0.3);
+  color: rgba(255, 235, 200, 0.32);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 0.05em;
   cursor: pointer;
   z-index: 30;
@@ -1299,5 +1498,5 @@ body {
 }
 
 .corner-json-btn:hover {
-  color: rgba(255, 235, 200, 0.85);
+  color: rgba(255, 235, 200, 0.88);
 }
