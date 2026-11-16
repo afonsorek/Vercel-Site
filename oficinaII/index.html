@@ -204,10 +204,14 @@
     <span id="tvModeLabel">projetar na TV</span>
   </button>
 
-  <!-- Exportação discreta do JSON -->
-  <button type="button" id="downloadJsonBtn" class="corner-json-btn" title="Baixar JSON com todas as entradas">
-    json (<span id="downloadCountBadge">0</span>)
-  </button>
+  <!-- Exportação discreta do JSON e acesso ao leitor -->
+  <div class="corner-right-actions" id="cornerRightActions">
+    <a href="leitor.html" class="corner-json-btn" title="Abrir leitor de arquivo JSON">leitor</a>
+    <span class="corner-sep" aria-hidden="true">·</span>
+    <button type="button" id="downloadJsonBtn" class="corner-json-btn" title="Baixar JSON com todas as entradas">
+      json (<span id="downloadCountBadge">0</span>)
+    </button>
+  </div>
 
   <!-- Motor de áudio oculto (somente som) -->
   <div class="hidden-audio-engine" aria-hidden="true">

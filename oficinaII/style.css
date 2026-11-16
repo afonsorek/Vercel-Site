@@ -1484,18 +1484,31 @@ body {
   z-index: -1;
 }
 
-.corner-json-btn {
+.corner-right-actions {
   position: fixed;
   bottom: 10px;
   right: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 30;
+}
+
+.corner-sep {
+  color: rgba(255, 235, 200, 0.22);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.corner-json-btn {
   background: transparent;
   border: none;
   color: rgba(255, 235, 200, 0.32);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.05em;
+  text-decoration: none;
   cursor: pointer;
-  z-index: 30;
   transition: color 180ms ease;
 }
 
@@ -1643,6 +1656,7 @@ body[data-view-mode="controller"] .jb-panel {
 body[data-view-mode="tv"] .secret-reset-btn,
 body[data-view-mode="tv"] #cocreationForm,
 body[data-view-mode="tv"] .concept-plaque,
+body[data-view-mode="tv"] #cornerRightActions,
 body[data-view-mode="tv"] #downloadJsonBtn {
   display: none !important;
 }

@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Jukebox da Saudade — Leitor de Arquivo (JSON)</title>
+  <meta name="description" content="Leitor de registros da Jukebox da Saudade: histórico completo, horários e rastros de apagamento." />
+  <meta name="author" content="Afonso Rekbaim" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Oswald:wght@400;500;600;700&family=Special+Elite&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --neon-pink: #ff4fd8;
+      --neon-magenta: #d91b8f;
+      --neon-amber: #ffae34;
+      --neon-gold: #ffd97d;
+      --wood-dark: #1d0f09;
+      --paper-cream: #f7edd4;
+      --paper-aged: #e5d2a7;
+      --ink-dark: #1b130c;
+      --ink-muted: #5c4632;
+
+      --panel-r: 10px;
+      --control-r: 6px;
+      --inner-r: 4px;
+
+      --font-display: 'Oswald', sans-serif;
+      --font-typewriter: 'Special Elite', monospace;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html,
+    body {
+      min-height: 100vh;
+      background-color: #09060d;
+      color: #f5efe6;
+      font-family: var(--font-display);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambiente de fundo igual ao da Jukebox */
+    .room {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .room-wall {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(217, 27, 143, 0.25) 0%, rgba(74, 24, 92, 0.2) 38%, rgba(8, 5, 14, 0.97) 78%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.012) 0px,
+          rgba(255, 255, 255, 0.012) 2px,
+          transparent 2px,
+          transparent 48px
+        ),
+        linear-gradient(180deg, #120b1d 0%, #09050e 82%, #050307 100%);
+    }
+
+    .room-spot {
+      position: fixed;
+      top: -180px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1100px;
+      height: 700px;
+      background: radial-gradient(
+        circle,
+        rgba(255, 174, 52, 0.16) 0%,
+        rgba(255, 79, 216, 0.1) 40%,
+        transparent 70%
+      );
+      filter: blur(32px);
+    }
+
+    /* Container Principal */
+    .archive-shell {
+      position: relative;
+      z-index: 2;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 28px 22px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Cabeçalho Arqueado / Brasão Cromado */
+    .archive-header {
+      position: relative;
+      padding: 34px 28px 22px;
+      border-radius: 44px 44px 16px 16px;
+      background: linear-gradient(180deg, #271115 0%, #15090b 100%);
+      border: 3px solid #9ea5b0;
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.92),
+        0 0 48px rgba(255, 79, 216, 0.25),
+        inset 0 0 0 4px rgba(255, 79, 216, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .jb-crown {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 28px 6px;
+      border-radius: var(--panel-r);
+      background: linear-gradient(180deg, #ffffff 0%, #c6cdd6 35%, #464c56 68%, #d7dde5 100%);
+      border: 2px solid #f7f9fc;
+      box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.85),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      white-space: nowrap;
+    }
+
+    .crown-text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.94rem;
+      letter-spacing: 0.14em;
+      color: #16181d;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .crown-text em {
+      font-style: normal;
+      color: #a8134b;
+      margin-left: 4px;
+    }
+
+    .archive-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.05rem, 2vw, 1.32rem);
+      color: rgba(255, 240, 220, 0.92);
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Visores VFD com Estatísticas */
+    .vfd-stats {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .vfd-box {
+      padding: 10px 14px;
+      border-radius: var(--control-r);
+      background: radial-gradient(circle at 50% 50%, #182a2e 0%, #091114 100%);
+      border: 1px solid #4a5564;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .vfd-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: rgba(255, 217, 150, 0.65);
+      text-transform: uppercase;
+    }
+
+    .vfd-value {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      color: #ffae34;
+      text-shadow: 0 0 10px rgba(255, 174, 52, 0.6);
+    }
+
+    /* Painel Metálico de Controles */
+    .control-panel {
+      position: relative;
+      padding: 18px 20px;
+      border-radius: var(--panel-r);
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.02) 0px,
+          rgba(255, 255, 255, 0.02) 1px,
+          transparent 1px,
+          transparent 3px
+        ),
+        linear-gradient(180deg, #2d323b 0%, #1d2027 100%);
+      border: 2px solid #8a93a2;
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.35),
+        0 10px 26px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .screw {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e2e8f0, #475569);
+      border: 1px solid #1e293b;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+    .screw--tl { top: 6px; left: 6px; }
+    .screw--tr { top: 6px; right: 6px; }
+    .screw--bl { bottom: 6px; left: 6px; }
+    .screw--br { bottom: 6px; right: 6px; }
+
+    .controls-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .controls-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    .arcade-btn {
+      padding: 8px 20px;
+      border-radius: var(--control-r);
+      border: 2px solid #ffd485;
+      background: linear-gradient(180deg, #ff5e36 0%, #c91e10 55%, #8f0f06 100%);
+      color: #fff9eb;
+      font-family: var(--font-display);
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow:
+        0 3px 0 #4d0803,
+        0 5px 12px rgba(0, 0, 0, 0.75),
+        inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      transition: transform 90ms ease, filter 120ms ease;
+    }
+
+    .arcade-btn:hover { filter: brightness(1.08); }
+    .arcade-btn:active { transform: translateY(2px); }
+
+    .chrome-action-btn {
+      padding: 8px 14px;
+      border-radius: var(--control-r);
+      border: 1px solid #9da6b4;
+      background: linear-gradient(180deg, #434a57 0%, #262b33 100%);
+      color: #f1f5f9;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 140ms ease, filter 140ms ease;
+    }
+
+    .chrome-action-btn:hover {
+      border-color: #ffae34;
+      filter: brightness(1.08);
+    }
+
+    .chrome-action-btn.is-active {
+      border-color: #ffae34;
+      background: linear-gradient(180deg, #5e411a 0%, #38250c 100%);
+      color: #ffd98a;
+    }
+
+    .controls-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      background: linear-gradient(180deg, #121418 0%, #181b21 100%);
+      border: 1px solid #525b69;
+      border-radius: var(--control-r);
+      padding: 8px 12px;
+      color: #ffebba;
+      font-family: var(--font-typewriter);
+      font-size: 0.88rem;
+      outline: none;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
+    }
+
+    .search-input:focus {
+      border-color: #ffae34;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 235, 186, 0.35);
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .source-banner {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #ffd996;
+      opacity: 0.8;
+    }
+
+    /* Estado Vazio / Dropzone */
+    .empty-state {
+      padding: 48px 24px;
+      border-radius: var(--panel-r);
+      border: 2px dashed rgba(255, 174, 52, 0.4);
+      background: rgba(20, 12, 16, 0.72);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .empty-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffd98a;
+    }
+
+    .empty-sub {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: rgba(245, 237, 224, 0.78);
+      max-width: 520px;
+      line-height: 1.5;
+    }
+
+    /* ========================================================================
+       GRID DE CARDS NO ESTILO TIRA DE JUKEBOX
+       ======================================================================== */
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .strip-card {
+      position: relative;
+      border-radius: var(--panel-r);
+      background: linear-gradient(180deg, #fff8e6 0%, #f3dfba 55%, #e2c792 100%);
+      border: 2px solid #966b3b;
+      box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.8),
+        inset 0 0 14px rgba(255, 166, 48, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      color: var(--ink-dark);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .strip-card:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(255, 174, 52, 0.25);
+    }
+
+    .strip-card.is-on-stage {
+      background: linear-gradient(180deg, #fffdf5 0%, #ffefc8 55%, #f5d693 100%);
+      border-color: #ffae34;
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.82),
+        0 0 20px rgba(255, 174, 52, 0.4);
+    }
+
+    /* Topo do Card: Ordem + Status + Horário */
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(92, 70, 50, 0.28);
+    }
+
+    .card-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .order-stamp {
+      padding: 3px 8px;
+      border-radius: var(--inner-r);
+      background: linear-gradient(180deg, #a81c1c 0%, #630e0e 100%);
+      color: #fff5d6;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35);
+    }
+
+    .status-pill {
+      padding: 2px 7px;
+      border-radius: var(--inner-r);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .status-pill--stage {
+      background: #2f5e2e;
+      color: #e8fce6;
+    }
+
+    .status-pill--erased {
+      background: rgba(110, 25, 25, 0.14);
+      color: #701919;
+      border: 1px solid rgba(110, 25, 25, 0.28);
+    }
+
+    .card-time {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: #4f3a25;
+      line-height: 1.2;
+    }
+
+    .card-time strong {
+      display: block;
+      font-size: 0.84rem;
+      color: #1b130c;
+    }
+
+    /* Nome e Texto */
+    .card-person {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .card-name {
+      font-family: var(--font-display);
+      font-size: 1.32rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      line-height: 1.15;
+      color: #140c05;
+      word-break: break-word;
+    }
+
+    .card-meaning {
+      font-family: var(--font-typewriter);
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #3f2d1d;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Música escolhida */
+    .card-song {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--control-r);
+      background: rgba(45, 28, 12, 0.08);
+      border: 1px solid rgba(92, 70, 50, 0.2);
+      text-decoration: none;
+      color: inherit;
+      transition: background-color 140ms ease;
+    }
+
+    .card-song:hover {
+      background: rgba(45, 28, 12, 0.15);
+    }
+
+    .card-song-thumb {
+      width: 52px;
+      height: 38px;
+      object-fit: cover;
+      border-radius: var(--inner-r);
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+      background: #1b130c;
+    }
+
+    .card-song-meta {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .card-song-title {
+      font-family: var(--font-display);
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #1d1208;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .card-song-channel {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: #6b4c2b;
+    }
+
+    /* Bloco de Apagamento: Quem apagou & Por quem foi apagado */
+    .card-erasure {
+      margin-top: auto;
+      padding: 9px 11px;
+      border-radius: var(--control-r);
+      background: rgba(24, 14, 7, 0.07);
+      border: 1px solid rgba(92, 70, 50, 0.24);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      line-height: 1.35;
+    }
+
+    .erasure-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .erasure-tag {
+      flex-shrink: 0;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .erasure-tag--did {
+      background: #8b1414;
+      color: #fff3db;
+    }
+
+    .erasure-tag--none {
+      background: rgba(92, 70, 50, 0.2);
+      color: #4f3a25;
+    }
+
+    .erasure-tag--by {
+      background: rgba(30, 30, 30, 0.14);
+      color: #3a2a1b;
+    }
+
+    .erasure-detail {
+      color: #2c1e12;
+      word-break: break-word;
+    }
+
+    .erasure-detail em {
+      font-style: normal;
+      color: #6b4c2b;
+    }
+
+    /* Overlay de Drag & Drop */
+    .drop-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(12, 6, 16, 0.86);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .drop-overlay-box {
+      padding: 40px 52px;
+      border-radius: var(--panel-r);
+      border: 3px dashed #ffae34;
+      background: rgba(29, 15, 9, 0.94);
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffd98a;
+      box-shadow: 0 0 40px rgba(255, 174, 52, 0.28);
+    }
+
+    @media (max-width: 640px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .archive-header {
+        padding: 32px 16px 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="room" aria-hidden="true">
+    <div class="room-wall"></div>
+    <div class="room-spot"></div>
+  </div>
+
+  <main class="archive-shell">
+
+    <header class="archive-header">
+      <div class="jb-crown">
+        <span class="crown-text">JUKEBOX <em>DA SAUDADE</em> · ARQUIVO</span>
+      </div>
+
+      <p class="archive-quote">“Enquanto uns são aplaudidos no palco, outros são abafados pela platéia.”</p>
+
+      <div class="vfd-stats">
+        <div class="vfd-box">
+          <span class="vfd-label">Participações</span>
+          <span id="statTotal" class="vfd-value">0</span>
+        </div>
+        <div class="vfd-box">
+          <span class="vfd-label">Vozes Apagadas</span>
+          <span id="statErased" class="vfd-value">0</span>
+        </div>
+        <div class="vfd-box">
+          <span class="vfd-label">No Visor Final</span>
+          <span id="statVisible" class="vfd-value">0</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="control-panel" aria-label="Controles do leitor de JSON">
+      <span class="screw screw--tl"></span><span class="screw screw--tr"></span>
+      <span class="screw screw--bl"></span><span class="screw screw--br"></span>
+
+      <div class="controls-top">
+        <div class="controls-actions">
+          <label for="jsonFileInput" class="arcade-btn">
+            Importar JSON
+          </label>
+          <input type="file" id="jsonFileInput" class="file-input-hidden" accept=".json,application/json" />
+
+          <button type="button" id="loadLocalBtn" class="chrome-action-btn">
+            Carregar deste navegador
+          </button>
+
+          <a href="./" class="chrome-action-btn">← Voltar à Jukebox</a>
+        </div>
+
+        <span id="sourceBanner" class="source-banner">Nenhum arquivo carregado ainda</span>
+      </div>
+
+      <div class="controls-filters">
+        <input
+          type="search"
+          id="searchFilterInput"
+          class="search-input"
+          placeholder="Filtrar por nome, música, significado ou quem foi apagado..."
+          autocomplete="off"
+        />
+
+        <div class="filter-pills">
+          <button type="button" class="chrome-action-btn is-active" data-filter="all">Todas</button>
+          <button type="button" class="chrome-action-btn" data-filter="erased_someone">Apagaram alguém</button>
+          <button type="button" class="chrome-action-btn" data-filter="on_stage">Visor final</button>
+          <button type="button" id="sortOrderBtn" class="chrome-action-btn">Ordem: 1ª → última</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="emptyState" class="empty-state">
+      <h2 class="empty-title">Arraste ou importe um arquivo JSON</h2>
+      <p class="empty-sub">
+        Selecione o arquivo exportado pela Jukebox (ex.: <code>oficinaII-entradas.json</code>) ou clique em
+        <strong>Carregar deste navegador</strong> para visualizar todas as pessoas, horários exatos e quem cada participante apagou.
+      </p>
+    </section>
+
+    <section id="cardsGrid" class="cards-grid" aria-live="polite" hidden></section>
+
+  </main>
+
+  <div id="dropOverlay" class="drop-overlay" hidden>
+    <div class="drop-overlay-box">Solte o arquivo JSON da Jukebox aqui</div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'oficinaII_entries_v1';
+      const MAX_VISIBLE = 3;
+
+      const jsonFileInput = document.getElementById('jsonFileInput');
+      const loadLocalBtn = document.getElementById('loadLocalBtn');
+      const sourceBanner = document.getElementById('sourceBanner');
+      const searchFilterInput = document.getElementById('searchFilterInput');
+      const sortOrderBtn = document.getElementById('sortOrderBtn');
+      const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+
+      const statTotal = document.getElementById('statTotal');
+      const statErased = document.getElementById('statErased');
+      const statVisible = document.getElementById('statVisible');
+
+      const emptyState = document.getElementById('emptyState');
+      const cardsGrid = document.getElementById('cardsGrid');
+      const dropOverlay = document.getElementById('dropOverlay');
+
+      let enrichedEntries = [];
+      let currentFilter = 'all';
+      let sortNewestFirst = false;
+
+      function formatTimeParts(isoString) {
+        if (!isoString) return { time: '--:--:--', date: 'Sem data' };
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return { time: '--:--:--', date: 'Data inválida' };
+        return {
+          time: d.toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }),
+          date: d.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          }),
+        };
+      }
+
+      function normalizePayload(rawData) {
+        let list = [];
+        if (Array.isArray(rawData)) {
+          list = rawData;
+        } else if (rawData && Array.isArray(rawData.entradas)) {
+          list = rawData.entradas;
+        } else if (rawData && Array.isArray(rawData.entries)) {
+          list = rawData.entries;
+        }
+
+        // Garante ordem cronológica real da 1ª à última participação
+        const ordered = list.slice().sort((a, b) => {
+          const oa = a.order ?? a.sequenceNumber;
+          const ob = b.order ?? b.sequenceNumber;
+          if (typeof oa === 'number' && typeof ob === 'number') {
+            return oa - ob;
+          }
+          const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return ta - tb;
+        });
+
+        const total = ordered.length;
+
+        return ordered.map((entry, idx) => {
+          const orderNum = idx + 1;
+          const erasedEntry = idx >= MAX_VISIBLE ? ordered[idx - MAX_VISIBLE] : null;
+          const erasedByEntry = idx + MAX_VISIBLE < total ? ordered[idx + MAX_VISIBLE] : null;
+          const silencedAudioEntry = idx >= 1 ? ordered[idx - 1] : null;
+          const finalRank = total - idx;
+          const isOnStageAtEnd = finalRank <= MAX_VISIBLE;
+          const timeParts = formatTimeParts(entry.createdAt);
+
+          return {
+            raw: entry,
+            orderNum,
+            name: entry.name || 'Sem nome',
+            meaning: entry.meaning || '',
+            song: {
+              title: entry.song?.title || 'Música desconhecida',
+              channel: entry.song?.channel || '',
+              thumbnail:
+                entry.song?.thumbnail ||
+                (entry.song?.videoId ? `https://i.ytimg.com/vi/${entry.song.videoId}/hqdefault.jpg` : ''),
+              url:
+                entry.song?.url ||
+                (entry.song?.videoId ? `https://www.youtube.com/watch?v=${entry.song.videoId}` : '#'),
+            },
+            timeParts,
+            erasedEntry,
+            erasedEntryOrder: erasedEntry ? idx - MAX_VISIBLE + 1 : null,
+            erasedByEntry,
+            erasedByOrder: erasedByEntry ? idx + MAX_VISIBLE + 1 : null,
+            silencedAudioEntry,
+            finalRank,
+            isOnStageAtEnd,
+          };
+        });
+      }
+
+      function updateStats(entries) {
+        const total = entries.length;
+        const visible = Math.min(total, MAX_VISIBLE);
+        const erased = Math.max(0, total - MAX_VISIBLE);
+        statTotal.textContent = String(total);
+        statErased.textContent = String(erased);
+        statVisible.textContent = String(visible);
+      }
+
+      function escapeText(str) {
+        return String(str || '');
+      }
+
+      function renderGrid() {
+        cardsGrid.innerHTML = '';
+
+        if (enrichedEntries.length === 0) {
+          emptyState.hidden = false;
+          cardsGrid.hidden = true;
+          return;
+        }
+
+        emptyState.hidden = true;
+        cardsGrid.hidden = false;
+
+        const query = searchFilterInput.value.trim().toLowerCase();
+
+        let list = enrichedEntries.filter((item) => {
+          if (currentFilter === 'erased_someone' && !item.erasedEntry) return false;
+          if (currentFilter === 'on_stage' && !item.isOnStageAtEnd) return false;
+
+          if (!query) return true;
+          const haystack = [
+            item.name,
+            item.meaning,
+            item.song.title,
+            item.song.channel,
+            item.erasedEntry ? item.erasedEntry.name : '',
+            item.erasedByEntry ? item.erasedByEntry.name : '',
+            item.timeParts.time,
+            item.timeParts.date,
+          ]
+            .join(' ')
+            .toLowerCase();
+
+          return haystack.includes(query);
+        });
+
+        if (sortNewestFirst) {
+          list = list.slice().reverse();
+        }
+
+        if (list.length === 0) {
+          const noMatch = document.createElement('div');
+          noMatch.className = 'empty-state';
+          noMatch.style.gridColumn = '1 / -1';
+          noMatch.innerHTML =
+            '<p class="empty-title">Nenhum registro encontrado</p><p class="empty-sub">Tente limpar o filtro de busca.</p>';
+          cardsGrid.appendChild(noMatch);
+          return;
+        }
+
+        list.forEach((item) => {
+          const card = document.createElement('article');
+          card.className = 'strip-card' + (item.isOnStageAtEnd ? ' is-on-stage' : '');
+
+          // Topo: Ordem + Status + Horário
+          const top = document.createElement('div');
+          top.className = 'card-top';
+
+          const badges = document.createElement('div');
+          badges.className = 'card-badges';
+
+          const orderStamp = document.createElement('span');
+          orderStamp.className = 'order-stamp';
+          orderStamp.textContent = `#${String(item.orderNum).padStart(2, '0')}`;
+
+          const statusPill = document.createElement('span');
+          statusPill.className =
+            'status-pill ' + (item.isOnStageAtEnd ? 'status-pill--stage' : 'status-pill--erased');
+          statusPill.textContent = item.isOnStageAtEnd
+            ? `No visor · A${item.finalRank}`
+            : 'Apagada pela platéia';
+
+          badges.appendChild(orderStamp);
+          badges.appendChild(statusPill);
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'card-time';
+          const timeStrong = document.createElement('strong');
+          timeStrong.textContent = item.timeParts.time;
+          const dateSpan = document.createElement('span');
+          dateSpan.textContent = item.timeParts.date;
+          timeEl.appendChild(timeStrong);
+          timeEl.appendChild(dateSpan);
+
+          top.appendChild(badges);
+          top.appendChild(timeEl);
+
+          // Pessoa + Significado
+          const person = document.createElement('div');
+          person.className = 'card-person';
+
+          const nameEl = document.createElement('h3');
+          nameEl.className = 'card-name';
+          nameEl.textContent = escapeText(item.name);
+
+          const meaningEl = document.createElement('p');
+          meaningEl.className = 'card-meaning';
+          meaningEl.textContent = `“${escapeText(item.meaning)}”`;
+
+          person.appendChild(nameEl);
+          person.appendChild(meaningEl);
+
+          // Música
+          const songLink = document.createElement('a');
+          songLink.className = 'card-song';
+          songLink.href = item.song.url;
+          songLink.target = '_blank';
+          songLink.rel = 'noopener noreferrer';
+
+          if (item.song.thumbnail) {
+            const thumb = document.createElement('img');
+            thumb.className = 'card-song-thumb';
+            thumb.src = item.song.thumbnail;
+            thumb.alt = '';
+            thumb.loading = 'lazy';
+            songLink.appendChild(thumb);
+          }
+
+          const songMeta = document.createElement('div');
+          songMeta.className = 'card-song-meta';
+
+          const songTitle = document.createElement('span');
+          songTitle.className = 'card-song-title';
+          songTitle.textContent = item.song.title;
+
+          const songChannel = document.createElement('span');
+          songChannel.className = 'card-song-channel';
+          songChannel.textContent = item.song.channel || 'YouTube';
+
+          songMeta.appendChild(songTitle);
+          songMeta.appendChild(songChannel);
+          songLink.appendChild(songMeta);
+
+          // Bloco de Apagamento
+          const erasureBox = document.createElement('div');
+          erasureBox.className = 'card-erasure';
+
+          // Linha 1: Quem esta pessoa apagou
+          const didRow = document.createElement('div');
+          didRow.className = 'erasure-row';
+
+          const didTag = document.createElement('span');
+          const didText = document.createElement('span');
+          didText.className = 'erasure-detail';
+
+          if (item.erasedEntry) {
+            didTag.className = 'erasure-tag erasure-tag--did';
+            didTag.textContent = 'Apagou';
+
+            const strongVictim = document.createElement('strong');
+            strongVictim.textContent = `${item.erasedEntry.name} (#${String(item.erasedEntryOrder).padStart(2, '0')})`;
+            const extraInfo = document.createElement('em');
+            extraInfo.textContent = ` — ${item.erasedEntry.song?.title || ''}`;
+
+            didText.appendChild(strongVictim);
+            didText.appendChild(extraInfo);
+          } else {
+            didTag.className = 'erasure-tag erasure-tag--none';
+            didTag.textContent = 'Apagou';
+            didText.textContent = item.silencedAudioEntry
+              ? `Ninguém do visor (silenciou o áudio de ${item.silencedAudioEntry.name})`
+              : 'Ninguém (estreou o palco da Jukebox)';
+          }
+
+          didRow.appendChild(didTag);
+          didRow.appendChild(didText);
+          erasureBox.appendChild(didRow);
+
+          // Linha 2: Por quem ela foi apagada depois (ou se ficou no visor)
+          const byRow = document.createElement('div');
+          byRow.className = 'erasure-row';
+
+          const byTag = document.createElement('span');
+          byTag.className = 'erasure-tag erasure-tag--by';
+          byTag.textContent = 'Destino';
+
+          const byText = document.createElement('span');
+          byText.className = 'erasure-detail';
+
+          if (item.erasedByEntry) {
+            const byTime = formatTimeParts(item.erasedByEntry.createdAt).time;
+            byText.textContent = `Apagado(a) por ${item.erasedByEntry.name} (#${String(item.erasedByOrder).padStart(2, '0')}) às ${byTime}`;
+          } else {
+            byText.textContent = `Permaneceu no visor final (posição A${item.finalRank})`;
+          }
+
+          byRow.appendChild(byTag);
+          byRow.appendChild(byText);
+          erasureBox.appendChild(byRow);
+
+          card.appendChild(top);
+          card.appendChild(person);
+          card.appendChild(songLink);
+          card.appendChild(erasureBox);
+
+          cardsGrid.appendChild(card);
+        });
+      }
+
+      function loadPayload(rawData, label) {
+        enrichedEntries = normalizePayload(rawData);
+        updateStats(enrichedEntries);
+        sourceBanner.textContent = `${label} · ${enrichedEntries.length} registros`;
+        renderGrid();
+      }
+
+      function handleFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const parsed = JSON.parse(String(e.target.result || ''));
+            loadPayload(parsed, file.name);
+          } catch (err) {
+            sourceBanner.textContent = `Erro ao ler ${file.name}: JSON inválido.`;
+          }
+        };
+        reader.readAsText(file, 'utf-8');
+      }
+
+      jsonFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        handleFile(file);
+        jsonFileInput.value = '';
+      });
+
+      loadLocalBtn.addEventListener('click', () => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            sourceBanner.textContent = 'Nenhum registro salvo neste navegador ainda.';
+            return;
+          }
+          loadPayload(JSON.parse(raw), 'Dados locais deste navegador');
+        } catch (_) {
+          sourceBanner.textContent = 'Não foi possível ler os dados salvos neste navegador.';
+        }
+      });
+
+      searchFilterInput.addEventListener('input', renderGrid);
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          currentFilter = btn.dataset.filter || 'all';
+          filterButtons.forEach((b) => b.classList.toggle('is-active', b === btn));
+          renderGrid();
+        });
+      });
+
+      sortOrderBtn.addEventListener('click', () => {
+        sortNewestFirst = !sortNewestFirst;
+        sortOrderBtn.textContent = sortNewestFirst
+          ? 'Ordem: última → 1ª'
+          : 'Ordem: 1ª → última';
+        renderGrid();
+      });
+
+      // Drag & Drop de arquivo JSON em qualquer lugar da página
+      let dragDepth = 0;
+      window.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dragDepth += 1;
+        dropOverlay.hidden = false;
+      });
+      window.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      window.addEventListener('dragleave', () => {
+        dragDepth -= 1;
+        if (dragDepth <= 0) {
+          dragDepth = 0;
+          dropOverlay.hidden = true;
+        }
+      });
+      window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragDepth = 0;
+        dropOverlay.hidden = true;
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file) {
+          handleFile(file);
+        }
+      });
+
+      // Auto-carrega dados locais caso já existam neste navegador
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            loadPayload(parsed, 'Dados locais deste navegador');
+          }
+        }
+      } catch (_) {}
+    })();
+  </script>
+</body>
+
+</html>
+
