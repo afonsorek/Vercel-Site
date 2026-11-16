@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function fitStageToViewport() {
     if (!stage) return;
     stage.style.transform = 'scale(1)';
-    const naturalHeight = stage.offsetHeight + 24;
+    const naturalHeight = stage.offsetHeight + 70;
     const naturalWidth = stage.offsetWidth + 32;
     const scaleY = window.innerHeight / naturalHeight;
     const scaleX = window.innerWidth / naturalWidth;
@@ -579,6 +579,14 @@ document.addEventListener('DOMContentLoaded', () => {
     physicsCanvas.width = window.innerWidth * physicsDpr;
     physicsCanvas.height = window.innerHeight * physicsDpr;
     pCtx.setTransform(physicsDpr, 0, 0, physicsDpr, 0, 0);
+
+    for (let i = 0; i < shards.length; i++) {
+      const s = shards[i];
+      if (!s.settled) continue;
+      s.x = Math.max(40, Math.min(window.innerWidth - 40, s.x));
+      s.y = Math.max(window.innerHeight - 34, Math.min(window.innerHeight - 10, s.y));
+    }
+
     renderPhysicsOnce();
   }
 
@@ -668,19 +676,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getFloorSurfaceAt(xPos) {
     const baseFloor = window.innerHeight - 6;
-    let highestY = baseFloor;
+    let overlapCount = 0;
 
     for (let i = 0; i < shards.length; i++) {
       const s = shards[i];
       if (!s.settled) continue;
-      if (Math.abs(s.x - xPos) < s.w * 0.62) {
-        const topOfShard = s.y - s.h * 0.36;
-        if (topOfShard < highestY) {
-          highestY = topOfShard;
-        }
+      if (Math.abs(s.x - xPos) < s.w * 0.65) {
+        overlapCount += 1;
       }
     }
-    return Math.max(window.innerHeight * 0.55, highestY);
+
+    const pileTop = baseFloor - overlapCount * 1.8;
+    const maxFloorCeiling = window.innerHeight - 36;
+    return Math.max(maxFloorCeiling, pileTop);
   }
 
   function shatterCardAtImpact(card) {
@@ -741,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
           { x: -shardW / 2 + jitter(), y: shardH / 2 + jitter() },
         ];
 
-        const spreadFactor = (c - 1) * 145 + (Math.random() - 0.5) * 120;
+        const spreadFactor = (c - 1) * 280 + (Math.random() - 0.5) * 240;
         shards.push({
           texture: card.texture,
           srcX: c * (card.texture.width / cols),
@@ -776,12 +784,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = 2;
     const shardW = 420 / cols;
     const shardH = 74 / rows;
-    const baseCenter = window.innerWidth * 0.36 + ((indexInPile % 5) - 2) * 75 + (Math.random() - 0.5) * 40;
+    const usableWidth = Math.max(200, window.innerWidth - 120);
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        const x = Math.max(40, Math.min(window.innerWidth - 40, baseCenter + (c - 1) * (shardW * 0.8) + (Math.random() - 0.5) * 35));
-        const floorY = getFloorSurfaceAt(x);
+        // Distribui horizontalmente por toda a largura do chão da tela
+        const seedSlot = ((indexInPile * 6 + r * 3 + c) * 0.61803398875) % 1;
+        const x = 60 + seedSlot * usableWidth + (Math.random() - 0.5) * 32;
+        const clampedX = Math.max(60, Math.min(window.innerWidth - 60, x));
+        const floorY = getFloorSurfaceAt(clampedX);
         const jitter = () => (Math.random() - 0.5) * 8;
         shards.push({
           texture: tex,
@@ -797,11 +808,11 @@ document.addEventListener('DOMContentLoaded', () => {
             { x: shardW / 2 + jitter(), y: shardH / 2 + jitter() },
             { x: -shardW / 2 + jitter(), y: shardH / 2 + jitter() },
           ],
-          x,
-          y: floorY - shardH * 0.32,
+          x: clampedX,
+          y: Math.max(window.innerHeight - 32, Math.min(window.innerHeight - 10, floorY - shardH * 0.22)),
           vx: 0,
           vy: 0,
-          angle: (Math.random() - 0.5) * 0.75,
+          angle: (Math.random() - 0.5) * 0.44,
           omega: 0,
           restitution: 0.3,
           friction: 0.78,
@@ -939,15 +950,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Colisão com o fundo ou pilha já assentada
       const surfaceY = getFloorSurfaceAt(s.x);
-      const halfThick = s.h * 0.34;
+      const halfThick = s.h * 0.24;
       if (s.y + halfThick >= surfaceY) {
-        s.y = surfaceY - halfThick;
+        s.y = Math.max(window.innerHeight - 34, surfaceY - halfThick);
         s.bounces += 1;
 
         if (Math.abs(s.vy) < 95 || s.bounces >= 4) {
           s.vy = 0;
           s.vx = 0;
           s.omega = 0;
+          // Assenta quase horizontalmente no chão da página
+          s.angle = Math.max(-0.22, Math.min(0.22, Math.sin(s.angle) * 0.25));
           s.settled = true;
         } else {
           s.vy = -s.vy * s.restitution;

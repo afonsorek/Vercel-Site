@@ -122,7 +122,8 @@ body {
   align-items: center;
   gap: 12px;
   transform-origin: top center;
-  padding-top: 12px;
+  padding-top: 8px;
+  padding-bottom: 44px;
 }
 
 .room-quote {
