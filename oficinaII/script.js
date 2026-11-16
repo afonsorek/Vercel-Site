@@ -1198,10 +1198,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (allEntries.length >= MAX_VISIBLE_RANKING) {
       const oldestVisible = allEntries[allEntries.length - MAX_VISIBLE_RANKING];
       confirmModalSub.textContent =
-        `Sua música assumirá o palco em looping, empurrando e quebrando a memória de “${oldestVisible.name}” (A3) no chão.`;
+        `Ao confirmar, sua escolha ocupará o topo e o registro de “${oldestVisible.name}” dará lugar ao seu.`;
     } else {
       confirmModalSub.textContent =
-        'Sua música assumirá o palco principal (A1) e tocará em looping contínuo.';
+        'Ao confirmar, sua música passará a tocar na máquina.';
     }
 
     confirmModal.hidden = false;
