@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const shatteredCountText = document.getElementById('shatteredCountText');
   const tvModeBtn = document.getElementById('tvModeBtn');
   const tvModeLabel = document.getElementById('tvModeLabel');
+  const secretResetBtn = document.getElementById('secretResetBtn');
 
   // Popup de Confirmação
   const confirmModal = document.getElementById('confirmModal');
@@ -1403,6 +1404,8 @@ document.addEventListener('DOMContentLoaded', () => {
             : [...allEntries, msg.entry];
           saveEntriesToStorage();
           addNewEntryToStage(msg.entry);
+        } else if (msg.type === 'RESET_STATE') {
+          performFullReset(false);
         } else if (msg.type === 'TOGGLE_PLAY') {
           if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
             if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
@@ -1494,6 +1497,53 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         } catch (_) {}
       }
+    });
+  }
+
+  function performFullReset(broadcast = true) {
+    allEntries = [];
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (_) {}
+
+    currentPlayingVideoId = null;
+    if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+      try {
+        ytPlayer.stopVideo();
+      } catch (_) {}
+    }
+
+    setMechanicsPlaying(false);
+    tonearm.classList.remove('is-active');
+    nowPlayingTitle.textContent = 'INSIRA UMA MÚSICA';
+    vinylLabel.style.backgroundImage = '';
+
+    fallingCards = [];
+    shards = [];
+    impactParticles = [];
+    impactFlashes = [];
+    if (physicsRafId) {
+      cancelAnimationFrame(physicsRafId);
+      physicsRafId = null;
+      lastPhysicsTime = 0;
+    }
+    renderPhysicsOnce();
+
+    rankingList.innerHTML = '';
+    updateCounters();
+    resetFormForNextPerson();
+    fitStageToViewport();
+
+    if (broadcast && syncChannel && !isTvWindow) {
+      syncChannel.postMessage({ type: 'RESET_STATE' });
+    }
+  }
+
+  if (secretResetBtn) {
+    secretResetBtn.addEventListener('click', () => {
+      const ok = window.confirm('Apagar todos os dados salvos da Oficina II?');
+      if (!ok) return;
+      performFullReset(true);
     });
   }
 

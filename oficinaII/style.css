@@ -1609,6 +1609,37 @@ body[data-view-mode="controller"] .jb-panel {
 }
 
 /* TV (HDMI): exibe em destaque apenas a Jukebox + animações de física */
+/* Botão secreto no canto superior direito para apagar os dados do app */
+.secret-reset-btn {
+  position: fixed;
+  top: 8px;
+  right: 10px;
+  z-index: 40;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 235, 200, 0.65);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 200ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.secret-reset-btn:hover,
+.secret-reset-btn:focus-visible {
+  opacity: 0.45;
+  color: #ff8a8a;
+  border-color: rgba(255, 107, 107, 0.45);
+}
+
+body[data-view-mode="tv"] .secret-reset-btn,
 body[data-view-mode="tv"] #cocreationForm,
 body[data-view-mode="tv"] .concept-plaque,
 body[data-view-mode="tv"] #downloadJsonBtn {
