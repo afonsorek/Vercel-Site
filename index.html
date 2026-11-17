@@ -1,1175 +1,2948 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html>
 
-    <title>Afonso Rocha Rekbaim :: Desenvolvedor Swift & iOS</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>𝄞⨾💿✮˚.⋆• REK — Music Portfolio</title>
+  <link rel="canonical" href="https://www.afonso.io/" />
+  <meta name="description"
+    content="Music portfolio of REK (r3k.wav) — chiptune, DnB, synthwave, and experimental sound design for games and interactive media." />
+  <meta property="og:title" content="REK :: Music Portfolio" />
+  <meta property="og:description"
+    content="Chiptune, DnB, synthwave, and experimental sound design for games. Listen to REK tracks and explore the sonic archive." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.afonso.io/" />
+  <meta property="og:image" content="https://www.afonso.io/music/src/logo-principal.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://www.afonso.io/music/src/logo-principal.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=VT323&display=swap"
+    rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Departure Mono';
+      src: url('music/src/Departure.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
 
-    <meta
-      name="description"
-      content="Conheça Afonso Rekbaim, desenvolvedor especialista em Swift, iOS, macOS e Flutter com mais de 7 anos de experiência na criação de aplicativos inovadores."
-    />
-    <meta name="author" content="Afonso Rocha Rekbaim" />
+    :root {
+      /* Paleta Principal REK: Roxo Profundo + Verde Ácido + Rosa Choque */
+      --rek-bg-deep: #180828;
+      --rek-bg-mid: #2c1046;
+      --rek-surface: #3f1d63;
+      --rek-surface-card: #12061f;
+      --rek-primary: #b7e100;
+      --rek-secondary: #ed0080;
+      --rek-accent: #0077b8;
+      --rek-border: #b7e100;
+      --rek-border-alt: #ed0080;
+      --rek-text: #f3ffe2;
+      --rek-text-muted: #d6c4ff;
+      --rek-ink-dark: #12061f;
+      --rek-glow: rgba(183, 225, 0, 0.28);
+    }
 
-    <link rel="canonical" href="https://www.afonso.io/" />
+    body[data-rek-theme="azul"] {
+      --rek-bg-deep: #00233d;
+      --rek-bg-mid: #004e7c;
+      --rek-surface: #0066a1;
+      --rek-surface-card: #17082a;
+      --rek-primary: #ff1e9b;
+      --rek-secondary: #00d4ff;
+      --rek-accent: #7a1fa2;
+      --rek-border: #ff1e9b;
+      --rek-border-alt: #00d4ff;
+      --rek-text: #f0f9ff;
+      --rek-text-muted: #bde5ff;
+      --rek-ink-dark: #001c33;
+      --rek-glow: rgba(255, 30, 155, 0.34);
+    }
 
-    <meta
-      property="og:title"
-      content="Afonso Rocha Rekbaim :: Desenvolvedor Swift & iOS"
-    />
-    <meta
-      property="og:description"
-      content="Portfólio de Afonso Rocha Rekbaim, especialista em ecossistema Apple e desenvolvimento multiplataforma."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.afonso.io/" />
-    <meta
-      property="og:image"
-      content="https://www.afonso.io/Images/social-preview.jpg"
-    />
+    body[data-rek-theme="rosa-verde"] {
+      --rek-bg-deep: #16040f;
+      --rek-bg-mid: #3a0522;
+      --rek-surface: #ed0080;
+      --rek-surface-card: #0c080e;
+      --rek-primary: #b7e100;
+      --rek-secondary: #ff1e9b;
+      --rek-accent: #ff1e9b;
+      --rek-border: #b7e100;
+      --rek-border-alt: #ff1e9b;
+      --rek-text: #f7ffe0;
+      --rek-text-muted: #ffcbe6;
+      --rek-ink-dark: #0c080e;
+      --rek-glow: rgba(255, 30, 155, 0.36);
+    }
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:image"
-      content="https://www.afonso.io/Images/social-preview.jpg"
-    />
-    <meta
-      name="twitter:title"
-      content="Afonso Rocha Rekbaim :: Desenvolvedor Swift & iOS"
-    />
-    <meta
-      name="twitter:description"
-      content="Portfólio de Afonso Rocha Rekbaim, especialista em ecossistema Apple e desenvolvimento multiplataforma."
-    />
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" href="./Images/favicon.png" />
-    <style>
-      /* Seus estilos CSS permanecem os mesmos */
-      @font-face {
-        font-family: "Departure Mono";
-        src: url("./Fonts/DepartureMonoNerdFontMono-Regular.otf");
-        font-weight: normal;
-        font-style: normal;
+    body {
+      background-color: var(--rek-bg-deep);
+      background-image:
+        radial-gradient(circle at 50% 18%, var(--rek-bg-mid) 0%, transparent 65%),
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
+      overflow-x: hidden;
+      font-family: "Century Gothic", Verdana, sans-serif;
+      color: var(--rek-text);
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    #topborder {
+      background-image: url("music/src/arabesco.png");
+      background-repeat: repeat-x;
+      height: 83px;
+      width: 100%;
+      position: fixed;
+      top: -12px;
+      left: 0;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.72;
+      filter: hue-rotate(48deg) saturate(1.5) drop-shadow(0 0 8px var(--rek-secondary));
+    }
+
+    #bottomborder {
+      background-image: url("music/src/arabesco.png");
+      background-repeat: repeat-x;
+      height: 83px;
+      width: 100%;
+      position: fixed;
+      bottom: -12px;
+      left: 0;
+      z-index: 999;
+      pointer-events: none;
+      transform: scaleY(-1);
+      opacity: 0.72;
+      filter: hue-rotate(48deg) saturate(1.5) drop-shadow(0 0 8px var(--rek-secondary));
+    }
+
+    #all {
+      width: 1000px;
+      margin: 0 auto;
+      padding-top: 80px;
+      padding-bottom: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    /* =========================================
+         CAIXAS EXTERNAS (REK // Y2K / NEOFUTURISMO)
+         ========================================= */
+    #side {
+      width: 175px;
+      position: sticky;
+      top: 20px;
+    }
+
+    #main {
+      width: 605px;
+      position: relative;
+    }
+
+    #side-right {
+      width: 175px;
+      position: sticky;
+      top: 20px;
+    }
+
+    #profile {
+      background:
+        linear-gradient(165deg, rgba(63, 29, 99, 0.85), rgba(18, 6, 31, 0.96)),
+        url("music/src/black.gif");
+      background-color: var(--rek-surface-card);
+      width: 175px;
+      margin-bottom: 25px;
+      color: var(--rek-text);
+      border: 2px double var(--rek-border);
+      box-shadow: 0 0 18px var(--rek-glow);
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    #pfp {
+      background: var(--rek-bg-deep);
+      width: 141px;
+      height: 141px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      border: 2px solid var(--rek-primary);
+      box-shadow: 0 0 12px var(--rek-glow);
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    #nav,
+    #chatbox,
+    #aboutme-box,
+    .rek-side-box {
+      background:
+        linear-gradient(175deg, rgba(44, 16, 70, 0.9), rgba(18, 6, 31, 0.96)),
+        url("music/src/black.gif");
+      background-color: var(--rek-surface-card);
+      width: 175px;
+      color: var(--rek-text);
+      text-shadow: 1px 1px 0px var(--rek-ink-dark);
+      border: 2px double var(--rek-border);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
+      box-sizing: border-box;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .box-deco-top {
+      background-image: url("music/src/arabesco.png");
+      background-size: auto 100%;
+      background-repeat: repeat-x;
+      height: 18px;
+      width: 100%;
+      border-bottom: 2px double var(--rek-border);
+      filter: hue-rotate(48deg) saturate(1.3);
+    }
+
+    .box-deco-bottom {
+      background-image: url("music/src/arabesco.png");
+      background-size: auto 100%;
+      background-repeat: repeat-x;
+      height: 18px;
+      width: 100%;
+      border-top: 2px double var(--rek-border);
+      transform: scaleY(-1);
+      filter: hue-rotate(48deg) saturate(1.3);
+    }
+
+    #navheader,
+    #chatboxheader,
+    #aboutmeheader,
+    .rek-box-header {
+      border-bottom: 2px double var(--rek-border);
+      background-color: var(--rek-bg-deep);
+      margin: 0px;
+      line-height: 16px;
+      padding: 8px 5px;
+      font-size: 16px;
+      color: var(--rek-primary);
+      text-shadow: 1px 1px 0px var(--rek-secondary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .rek-palette-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .rek-palette-btn {
+      padding: 2px;
+      background: var(--rek-bg-deep);
+      border: 2px solid var(--rek-border-alt);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .rek-palette-btn:hover,
+    .rek-palette-btn.is-active {
+      transform: scale(1.06);
+      border-color: var(--rek-primary);
+      box-shadow: 0 0 10px var(--rek-glow);
+    }
+
+    .rek-palette-btn img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .headericon {
+      height: 22px;
+      width: auto;
+      vertical-align: middle;
+    }
+
+    .navbow {
+      background-image: url("https://blob.gifcities.org/gifcities/6D456JY7ZKT4VC2U7YOYUTII7VCSNORN.gif");
+      background-size: 100%;
+      background-repeat: no-repeat;
+      width: 80px;
+      height: 60px;
+      position: absolute;
+      right: 2px;
+      top: 1px;
+      z-index: 2;
+    }
+
+    .chatbow {
+      background-image: url("https://soapbubbleseal.net/chat.gif");
+      background-size: 100%;
+      background-repeat: no-repeat;
+      width: 80px;
+      height: 60px;
+      position: absolute;
+      right: 2px;
+      top: 1px;
+      z-index: 2;
+    }
+
+    ul {
+      margin: 0px;
+      padding: 13px 10px 10px 16px;
+      line-height: 28px;
+    }
+
+    li {
+      list-style-type: none;
+      margin: -6px;
+      font-size: 16px;
+    }
+
+    #side a,
+    #side-right a {
+      text-decoration: none;
+      color: var(--rek-text);
+      text-shadow: 1px 1px 0px var(--rek-secondary);
+      background-color: transparent;
+    }
+
+    #side a:hover,
+    #side-right a:hover {
+      font-style: italic;
+      color: var(--rek-primary);
+      text-shadow: 0 0 8px var(--rek-primary);
+    }
+
+    #title {
+      font-family:
+        Century Gothic,
+        Verdana,
+        sans-serif;
+      border-bottom: 3px double var(--rek-border);
+      border-top: 2px solid var(--rek-border-alt);
+      border-left: 2px solid var(--rek-border-alt);
+      border-right: 2px solid var(--rek-border-alt);
+      line-height: 22px;
+      width: 605px;
+      box-sizing: border-box;
+      margin: 0px;
+      color: var(--rek-primary);
+      background-color: var(--rek-bg-deep);
+      padding: 12px 10px 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-shadow: 2px 2px 0 var(--rek-secondary);
+    }
+
+    #content {
+      background-color: var(--rek-surface-card);
+      border: 2px solid var(--rek-border-alt);
+      border-top: none;
+      box-shadow: 0 0 32px var(--rek-glow);
+      width: 605px;
+      box-sizing: border-box;
+      padding: 15px;
+      min-height: 500px;
+    }
+
+    .gif-center {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    /* PLAYLIST STYLE */
+    .playlist-container {
+      margin-top: 30px;
+      border-top: 2px dotted var(--rek-border-alt);
+      padding-top: 20px;
+    }
+
+    .playlist-header {
+      font-family:
+        Century Gothic,
+        Verdana,
+        sans-serif;
+      font-size: 18px;
+      color: var(--rek-primary);
+      margin-bottom: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 1px 1px 0 var(--rek-secondary);
+    }
+
+    #playlist-ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    #playlist-ul li {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--rek-border-alt);
+      list-style: none;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .track-left {
+      width: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .status-gif {
+      width: 28px;
+      height: auto;
+    }
+
+    .track-right {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-right: 10px;
+    }
+
+    .track-title {
+      font-family: "Departure Mono", monospace;
+      font-size: 20px;
+      color: var(--rek-primary);
+      background-color: transparent;
+      padding: 2px 8px;
+      text-shadow: none;
+      border: 1px solid transparent;
+    }
+
+    .track-title:hover {
+      color: #ffffff;
+      background-color: var(--rek-secondary);
+    }
+
+    .track-stats {
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      color: var(--rek-text-muted);
+      opacity: 0.85;
+    }
+
+    .btn-show-more {
+      display: block;
+      margin: 20px auto 0;
+      background-color: transparent;
+      color: var(--rek-primary);
+      border: 2px solid var(--rek-primary);
+      padding: 8px 20px;
+      font-family: "Departure Mono", monospace;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-show-more:hover {
+      background-color: var(--rek-primary);
+      color: var(--rek-ink-dark);
+    }
+
+    /* =========================================
+         INÍCIO DO CSS DO PLAYER 3D (RESTAURADO E INTACTO)
+         ========================================= */
+    .player-3d-perspective {
+      perspective: 1200px;
+      width: 100%;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      font-family: "Outfit", sans-serif;
+      user-select: none;
+    }
+
+    .player-wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+      width: 100%;
+    }
+
+    .hud-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 15px;
+      transform-style: preserve-3d;
+    }
+
+    .hud-side {
+      display: flex;
+      transform: translateZ(20px);
+    }
+
+    .stats-panel {
+      background: rgba(18, 6, 31, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--rek-border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 18px var(--rek-glow);
+    }
+
+    .stat-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--rek-text-muted);
+      letter-spacing: 1px;
+      font-family: "Departure Mono", monospace;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      color: var(--rek-primary);
+      font-family: "Departure Mono", monospace;
+      text-shadow:
+        1px 0px 0px var(--rek-secondary),
+        -1px 0px 0px var(--rek-accent);
+      line-height: 1;
+    }
+
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 4px);
+      grid-template-rows: repeat(5, 4px);
+      gap: 2px;
+    }
+
+    .pixel {
+      width: 4px;
+      height: 4px;
+      background: rgba(183, 225, 0, 0.14);
+      border-radius: 1px;
+      transition:
+        background 0.1s,
+        box-shadow 0.1s;
+    }
+
+    .pixel.on {
+      background: var(--rek-primary);
+      box-shadow: 0 0 6px var(--rek-primary);
+    }
+
+    .pixel.on-alt {
+      background: var(--rek-secondary);
+      box-shadow: 0 0 6px var(--rek-secondary);
+    }
+
+    .artist-badge {
+      background: rgba(18, 6, 31, 0.88);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 8px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--rek-primary);
+      transform: translateZ(30px);
+      box-shadow: 0 4px 18px var(--rek-glow);
+      border: 1px solid var(--rek-border);
+    }
+
+    .artist-avatar {
+      width: 28px;
+      height: 28px;
+      background: var(--rek-bg-mid);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+      border: 1px solid var(--rek-border-alt);
+      overflow: hidden;
+    }
+
+    .artist-info h2 {
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+      color: var(--rek-primary);
+    }
+
+    .artist-info p {
+      font-family: "Departure Mono", monospace;
+      font-size: 13px;
+      color: var(--rek-text-muted);
+      margin: 0;
+    }
+
+    .player-core {
+      background: rgba(18, 6, 31, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 10px 20px;
+      width: 100%;
+      height: 100px;
+      box-shadow: 0 10px 30px var(--rek-glow);
+      border: 1px solid var(--rek-border);
+      position: relative;
+      transform-style: preserve-3d;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    /* NOVA WAVEFORM: ONDA HORIZONTAL DESLIZANTE */
+    .waveform-window {
+      height: 70px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      transform: translateZ(20px);
+      /* Efeito de fade nas bordas para a onda sumir suavemente */
+      mask-image: linear-gradient(to right,
+          transparent,
+          black 10%,
+          black 90%,
+          transparent);
+      -webkit-mask-image: linear-gradient(to right,
+          transparent,
+          black 10%,
+          black 90%,
+          transparent);
+    }
+
+    .waveform-container {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: max-content;
+      gap: 3px;
+      /* Animação pausada por padrão */
+      animation: scrollWave 15s linear infinite;
+      animation-play-state: paused;
+    }
+
+    /* Desliza a onda para a esquerda quando tocar */
+    .is-playing .waveform-container {
+      animation-play-state: running;
+    }
+
+    .wave-bar {
+      width: 4px;
+      background: rgba(237, 0, 128, 0.32);
+      border-radius: 2px;
+      /* Barras da wave devem manter a ponta redonda para estética */
+      transition:
+        background 0.3s,
+        box-shadow 0.3s;
+    }
+
+    .is-playing .wave-bar {
+      background: var(--rek-primary);
+      box-shadow: 0 0 8px var(--rek-primary);
+    }
+
+    /* Loop perfeito de 0 a 50% */
+    @keyframes scrollWave {
+      0% {
+        transform: translateX(0);
       }
-      .departure {
-        font-family: "Departure Mono";
+
+      100% {
+        transform: translateX(-50%);
       }
-      :root {
-        --main-bg: #000000;
-        --accent-color: #be93fd;
-        --text-color: #d9c2ff;
-        --border-color: rgba(190, 147, 253, 0.3);
-        --spotlight-size: 400px;
-        --mouse-x: 50vw;
-        --mouse-y: 50vh;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+    }
+
+    .submission-text {
+      text-align: center;
+      font-family: "Departure Mono", monospace;
+      color: var(--rek-primary);
+      font-size: 16px;
+      margin-top: 10px;
+      transform: translateZ(20px);
+      letter-spacing: 1px;
+    }
+
+    .controls-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+      transform: translateZ(30px);
+    }
+
+    .controls-pill {
+      background: rgba(18, 6, 31, 0.9);
+      padding: 5px 20px;
+      border-radius: 30px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      border: 1px solid var(--rek-border);
+      box-shadow: 0 5px 15px var(--rek-glow);
+    }
+
+    .controls-pill button {
+      background: none;
+      border: none;
+      color: var(--rek-primary);
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: none;
+    }
+
+    .controls-pill button:hover {
+      color: var(--rek-secondary);
+      transform: scale(1.1);
+    }
+
+    .controls-pill .btn-play {
+      background: none;
+      color: var(--rek-primary);
+      width: auto;
+      height: 35px;
+      font-size: 24px;
+      padding: 0;
+      border: none;
+      box-shadow: 0 3px 10px var(--rek-glow);
+      border-radius: 5px;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--rek-primary);
+        background: rgba(183, 225, 0, 0.12);
       }
-      html {
-        scroll-behavior: smooth;
+
+      50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 20px var(--rek-secondary), 0 0 10px #fff;
+        background: rgba(237, 0, 128, 0.35);
       }
-      body {
-        background-color: var(--main-bg);
-        color: var(--text-color);
-        font-family: "Inter", sans-serif;
-        overflow-x: hidden;
-        background-image: radial-gradient(
-          circle at var(--mouse-x) var(--mouse-y),
-          rgba(190, 147, 253, 0.1) 0%,
-          transparent 20%
-        );
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--rek-primary);
+        background: rgba(183, 225, 0, 0.12);
       }
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-image: linear-gradient(
-            to right,
-            rgba(190, 147, 253, 0.05) 1px,
-            transparent 1px
-          ),
-          linear-gradient(
-            to bottom,
-            rgba(190, 147, 253, 0.05) 1px,
-            transparent 1px
-          );
-        background-size: 40px 40px;
-        z-index: -3;
-        pointer-events: none;
+    }
+
+    .first-play-glow {
+      animation: pulseGlow 1.2s infinite ease-in-out !important;
+      z-index: 100005;
+    }
+
+    /* =========================================
+         WMP VISUALIZER CSS
+         ========================================= */
+    .vis-bar {
+      width: 11%;
+      background: linear-gradient(to top,
+          #00ff00 0%,
+          #ffff00 60%,
+          #ff0000 100%);
+      transform-origin: bottom;
+      border-top: 2px solid #fff;
+    }
+
+    .controls-pill .btn-play:hover {
+      background: var(--rek-secondary);
+      color: white;
+    }
+
+    /* =========================================
+         FIM DO CSS DO PLAYER 3D
+         ========================================= */
+
+    /* =========================================
+         CHAOS ZONE — FLOATING AD BUTTONS
+         ========================================= */
+    #chaos-float {
+      position: fixed;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .chaos-btn {
+      display: block;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      transition:
+        transform 0.1s,
+        filter 0.1s;
+      line-height: 0;
+    }
+
+    .chaos-btn:hover {
+      transform: scale(1.12);
+      filter: brightness(1.2) drop-shadow(0 0 4px #ff00ff);
+    }
+
+    .chaos-btn:active {
+      transform: scale(0.93);
+    }
+
+    .chaos-btn img {
+      display: block;
+      image-rendering: pixelated;
+      width: 130px;
+      height: auto;
+    }
+
+    /* Wiggle animation to draw attention */
+    @keyframes adWiggle {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
       }
-      body::after {
-        content: "";
-        position: fixed;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-            ellipse at 10% 20%,
-            var(--accent-color),
-            transparent 40%
-          ),
-          radial-gradient(
-            ellipse at 80% 30%,
-            var(--accent-color),
-            transparent 40%
-          ),
-          radial-gradient(
-            ellipse at 30% 80%,
-            rgba(190, 147, 253, 0.5),
-            transparent 40%
-          );
-        animation: organicWaves 45s ease-in-out infinite alternate;
-        z-index: -2;
-        opacity: 0.3;
-        filter: blur(80px);
+
+      25% {
+        transform: rotate(-2deg);
       }
-      @keyframes organicWaves {
-        0% {
-          transform: translate(0, 0) rotate(0deg) scale(1.2);
-        }
-        50% {
-          transform: translate(10%, -10%) rotate(180deg) scale(1.3);
-        }
-        100% {
-          transform: translate(0, 0) rotate(360deg) scale(1.2);
-        }
+
+      75% {
+        transform: rotate(2deg);
       }
-      .font-display {
-        font-family: "Orbitron", sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 700;
+    }
+
+    .chaos-btn img:hover {
+      animation: adWiggle 0.3s ease-in-out infinite;
+    }
+
+    /* --- MLG Overlay --- */
+    #mlg-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    #mlg-overlay.active {
+      display: block;
+    }
+
+    .mlg-gif {
+      position: absolute;
+      image-rendering: pixelated;
+    }
+
+    /* --- Nyan Cats --- */
+    .nyan-cat-spawn {
+      position: fixed;
+      z-index: 88888;
+      pointer-events: none;
+      image-rendering: pixelated;
+      height: 80px;
+      width: auto;
+      animation: nyanFly linear forwards;
+    }
+
+    @keyframes nyanFly {
+      from {
+        transform: translateX(0);
       }
-      .glow {
-        text-shadow: 0 0 15px var(--accent-color), 0 0 5px white;
-        color: white;
+
+      to {
+        transform: translateX(calc(100vw + 350px));
       }
-      .element-glow-hover:hover {
-        box-shadow: 0 0 25px var(--accent-color), 0 0 10px white;
+    }
+
+    /* --- 360 spin --- */
+    body.spinning-360 {
+      animation: spin360 0.7s linear 1;
+    }
+
+    @keyframes spin360 {
+      from {
+        transform: rotate(0deg);
       }
-      .btn {
-        background-color: transparent;
-        color: var(--accent-color);
-        border: 2px solid var(--accent-color);
-        text-decoration: none;
-        transition: all 0.2s ease-out;
-        font-weight: bold;
+
+      to {
+        transform: rotate(360deg);
       }
-      .btn:hover {
-        color: black;
-        background-color: var(--accent-color);
-        box-shadow: 0 0 20px var(--accent-color);
+    }
+
+    /* --- BSOD overlay --- */
+    #bsod-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #0830d0;
+      color: white;
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      padding: 60px 80px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    #bsod-overlay.active {
+      display: block;
+    }
+
+    /* --- Shake --- */
+    @keyframes screenShake {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
       }
-      .hud-card {
-        background-color: rgba(10, 0, 20, 0.5);
-        border: 1px solid var(--border-color);
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
-        position: relative;
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
+
+      10% {
+        transform: translate(-8px, -6px) rotate(-1deg);
       }
-      .hud-card:hover {
-        border-color: var(--accent-color);
-        transform: translateY(-4px) perspective(1000px);
+
+      20% {
+        transform: translate(8px, 6px) rotate(1deg);
       }
-      .hud-card::before,
-      .hud-card::after {
-        content: "";
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        border-color: var(--accent-color);
-        transition: all 0.3s ease;
+
+      30% {
+        transform: translate(-6px, 8px) rotate(0deg);
       }
-      .hud-card:hover::before,
-      .hud-card:hover::after {
-        border-color: white;
+
+      40% {
+        transform: translate(6px, -8px) rotate(1deg);
       }
-      .hud-card::before {
-        top: -1px;
-        left: -1px;
-        border-top: 2px solid;
-        border-left: 2px solid;
+
+      50% {
+        transform: translate(-8px, 6px) rotate(-1deg);
       }
-      .hud-card::after {
-        bottom: -1px;
-        right: -1px;
-        border-bottom: 2px solid;
-        border-right: 2px solid;
+
+      60% {
+        transform: translate(8px, -6px) rotate(1deg);
       }
-      .blinking-cursor {
-        animation: blink 1.2s step-end infinite;
+
+      70% {
+        transform: translate(-6px, -8px) rotate(0deg);
       }
-      @keyframes blink {
-        from,
-        to {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0;
-        }
+
+      80% {
+        transform: translate(6px, 8px) rotate(-1deg);
       }
-      .section-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        position: relative;
+
+      90% {
+        transform: translate(-4px, -4px) rotate(1deg);
       }
-      .section-header h2 {
-        flex-shrink: 0;
+
+      100% {
+        transform: translate(0, 0) rotate(0deg);
       }
-      .section-header::after {
-        content: "";
-        width: 100%;
-        height: 1px;
-        background: var(--border-color);
-      }
-      .noise-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjEuMiIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSIvPjwvc3ZnPg==");
-        opacity: 0.08;
-        z-index: 100;
-        pointer-events: none;
-      }
-      .scanline-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: linear-gradient(
-          to bottom,
-          rgba(0, 0, 0, 0) 50%,
-          rgba(0, 0, 0, 0.2) 50%
-        );
-        background-size: 100% 4px;
-        animation: scanlines 10s linear infinite;
-        z-index: -1;
-        pointer-events: none;
-        opacity: 0.5;
-      }
-      @keyframes scanlines {
-        from {
-          background-position: 0 0;
-        }
-        to {
-          background-position: 0 100%;
-        }
-      }
-      .project-image {
-        height: 160px;
-        object-fit: cover;
-        object-position: center;
-        mix-blend-mode: normal;
-        filter: grayscale(0%) contrast(1) brightness(1);
+    }
+
+    body.shaking {
+      animation: screenShake 0.5s ease-out;
+    }
+
+    /* --- Confetti --- */
+    .confetti-piece {
+      position: fixed;
+      z-index: 55555;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+      border-radius: 2px;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
         opacity: 1;
       }
-      ::-webkit-scrollbar {
-        width: 8px;
-        background-color: var(--main-bg);
+
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
       }
-      ::-webkit-scrollbar-thumb {
-        background: var(--accent-color);
+    }
+
+    /* =========================================
+         Y2K / NEOFUTURISMO EXTRAS
+         ========================================= */
+
+    /* --- Marquee ticker bar --- */
+    #marquee-bar {
+      background: linear-gradient(90deg,
+          #7f0fd5 0%,
+          #190cff 50%,
+          #7f0fd5 100%);
+      background-size: 200% 100%;
+      animation: marqueeBg 4s linear infinite;
+      color: #fff;
+      font-family: "Departure Mono", monospace;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 2px solid #d710ff;
+      border-bottom: 2px solid #d710ff;
+      margin-bottom: 8px;
+    }
+
+    @keyframes marqueeBg {
+      0% {
+        background-position: 0% 0%;
       }
-      ::-webkit-scrollbar-track {
-        border-left: 1px solid var(--border-color);
+
+      100% {
+        background-position: 200% 0%;
       }
-      #glitch-heading {
-        position: relative;
-        display: inline-block;
+    }
+
+    #marquee-bar marquee {
+      display: inline-block;
+    }
+
+    /* --- Under Construction banner --- */
+    .under-construction {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: repeating-linear-gradient(45deg,
+          #ff0 0px,
+          #ff0 10px,
+          #000 10px,
+          #000 20px);
+      color: #000;
+      font-family: Impact, sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 5px 10px;
+      margin: 12px 0;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* --- Blink --- */
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
       }
-      #glitch-heading::before,
-      #glitch-heading::after {
-        content: attr(data-text);
-        position: absolute;
-        top: 0;
-        left: 0;
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .blink {
+      animation: blink 0.9s step-start infinite;
+    }
+
+    /* --- Badge strip (88x31 style) --- */
+    .badge-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px 6px;
+      justify-content: center;
+    }
+
+    .badge-strip img {
+      image-rendering: pixelated;
+      height: 31px;
+      width: auto;
+      border: 1px solid #7f0fd5;
+      transition: transform 0.15s;
+    }
+
+    .badge-strip img:hover {
+      transform: scale(1.15);
+    }
+
+    /* --- Visitor counter box --- */
+    .y2k-counter-box {
+      background: #0d0418;
+      border: 2px double var(--rek-border);
+      font-family: "Departure Mono", monospace;
+      font-size: 14px;
+      color: var(--rek-primary);
+      text-align: center;
+      padding: 6px 8px;
+      margin: 8px 0;
+      text-shadow: 0 0 6px var(--rek-primary);
+    }
+
+    .y2k-counter-digits {
+      font-size: 26px;
+      letter-spacing: 4px;
+      color: var(--rek-primary);
+      text-shadow:
+        0 0 10px var(--rek-primary),
+        0 0 20px var(--rek-secondary);
+    }
+
+    /* --- Music GIF decorations in sidebar --- */
+    .sidebar-gif-row {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 0;
+      flex-wrap: wrap;
+    }
+
+    .sidebar-gif-row img {
+      max-width: 80px;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    /* --- Horizontal retro divider --- */
+    .retro-divider {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 14px 0 8px 0;
+    }
+
+    .retro-divider::before,
+    .retro-divider::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg,
+          transparent,
+          #7f0fd5,
+          #190cff,
+          #7f0fd5,
+          transparent);
+    }
+
+    .retro-divider span {
+      font-family: "Departure Mono", monospace;
+      font-size: 14px;
+      color: #d710ff;
+      white-space: nowrap;
+      letter-spacing: 2px;
+    }
+
+    /* --- Ad banner sidebar strip --- */
+    .ad-banner-right {
+      border: 2px double #7f0fd5;
+      overflow: hidden;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: block;
+      transition: filter 0.2s;
+    }
+
+    .ad-banner-right:hover {
+      filter: brightness(1.2);
+    }
+
+    .ad-banner-right img {
+      display: block;
+      width: 100%;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    /* --- New! badge --- */
+    .new-badge {
+      display: inline-block;
+      background: red;
+      color: #fff;
+      font-family: Impact, sans-serif;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 1px 5px;
+      margin-left: 4px;
+      vertical-align: middle;
+      letter-spacing: 1px;
+      animation: blink 1s step-start infinite;
+    }
+
+
+
+    /* --- GIF banner strip in main content --- */
+    .gif-banner-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 6px;
+      margin: 16px 0 8px 0;
+      padding: 8px 6px;
+      background: linear-gradient(90deg,
+          rgba(127, 15, 213, 0.08),
+          rgba(25, 12, 255, 0.08),
+          rgba(127, 15, 213, 0.08));
+      border-top: 1px dashed #7f0fd5;
+      border-bottom: 1px dashed #7f0fd5;
+    }
+
+    .gif-banner-strip img {
+      height: 50px;
+      width: auto;
+      image-rendering: pixelated;
+    }
+
+    /* --- First Time Play Overlay --- */
+    #first-play-overlay {
+      position: fixed;
+      inset: 0;
+      /* Rectangle Opacity */
+      background: rgba(15, 15, 15, 0.95);
+      z-index: 100000;
+      display: none;
+    }
+
+    .player-highlight {
+      z-index: 100001 !important;
+      position: relative;
+    }
+
+    /* --- Music-reactive background glow --- */
+    #music-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background: radial-gradient(ellipse at center, rgba(127, 15, 213, 0.08) 0%, transparent 70%);
+    }
+
+    /* --- Accessibility Static Mode --- */
+    body.static-mode * {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    body.static-mode canvas {
+      display: none !important;
+    }
+
+    body.static-mode .player-wrapper {
+      box-shadow: none !important;
+    }
+
+    body.static-mode img[src*=".gif"] {
+      display: none !important;
+    }
+
+    body.static-mode .chaos-btn {
+      background: #c0c0c0 !important;
+      border: 2px outset #fff !important;
+      padding: 8px 12px !important;
+      font-family: inherit !important;
+      font-size: 14px !important;
+      color: black !important;
+      text-shadow: none !important;
+      margin-bottom: 5px;
+    }
+
+    body.static-mode #chaos-float {
+      display: none !important;
+    }
+
+    body.static-mode .navbow,
+    body.static-mode .chatbow,
+    body.static-mode #pfp {
+      background-image: none !important;
+      background-color: transparent !important;
+    }
+
+    /* --- Rainbow Button Animation --- */
+    @keyframes rainbow-border-anim {
+      0% {
+        border-color: #ff0000;
+      }
+
+      14% {
+        border-color: #ffa500;
+      }
+
+      28% {
+        border-color: #ffff00;
+      }
+
+      42% {
+        border-color: #008000;
+      }
+
+      57% {
+        border-color: #0000ff;
+      }
+
+      71% {
+        border-color: #4b0082;
+      }
+
+      85% {
+        border-color: #ee82ee;
+      }
+
+      100% {
+        border-color: #ff0000;
+      }
+    }
+
+    .rainbow-border-btn {
+      border: 3px solid #ff0000;
+      animation: rainbow-border-anim 3s linear infinite;
+    }
+
+    /* =========================================
+         FIM DO CSS EXTRAS
+         ========================================= */
+    /* =========================================
+         MOBILE RESPONSIVE TWEAKS
+         ========================================= */
+    @media (max-width: 1000px) {
+      body {
+        background-size: 100px;
+      }
+
+      /* Hide top and bottom floating boxes on mobile */
+      #topborder,
+      #bottomborder {
+        display: none !important;
+      }
+
+      #all {
         width: 100%;
-        height: 100%;
-        background: var(--main-bg);
-        overflow: hidden;
-      }
-      #glitch-heading::before {
-        left: 2px;
-        text-shadow: -2px 0 #ff00c1;
-        clip-path: rect(44px, 9999px, 56px, 0);
-        animation: glitch-anim-1 5s infinite linear alternate-reverse;
-      }
-      #glitch-heading::after {
-        left: -2px;
-        text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-        clip-path: rect(80px, 9999px, 90px, 0);
-        animation: glitch-anim-2 3s infinite linear alternate-reverse;
-      }
-      @keyframes glitch-anim-1 {
-        0% {
-          clip-path: rect(42px, 9999px, 44px, 0);
-          transform: skew(0.3deg);
-        }
-        5% {
-          clip-path: rect(17px, 9999px, 96px, 0);
-        }
-        10% {
-          clip-path: rect(40px, 9999px, 40px, 0);
-        }
-        100% {
-          clip-path: rect(50px, 9999px, 148px, 0);
-          transform: skew(0.8deg);
-        }
-      }
-      @keyframes glitch-anim-2 {
-        0% {
-          clip-path: rect(20px, 9999px, 90px, 0);
-          transform: skew(0.5deg);
-        }
-        10% {
-          clip-path: rect(30px, 9999px, 85px, 0);
-        }
-        100% {
-          clip-path: rect(10px, 9999px, 130px, 0);
-          transform: skew(0.1deg);
-        }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        overflow-x: hidden;
       }
 
-    </style>
-  </head>
+      #side,
+      #main,
+      #side-right {
+        width: 95%;
+        max-width: none;
+        position: static;
+        margin-bottom: 20px;
+      }
 
-  <body class="p-4 md:p-6 lg:p-8">
-    <div class="noise-overlay"></div>
-    <div class="scanline-overlay"></div>
+      /* Reorder components: Player first, Side Nav middle, Contact end */
+      #main {
+        order: 1;
+      }
 
-    <div class="max-w-7xl mx-auto relative z-10">
-      <nav
-        class="fixed top-0 left-0 w-full p-4 flex justify-between items-center text-sm z-50 bg-[rgba(10,0,20,0.5)] backdrop-blur-md border-b border-border-color"
-      >
-        <div>
-          <a
-            href="#home"
-            class="hidden md:flex hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150 whitespace-nowrap"
-            data-translate-key="navTitle"
-            >[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]</a
-          >
-        </div>
+      #side {
+        order: 2;
+      }
 
-        <div id="dev-nav-links" class="hidden md:flex gap-1">
-          <a
-            href="#projetos"
-            class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-            data-translate-key="navProjects"
-            >PROJETOS</a
-          >
-          <a
-            href="#carreira"
-            class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-            data-translate-key="navCareer"
-            >CARREIRA</a
-          >
-          <a
-            href="#contato"
-            class="hover:bg-accent-color hover:text-main-bg px-2 transition-colors duration-150"
-            data-translate-key="navContact"
-            >CONTATO</a
-          >
-        </div>
+      #side-right {
+        order: 3;
+      }
 
-        <div class="flex items-center gap-2">
-          <a href="/music/" class="btn font-display text-xs px-3 py-2" style="text-decoration:none">
-            [ MUSIC ]
-          </a>
-          <button id="lang-switcher" class="btn font-display text-xs px-3 py-2">
-            [ EN ]
-          </button>
-          <div class="hidden sm:flex gap-2">
-            <a
-              href="https://linkedin.com/in/afonsorek"
-              class="btn font-display text-xs element-glow-hover px-4 py-2"
-              target="_blank"
-              rel="noopener noreferrer"
-              >[ Linkedin ]</a
-            >
-            <a
-              href="https://github.com/afonsorek"
-              class="btn font-display text-xs element-glow-hover px-4 py-2"
-              target="_blank"
-              rel="noopener noreferrer"
-              >[ Github ]</a
-            >
-          </div>
-          <button id="menu-btn" class="md:hidden p-2 text-accent-color z-50">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div>
-      </nav>
+      /* User clarification: Remove "floating box" styles and ADS on mobile */
+      #aboutme-box,
+      #nav {
+        display: none !important;
+      }
 
-      <div
-        id="mobile-menu"
-        class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-40 flex flex-col items-center justify-center text-center"
-      >
-        <div
-          id="dev-mobile-links"
-          class="flex flex-col gap-8 text-2xl font-display"
-        >
-          <a
-            href="#projetos"
-            class="mobile-menu-link"
-            data-translate-key="navProjectsMobile"
-            >PROJETOS</a
-          >
-          <a
-            href="#carreira"
-            class="mobile-menu-link"
-            data-translate-key="navCareerMobile"
-            >CARREIRA</a
-          >
-          <a
-            href="#contato"
-            class="mobile-menu-link"
-            data-translate-key="navContactMobile"
-            >CONTATO</a
-          >
-        </div>
-        <div class="flex gap-4 mt-12">
-          <a
-            href="https://linkedin.com/in/afonsorek"
-            class="btn font-display text-sm element-glow-hover px-4 py-2"
-            target="_blank"
-            rel="noopener noreferrer"
-            >[ Linkedin ]</a
-          >
-          <a
-            href="https://github.com/afonsorek"
-            class="btn font-display text-sm element-glow-hover px-4 py-2"
-            target="_blank"
-            rel="noopener noreferrer"
-            >[ Github ]</a
-          >
-        </div>
+      #profile,
+      #chatbox {
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      .player-core,
+      .stats-panel,
+      .artist-badge {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      #chatboxheader,
+      #navheader,
+      #title {
+        background: transparent !important;
+        border: none !important;
+        padding-left: 0;
+      }
+
+      #title {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 18px;
+        white-space: wrap;
+        line-height: normal;
+      }
+
+      #floating-ad-banner {
+        display: none !important;
+      }
+
+      #skip-audio-btn {
+        transform: scale(0.6) translateY(-20%) !important;
+        transform-origin: right center !important;
+        right: 100% !important;
+        padding-right: 5px !important;
+      }
+
+      #floating-contact-banner {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        margin: 20px 0;
+      }
+
+      #content {
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent !important;
+      }
+
+      /* Stack player elements */
+      .hud-top {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .hud-side,
+      .artist-badge,
+      .controls-wrapper {
+        transform: none !important;
+      }
+
+      .player-3d-perspective {
+        perspective: none;
+      }
+
+      .player-wrapper {
+        transform: none !important;
+      }
+
+      .track-right {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .gif-center img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Hide floating chaos ads and visualizers on mobile to avoid covering content */
+      #chaos-float,
+      #wmp-float {
+        display: none !important;
+      }
+
+      #btt-btn-img {
+        width: 70px !important;
+      }
+
+      .btn-show-more {
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Make sure tracking pixels scale well */
+      .waveform-window {
+        max-width: 100%;
+      }
+    }
+  </style>
+  <link rel="icon" type="image/png" href="music/src/logo-principal.png" />
+  <link rel="apple-touch-icon" href="music/src/logo-principal.png" />
+</head>
+
+<body>
+  <div id="first-play-overlay"></div>
+
+  <div id="onboarding-warning"
+    style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 380px; background: #c0c0c0; border: 2px outset #dfdfdf; font-family: 'MS Sans Serif', sans-serif, 'Courier New'; z-index: 100002; display: none; box-shadow: 2px 2px 10px rgba(0,0,0,0.8);">
+    <div
+      style="background: linear-gradient(90deg, #000080, #1084d0); padding: 5px 8px; color: white; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+      <span>Motion and Sound Stimuli</span>
+      <span
+        style="background: #c0c0c0; color: black; border: 1px outset #fff; padding: 0 4px; font-size: 11px; cursor: default;">X</span>
+    </div>
+    <div style="padding: 15px; text-align: center; color: black;">
+      <h2
+        style="color: red; margin: 0 0 15px 0; font-size: 28px; font-weight: bold; text-shadow: 1px 1px 0px #fff; letter-spacing: 2px;">
+        WARNING</h2>
+      <p style="margin-top: 0; font-size: 14px;">This site contains moving images, GIFs, and sound stimuli.</p>
+      <p style="font-size: 14px; margin-bottom: 20px;">Please choose your experience mode:</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button onclick="chooseExperience('static')"
+          style="padding: 4px 8px; cursor: pointer; font-family: inherit; font-size: 13px; border: 2px outset #fff; background: #c0c0c0;">Static
+          Mode</button>
+        <button onclick="chooseExperience('full')" class="rainbow-border-btn"
+          style="padding: 4px 8px; cursor: pointer; font-family: inherit; font-size: 13px; background: #c0c0c0; font-weight: bold;">Full
+          Experience</button>
       </div>
+    </div>
+  </div>
+  <div id="music-glow"></div>
+  <div id="topborder"></div>
+  <div id="bottomborder"></div>
 
-      <!-- =================================================================== -->
-      <!-- =================== PORTFÓLIO DE DESENVOLVEDOR ==================== -->
-      <!-- =================================================================== -->
-      <div id="developer-portfolio">
-        <header
-          id="home"
-          class="min-h-screen flex flex-col justify-center relative border-b border-border-color pb-16"
-        >
-          <div class="absolute bottom-1/4 right-10 opacity-30">
-            <svg
-              width="80"
-              height="80"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="text-accent-color animate-spin"
-              style="animation-duration: 20s"
-            >
-              <path
-                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                stroke="currentColor"
-                stroke-width="1"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M2 12H22"
-                stroke="currentColor"
-                stroke-width="1"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M12 2C14.5013 4.73635 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2636 12 22C9.49872 19.2636 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73635 12 2Z"
-                stroke="currentColor"
-                stroke-width="1"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <div
-            class="absolute top-1/4 left-10 opacity-20 text-accent-color font-mono text-xs hidden lg:block"
-          >
-            <p>// STATUS: ONLINE</p>
-            <p>// CONN: SECURE</p>
-            <p>// BUILD: v2.5.1</p>
-          </div>
-          <h1
-            class="font-display text-6xl md:text-8xl lg:text-[9rem] font-bold leading-none mt-16"
-          >
-            <span id="glitch-heading" data-text="<AFONSO">&lt;AFONSO</span
-            ><br />
-            <span class="glow">REKBAIM/&gt</span>
-          </h1>
-          <p class="mt-8 max-w-lg text-lg font-light departure">
-            <span data-translate-key="heroLine1"
-              ><span class="text-accent-color">></span> Desenvolvedor no
-              ecossistema Apple.</span
-            ><br />
-            <span data-translate-key="heroLine2"
-              ><span class="text-accent-color">></span> Multiplataforma com
-              Flutter.</span
-            ><br />
-            <span data-translate-key="heroLine3"
-              ><span class="text-accent-color">></span> Web front-end (React &
-              Angular).</span
-            ><br />
-            <span data-translate-key="heroLine4"
-              ><span class="text-accent-color">></span> 7 anos de
-              experiência.</span
-            ><br />
-            <span data-translate-key="heroLine5"
-              ><span class="text-accent-color">></span> Aplicativo Top Charts na
-              Appstore.</span
-            ><br />
-            <span data-translate-key="heroLine6"
-              ><span class="text-accent-color">></span> Mais de 15 apps
-              produzidos.</span
-            ><br />
-            <span data-translate-key="heroLine7"
-              ><span class="text-accent-color">></span> Formação em UI/UX,
-              acessibilidade e business.</span
-            >
+  <!-- ===== CHAOS ZONE FLOATING BUTTONS ===== -->
+  <div id="chaos-float">
+
+    <button class="chaos-btn" id="btn-nyan" title="🌈 NYAN CATS">
+      <img src="https://blob.gifcities.org/gifcities/H2ZGNOHEJUBHTJPSYNDWD53LOTO6BOUX.gif" alt="Nyan Cats" />
+    </button>
+    <button class="chaos-btn" id="btn-360" title="🔄 360 NO SCOPE">
+      <img src="https://blob.gifcities.org/gifcities/2LMYFVFFMMSA3FAO2GAMOXSDCVDCNIT4.gif" alt="360" />
+    </button>
+    <button class="chaos-btn" id="btn-shake" title="🎉 EARTHQUAKE">
+      <img src="https://blob.gifcities.org/gifcities/33CBDF3BP3RU5MRRTYTLF7642R5TKQUA.gif" alt="Shake" />
+    </button>
+
+  </div>
+  <!-- ===== END CHAOS ZONE ===== -->
+
+  <div id="all">
+    <div id="side">
+      <div id="profile">
+        <center>
+          <p style="text-shadow: none; color: var(--rek-primary);">
+            ᏒᏋᏦ's 𝕸𝖚𝖘𝖎𝖈 𝕻𝖔𝖗𝖙𝖋𝖔𝖑𝖎𝖔 2026
           </p>
-        </header>
-        <main class="mt-16">
-          <div id="projetos"></div>
-          <br /><br /><br /><br />
-          <section class="mb-24">
-            <div class="section-header mb-8">
-              <h2
-                class="font-display text-4xl md:text-5xl"
-                data-translate-key="projectsTitle"
-              >
-                LOG:PROJETOS_
-              </h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <!-- Seus 6 cards de projeto aqui, como estavam antes. Exemplo: -->
-              <div class="hud-card">
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-accent-color">
-                    You Producer
-                  </h3>
-
-                  <p
-                    class="text-white/80 mt-2 font-light"
-                    data-translate-key="project1Subtitle"
-                  >
-                    Top #3 na App Store em jogos de música.
-                  </p>
-                </div>
-
-                <div class="mt-4">
-                  <img
-                    src="Images/you-producer.jpeg"
-                    alt="Project image for You Producer"
-                    class="project-image w-full mb-4"
-                  />
-
-                  <p
-                    class="text-white/70 font-light mb-4"
-                    data-translate-key="project1Desc"
-                  >
-                    Meu primeiro app publicado. Projeto de uma semana sobre
-                    produção musical em SwiftUI.
-                  </p>
-
-                  <div class="flex gap-2">
-                    <a
-                      href="https://apps.apple.com/br/app/you-producer/id6469336427?l=en-GB"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >App Store</a
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <div class="hud-card">
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-accent-color">
-                    Kite Odyssey
-                  </h3>
-
-                  <p
-                    class="text-white/80 mt-2 font-light"
-                    data-translate-key="project2Subtitle"
-                  >
-                    Jogo Hipercasual com SpriteKit e UIKit.
-                  </p>
-                </div>
-
-                <div class="mt-4">
-                  <img
-                    src="Images/kite-odyssey.jpg"
-                    alt="Project image for Kite Odyssey"
-                    class="project-image w-full mb-4"
-                  />
-
-                  <p
-                    class="text-white/70 font-light mb-4"
-                    data-translate-key="project2Desc"
-                  >
-                    Jogo Hipercasual com campanha de tráfego pago e orgânico,
-                    Analytics do Firebase e Google Ads.
-                  </p>
-
-                  <div class="flex flex-wrap gap-2">
-                    <a
-                      href="https://github.com/afonsorek/kite-odyssey"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >GitHub</a
-                    >
-
-                    <a
-                      href="https://apps.apple.com/br/app/kite-odyssey/id6479834293?l=en-GB"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >App Store</a
-                    >
-
-                    <a
-                      href="https://www.instagram.com/kiteodysseythegame/"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Instagram</a
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <div class="hud-card">
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-accent-color">
-                    NotchNook
-                  </h3>
-
-                  <p
-                    class="text-white/80 mt-2 font-light"
-                    data-translate-key="project3Subtitle"
-                  >
-                    App utilitário para macOS.
-                  </p>
-                </div>
-
-                <div class="mt-4">
-                  <img
-                    src="Images/notchnook.png"
-                    alt="Project image for NotchNook"
-                    class="project-image w-full mb-4"
-                  />
-
-                  <p
-                    class="text-white/70 font-light mb-4"
-                    data-translate-key="project3Desc"
-                  >
-                    App em SwiftUI que expande as funcionalidades do notch do
-                    Macbook. Focado em experiência de uso.
-                  </p>
-
-                  <div class="flex gap-2">
-                    <a
-                      href="https://lo.cafe/notchnook"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Website</a
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <div class="hud-card">
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-accent-color">
-                    AdAstra
-                  </h3>
-
-                  <p
-                    class="text-white/80 mt-2 font-light"
-                    data-translate-key="project4Subtitle"
-                  >
-                    App para conectar alunos da Apple Academy.
-                  </p>
-                </div>
-
-                <div class="mt-4">
-                  <img
-                    src="Images/ad-astra.png"
-                    alt="Project image for AdAstra"
-                    class="project-image w-full mb-4"
-                  />
-
-                  <p
-                    class="text-white/70 font-light mb-4"
-                    data-translate-key="project4Desc"
-                  >
-                    Utiliza tecnologias do iOS 18, views com cenas 3D e backend
-                    serverless para gerenciar conexões entre os alunos.
-                  </p>
-
-                  <div class="flex gap-2">
-                    <a
-                      href="https://github.com/apple-developer-academy-pucpr/AdAstra"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >GitHub</a
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <div class="hud-card">
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-accent-color">
-                    nova.
-                  </h3>
-
-                  <p
-                    class="text-white/80 mt-2 font-light"
-                    data-translate-key="project5Subtitle"
-                  >
-                    App de reflexões diárias (estilo Obsidian).
-                  </p>
-                </div>
-
-                <div class="mt-4">
-                  <img
-                    src="Images/nova.png"
-                    alt="Project image for nova."
-                    class="project-image w-full mb-4"
-                  />
-
-                  <p
-                    class="text-white/70 font-light mb-4"
-                    data-translate-key="project5Desc"
-                  >
-                    Incentiva reflexões com notificações remotas, áudio espacial
-                    e outras tecnologias.
-                  </p>
-
-                  <div class="flex gap-2">
-                    <a
-                      href="https://github.com/AndreWozniack/nova."
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >GitHub</a
-                    >
-
-                    <a
-                      href="https://www.behance.net/gallery/213420991/nova"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Behance</a
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <div class="hud-card">
-                <div>
-                  <h3 class="font-display text-2xl font-bold text-accent-color">
-                    Tuts
-                  </h3>
-
-                  <p
-                    class="text-white/80 mt-2 font-light"
-                    data-translate-key="project6Subtitle"
-                  >
-                    App de musicalização para crianças.
-                  </p>
-                </div>
-
-                <div class="mt-4">
-                  <img
-                    src="Images/tuts.png"
-                    alt="Project image for Tuts"
-                    class="project-image w-full mb-4"
-                  />
-
-                  <p
-                    class="text-white/70 font-light mb-4"
-                    data-translate-key="project6Desc"
-                  >
-                    Foco em controle de som, animações fluidas, pesquisas de
-                    usuário e testes de usabilidade.
-                  </p>
-
-                  <div class="flex gap-2">
-                    <a
-                      href="https://github.com/afonsorek/Tuts"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >GitHub</a
-                    >
-
-                    <a
-                      href="https://www.behance.net/gallery/200864867/Tuts-App"
-                      class="btn text-xs px-3 py-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Behance</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <!-- ... Repita para os outros 5 projetos ... -->
-            </div>
-          </section>
-          <div id="carreira"></div>
-          <br /><br /><br /><br />
-          <div id="carreira"></div>
-
-          <br /><br /><br /><br />
-
-          <section class="mb-24">
-            <div class="section-header mb-8">
-              <h2
-                class="font-display text-4xl md:text-5xl"
-                data-translate-key="careerTitle"
-              >
-                LOG:CARREIRA_
-              </h2>
-            </div>
-
-            <div class="border-t border-border-color">
-              <div
-                class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
-              >
-                <div class="md:col-span-1">
-                  <p
-                    class="font-display text-accent-color"
-                    data-translate-key="job1Date"
-                  >
-                    [ 2025-PRESENTE ]
-                  </p>
-
-                  <img
-                    src="Images/apple.jpg"
-                    alt="Apple Developer Academy Logo"
-                    class="project-image mt-4 w-full rounded-md"
-                  />
-                </div>
-
-                <div class="md:col-span-3">
-                  <h3
-                    class="text-xl font-bold text-white font-display"
-                    data-translate-key="job1Title"
-                  >
-                    Mentor de Desenvolvimento iOS
-                  </h3>
-
-                  <p
-                    class="mt-1 text-sm text-accent-color"
-                    data-translate-key="job1Company"
-                  >
-                    Apple Developer Academy
-                  </p>
-
-                  <ul
-                    class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
-                  >
-                    <li data-translate-key="job1Desc1">
-                      Preparação de workshops voltados a tecnologias Apple.
-                    </li>
-
-                    <li data-translate-key="job1Desc2">
-                      Pesquisa aprofundada em novas tecnologias e projetos
-                      Open-Source.
-                    </li>
-
-                    <li data-translate-key="job1Desc3">
-                      Suporte prestado a mais de 10 aplicações em menos de 2
-                      meses.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div
-                class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2 border-b border-border-color"
-              >
-                <div class="md:col-span-1">
-                  <p
-                    class="font-display text-accent-color"
-                    data-translate-key="job2Date"
-                  >
-                    [ 2024-2025 ]
-                  </p>
-
-                  <img
-                    src="Images/locafe.png"
-                    alt="Lo.Cafe Logo"
-                    class="project-image mt-4 w-full rounded-md"
-                  />
-                </div>
-
-                <div class="md:col-span-3">
-                  <h3
-                    class="text-xl font-bold text-white font-display"
-                    data-translate-key="job2Title"
-                  >
-                    Desenvolvedor Pleno iOS e macOS
-                  </h3>
-
-                  <p
-                    class="mt-1 text-sm text-accent-color"
-                    data-translate-key="job2Company"
-                  >
-                    Lo.Cafe
-                  </p>
-
-                  <ul
-                    class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
-                  >
-                    <li data-translate-key="job2Desc1">
-                      Desenvolvimento FullStack de aplicativos iOS e macOS.
-                    </li>
-
-                    <li data-translate-key="job2Desc2">
-                      Atuação nos principais produtos da empresa.
-                    </li>
-
-                    <li data-translate-key="job2Desc3">
-                      Independência na idealização e produção dos aplicativos.
-                    </li>
-
-                    <li data-translate-key="job2Desc4">Alto foco em UI/UX.</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="grid md:grid-cols-4 gap-x-8 gap-y-4 py-6 px-2">
-                <div class="md:col-span-1">
-                  <p
-                    class="font-display text-accent-color"
-                    data-translate-key="job3Date"
-                  >
-                    [ 2023 ]
-                  </p>
-
-                  <img
-                    src="Images/uex.png"
-                    alt="UEX Tecnologia Logo"
-                    class="project-image mt-4 w-full rounded-md"
-                  />
-                </div>
-
-                <div class="md:col-span-3">
-                  <h3
-                    class="text-xl font-bold text-white font-display"
-                    data-translate-key="job3Title"
-                  >
-                    Software Engineer Pleno
-                  </h3>
-
-                  <p
-                    class="mt-1 text-sm text-accent-color"
-                    data-translate-key="job3Company"
-                  >
-                    UEX Tecnologia
-                  </p>
-
-                  <ul
-                    class="list-disc list-inside text-white/70 space-y-2 mt-4 font-light"
-                  >
-                    <li data-translate-key="job3Desc1">
-                      Grande flexibilidade entre equipes e diferentes projetos.
-                    </li>
-
-                    <li data-translate-key="job3Desc2">
-                      Abstração de inúmeros componentes, low-code interno.
-                    </li>
-
-                    <li data-translate-key="job3Desc3">
-                      Entregas otimizadas, orçando 20% a menos para as mesmas
-                      entregas.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <div id="contato"></div>
-
-          <br /><br /><br /><br />
-
-          <footer class="text-center py-12 border-t border-border-color">
-            <h2
-              class="font-display text-4xl md:text-5xl glow"
-              data-translate-key="contactTitle"
-            >
-              Contato
-            </h2>
-
-            <p class="mt-4 text-white/70 departure">
-              <span data-translate-key="contactSubtitle"
-                >Disponível para novos projetos e colaborações</span
-              >
-
-              <span class="blinking-cursor font-display text-accent-color"
-                >|</span
-              >
-            </p>
-
-            <a
-              href="mailto:afonsorrekbaim@gmail.com"
-              class="btn text-lg px-8 py-3 mt-8 inline-block element-glow-hover font-display"
-              data-translate-key="contactButton"
-              >[ ENVIAR MENSAGEM ]</a
-            >
-
-            <p class="mt-24 text-xs opacity-50">@2025 - Afonso Rekbaim</p>
-          </footer>
-        </main>
+        </center>
+        <div id="pfp" title="Click to zoom REK logo">
+          <img src="music/src/logo-principal.png" alt="REK Logo"
+            style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+        </div>
+        <br />
+        <center>
+          <p style="text-shadow: none; color: var(--rek-text);">Welcome to r3k.wav!!!</p>
+        </center>
       </div>
+
+      <div id="nav">
+        <div class="navbow"></div>
+        <div class="box-deco-top"></div>
+        <h2 id="navheader">
+          <img src="https://soapbubbleseal.net/h02-icon-shell.gif" class="headericon" />
+          Nav
+        </h2>
+        <span>
+          <ul>
+            <li><a href="#title" style="text-decoration:none">🏠 Welcome</a></li>
+            <li><a href="#playerPerspective" style="text-decoration:none">🎵 Player</a></li>
+            <li><a href="#trackDescription" style="text-decoration:none">ℹ️ Track Info</a></li>
+            <li><a href="#playlist-header-nav" style="text-decoration:none">💿 Track List</a></li>
+            <li><a href="#careerSection" style="text-decoration:none">💼 Career</a></li>
+            <li><a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer" style="text-decoration:none">📸 @r3k.wav</a></li>
+          </ul>
+        </span>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <div id="chatbox">
+        <div class="chatbow"></div>
+        <div class="box-deco-top"></div>
+        <h2 id="chatboxheader">
+          <img src="https://soapbubbleseal.net/small_palm.gif" class="headericon" />
+          Chat
+        </h2>
+        <span>
+          <iframe src="https://www3.cbox.ws/box/?boxid=3553722&boxtag=QYH0MZ" width="100%" height="300"
+            allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0"
+            scrolling="auto"></iframe>
+        </span>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+
 
 
     </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const translations = {
-          en: {
-            pageTitle: "Afonso Rocha Rekbaim :: Swift Developer",
-            navTitle: "[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]",
-            navProjects: "PROJECTS",
-            navCareer: "CAREER",
-            navContact: "CONTACT",
-            navProjectsMobile: "PROJECTS",
-            navCareerMobile: "CAREER",
-            navContactMobile: "CONTACT",
-            heroLine1:
-              '<span class="text-accent-color">></span> Developer in the Apple ecosystem.',
-            heroLine2:
-              '<span class="text-accent-color">></span> Cross-platform with Flutter.',
-            heroLine3:
-              '<span class="text-accent-color">></span> Web front-end (React & Angular).',
-            heroLine4:
-              '<span class="text-accent-color">></span> 7 years of experience.',
-            heroLine5:
-              '<span class="text-accent-color">></span> Top Charts app on the App Store.',
-            heroLine6:
-              '<span class="text-accent-color">></span> Over 15 apps produced.',
-            heroLine7:
-              '<span class="text-accent-color">></span> Trained in UI/UX, accessibility, and business.',
-            projectsTitle: "LOG:PROJECTS_",
-            careerTitle: "LOG:CAREER_",
-            contactTitle: "Contact",
-            contactSubtitle: "Available for new projects and collaborations",
-            contactButton: "[ SEND MESSAGE ]",
-          },
-          pt: {
-            pageTitle: "Afonso Rocha Rekbaim :: Desenvolvedor Swift",
-            navTitle: "[ AFONSO ROCHA REKBAIM // SWIFT_DEV ]",
-            navProjects: "PROJETOS",
-            navCareer: "CARREIRA",
-            navContact: "CONTATO",
-            navProjectsMobile: "PROJETOS",
-            navCareerMobile: "CARREIRA",
-            navContactMobile: "CONTATO",
-            heroLine1:
-              '<span class="text-accent-color">></span> Desenvolvedor no ecossistema Apple.',
-            heroLine2:
-              '<span class="text-accent-color">></span> Multiplataforma com Flutter.',
-            heroLine3:
-              '<span class="text-accent-color">></span> Web front-end (React & Angular).',
-            heroLine4:
-              '<span class="text-accent-color">></span> 7 anos de experiência.',
-            heroLine5:
-              '<span class="text-accent-color">></span> Aplicativo Top Charts na Appstore.',
-            heroLine6:
-              '<span class="text-accent-color">></span> Mais de 15 apps produzidos.',
-            heroLine7:
-              '<span class="text-accent-color">></span> Formação em UI/UX, acessibilidade e business.',
-            projectsTitle: "LOG:PROJETOS_",
-            careerTitle: "LOG:CARREIRA_",
-            contactTitle: "Contato",
-            contactSubtitle: "Disponível para novos projetos e colaborações",
-            contactButton: "[ ENVIAR MENSAGEM ]",
-          },
-        };
-        const langSwitcher = document.getElementById("lang-switcher");
-        let currentLang = localStorage.getItem("language") || "pt";
-        const setLanguage = (lang) => {
-          document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
-          const elements = document.querySelectorAll("[data-translate-key]");
-          elements.forEach((el) => {
-            const key = el.getAttribute("data-translate-key");
-            if (translations[lang] && translations[lang][key]) {
-              el.innerHTML = translations[lang][key];
-            }
-          });
-          document.title = translations[lang].pageTitle;
-          langSwitcher.textContent = lang === "en" ? "[ PT ]" : "[ EN ]";
-        };
-        langSwitcher.addEventListener("click", () => {
-          currentLang = currentLang === "en" ? "pt" : "en";
-          localStorage.setItem("language", currentLang);
-          setLanguage(currentLang);
-        });
-        setLanguage(currentLang);
+    <div id="main">
+      <h1 id="title">
+        <img src="music/src/sem-fundo-preto.png" alt="REK" class="headericon" style="height: 36px; width: auto;" />
+        𝄞⨾💿✮˚.⋆ ᏒᏋᏦ // r3k.wav
+      </h1>
 
-        const menuBtn = document.getElementById("menu-btn");
-        const mobileMenu = document.getElementById("mobile-menu");
-        const mobileMenuLinks = document.querySelectorAll(".mobile-menu-link");
+      <div id="content">
+        <!-- Welcome GIF -->
+        <div class="gif-center" style="margin: 8px 0 0 0">
+          <img src="https://blob.gifcities.org/gifcities/C3M7AJSAYLIKUNBMQPNTRBICWT5BQDN4.gif" alt="Welcome!"
+            style="max-width: 100px; height: auto; image-rendering: pixelated" />
 
-        menuBtn.addEventListener("click", () => {
-          mobileMenu.classList.toggle("hidden");
-        });
+          <img src="https://blob.gifcities.org/gifcities/IYTE7LR4E6PSPJC3XG5IT3WM3QCLL2TG.gif" alt="Welcome!"
+            style="max-width: 40%; height: auto; image-rendering: pixelated" />
 
-        mobileMenuLinks.forEach((link) => {
-          link.addEventListener("click", () => {
-            mobileMenu.classList.add("hidden");
-          });
+          <img src="https://blob.gifcities.org/gifcities/C3M7AJSAYLIKUNBMQPNTRBICWT5BQDN4.gif" alt="Welcome!"
+            style="max-width: 100px; height: auto; image-rendering: pixelated" />
+        </div>
+        <div class="player-3d-perspective" id="playerPerspective">
+          <div class="player-wrapper" id="playerWrapper">
+            <div class="hud-top">
+              <div class="hud-side">
+                <div class="stats-panel">
+                  <div class="stat-block">
+                    <span class="stat-label">BPM</span>
+                    <span class="stat-value" id="statBpm">---</span>
+                  </div>
+                  <div class="stat-block">
+                    <span class="stat-label">TIME</span>
+                    <span class="stat-value" id="statTime">--/--</span>
+                  </div>
+                  <div class="stat-block">
+                    <span class="stat-label">KEY</span>
+                    <span class="stat-value" id="statKey">---</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="artist-badge">
+                <div class="artist-avatar">
+                  <img src="music/src/sem-fundo-preto.png" alt="REK" style="width: 24px; height: 24px; object-fit: contain;" />
+                </div>
+                <div class="artist-info">
+                  <h2 id="trackTitle">NOME DA MÚSICA</h2>
+                  <p>
+                    PROJETO • <span id="trackNumber">01</span>/<span class="trackTotal">00</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="hud-side">
+                <div class="stats-panel">
+                  <div class="pixel-grid" id="pixelGrid1"></div>
+                  <div class="pixel-grid" id="pixelGrid2"></div>
+                  <div class="pixel-grid" id="pixelGrid3"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="player-core" id="playerCore">
+              <div class="waveform-window">
+                <div class="waveform-container" id="waveform"></div>
+              </div>
+            </div>
+
+            <div class="submission-text">
+              Track <span id="trackNumberSub">1</span> /
+              <span class="trackTotal">00</span>
+            </div>
+
+            <div class="controls-wrapper" style="position: relative">
+              <div id="skip-audio-btn"
+                style="position: absolute; right: 105%; top: 50%; transform: translateY(-20%); z-index: 100001; text-align: center; cursor: pointer; display: none; padding-right: 15px; width: max-content;"
+                onclick="dismissOverlay()">
+                <div style="background: white; border: 2px solid #7f0fd5; margin-bottom: 5px; display: inline-block;">
+                  <img src="https://blob.gifcities.org/gifcities/KYVDH57ENWIVEURCI34KQRBD4ON2XLTO.gif"
+                    style="width: 100px; image-rendering: pixelated; display: block;" alt="I can't listen right now" />
+                </div>
+                <div
+                  style="font-family: 'Departure Mono', monospace; color: white; background: #000; padding: 4px 8px; border: 2px dashed #7f0fd5; font-size: 16px; text-shadow: 1px 1px 0px #7f0fd5;">
+                  I can't listen right now
+                </div>
+              </div>
+              <!-- Animated Click Here + Arrow pointing to the play button -->
+              <div style="
+                    position: absolute;
+                    left: 105%;
+                    top: -5px;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 5px;
+                    z-index: 50;
+                    width: max-content;
+                  ">
+                <img src="https://blob.gifcities.org/gifcities/5QS7OMAB25OCTGECVOVT6MKLVJSFOXEA.gif" style="
+                      width: 40px;
+                      transform: scaleX(-1);
+                      image-rendering: pixelated;
+                      margin-right: 5px;
+                    " alt="arrow pointing left" />
+                <img src="https://blob.gifcities.org/gifcities/KT64L3GTCRKE3YJ5F4SL367VSCXZRQUJ.gif"
+                  style="width: 80px; image-rendering: pixelated" alt="click here" />
+              </div>
+              <div class="controls-pill">
+                <button id="btnPrev">⏮</button>
+                <button class="btn-play" id="btnPlay">
+                  <img src="https://blob.gifcities.org/gifcities/BAQTUDFRHRCC6TEY36YZ6LZZ3GF5ULYR.gif" alt="Play"
+                    style="height: 35px; image-rendering: pixelated" />
+                </button>
+                <button id="btnNext">⏭</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Track Info (dynamic, updates with current song) -->
+        <div class="playlist-header">
+          <img src="https://soapbubbleseal.net/h02-icon-shell.gif" class="headericon" />
+          Track Info
+        </div>
+        <div id="trackDescription" style="
+            background: var(--rek-bg-deep);
+            border: 2px dashed var(--rek-border);
+            color: var(--rek-text);
+            padding: 12px;
+            text-shadow: none;
+            line-height: 1.4;
+            font-family: 'Departure Mono', monospace;
+            font-size: 16px;
+            margin-bottom: 15px;
+          ">
+          (Loading track info...)
+        </div>
+        <div class="playlist-container">
+          <!-- GIF banner strip above playlist -->
+          <!-- <div class="gif-banner-strip">
+            <img src="https://blob.gifcities.org/gifcities/3BEBZOGHTZOGGL5E2I6EDB46NOVXVO2V.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/3FJGXSGBZ25OXJZ4TUSB2OYOHPGHM426.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/36YDUI67DDVTYVDSCK4WCXLX5FCDIG2T.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/4D7DYVYXK5AZVQJFW5H52BWI6KGYBZBH.gif" alt="music gif" />
+            <img src="https://blob.gifcities.org/gifcities/4JIDCRB7XP5ZVXSZ3GCU5Q4GIKKZVF26.gif" alt="music gif" />
+          </div> -->
+
+          <div class="playlist-header" id="playlist-header-nav">
+            <img src="https://soapbubbleseal.net/small_palm.gif" class="headericon" />
+            Track List <span class="new-badge">NEW</span>
+          </div>
+          <ul id="playlist-ul"></ul>
+          <button id="btnShowMore" class="btn-show-more">SHOW MORE</button>
+
+          <!-- Career / Experience section -->
+          <div class="playlist-header" style="margin-top: 25px;">
+            <img src="https://soapbubbleseal.net/f05-icon-tropical_drink.gif" class="headericon" />
+            Career
+          </div>
+          <div id="careerSection" style="
+            background: var(--rek-bg-deep);
+            border: 2px dashed var(--rek-border);
+            color: var(--rek-text-muted);
+            padding: 14px;
+            text-shadow: none;
+            line-height: 1.6;
+            font-family: 'Departure Mono', monospace;
+            font-size: 21px;
+          ">
+            <!-- ===== EDITAR CARREIRA AQUI ===== -->
+            <p style="color: var(--rek-secondary); font-size: 23px; margin-top: 0;">Musical Producer &amp; Sound Designer</p>
+
+            <p style="font-size: 16px; margin-left: 10px;">I started producing in <b style="color:var(--rek-primary)">2021</b>,
+              using
+              <b style="color:var(--rek-primary)">Ableton
+                Live</b> as my main DAW. My focus is on experimental sound design and sounds that mix
+              nostalgia with my personal taste. I have made music for over 20 games along the way, with 5 awarded games
+              by Apple on the WWDC Swift Student challenge competition using my tunes.
+            </p>
+
+            <p style="color: var(--rek-secondary); font-size: 23px;">Interest</p>
+            <ul style="margin: 0;">
+              <li>Sound Design for games and interactive media</li>
+              <li>Sound synthesis (FM, granular, subtractive)</li>
+              <li>Experimental and microtonal composition</li>
+              <li>Chiptune, DnB, Acustic, Dubstep and Synthwave</li>
+            </ul>
+
+            <p style="color: var(--rek-secondary); font-size: 23px;">Tools</p>
+            <ul style="margin: 0; padding-left: 18px;">
+              <li>Unity, FMOD, Godot, Apple Spatial Audio</li>
+              <li>Ableton Live Suite, Reaper, Pro Tools</li>
+              <li>Serum, Vital, Operator, Trackers</li>
+            </ul>
+
+            <p style="color: var(--rek-secondary); font-size: 23px;">Contact</p>
+            <p style="font-size: 16px; margin-left: 10px;">Want to collaborate or exchange ideas about sound? Hit me up on
+              <a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer"
+                style="color: var(--rek-primary); text-decoration: underline;">Instagram (@r3k.wav)</a>!
+            </p>
+
+            <div id="mobile-contact-container">
+              <!-- Floating Ad Banner Right -->
+              <a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer"
+                style="position: fixed; top: 140px; right: 20px; z-index: 9999; border: 2px solid var(--rek-border);"
+                id="floating-ad-banner" title="@r3k.wav">
+                <img src="music/src/rosa-verde.png"
+                  style="width: 145px; height: auto; display: block;" alt="REK Sticker" />
+              </a>
+
+              <!-- Floating Contact Me Banner Right (Only Instagram) -->
+              <div id="floating-contact-banner"
+                style="position: fixed; top: 52%; transform: translateY(-50%); right: 20px; z-index: 9999; width: 190px; background: var(--rek-surface-card); border: 2px double var(--rek-border); box-shadow: 0 0 18px var(--rek-glow); text-align: center; font-family: 'Departure Mono', monospace;">
+                <div
+                  style="background: var(--rek-bg-deep); padding: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; border-bottom: 1px solid var(--rek-border);">
+                  <span style="color: var(--rek-primary); text-shadow: 1px 1px 0 var(--rek-secondary); font-size: 20px;">Contact</span>
+                </div>
+                <div style="padding: 12px;">
+                  <a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer"
+                    style="display:block; color: var(--rek-text); text-decoration: none; border: 1px dashed var(--rek-border); background: var(--rek-bg-deep); padding: 8px; font-size: 18px;">
+                    <img src="music/src/Instagram.png" alt="r3k.wav Instagram"
+                      style="width: 64px; height: 64px; object-fit: cover; display: block; margin: 0 auto 8px auto; border: 2px solid var(--rek-primary);" />
+                    Instagram
+                  </a>
+                  <div style="font-size: 14px; color: var(--rek-primary); margin-top: 6px; word-break: break-word;">
+                    @r3k.wav
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ===== FIM DA SEÇÃO DE CARREIRA ===== -->
+          </div>
+
+        </div>
+
+        <!-- (Back button moved to absolute right edge) -->
+      </div>
+    </div>
+
+    <div id="side-right">
+      <!-- About Me Box -->
+      <div id="aboutme-box" style="margin-bottom: 14px; position: relative">
+        <div class="box-deco-top"></div>
+        <h2 id="aboutmeheader">
+          <img src="https://soapbubbleseal.net/f05-icon-tropical_drink.gif" class="headericon" />
+          About REK
+        </h2>
+        <div style="
+              padding: 10px;
+              font-size: 14px;
+              text-align: justify;
+              line-height: 1.4;
+              text-shadow: 1px 1px 0px var(--rek-ink-dark);
+              color: var(--rek-text);
+            ">
+          <img
+            src="music/src/Preto e branco pixel.png"
+            alt="REK Pixel Logo"
+            style="width: 100%; margin-bottom: 10px; border: 2px solid var(--rek-border); display: block;" />
+
+          <p style="margin-top: 0">
+            Hi! I'm <b style="color: var(--rek-primary);">REK</b>. This is my music portfolio. I created this little
+            corner to document my sound projects, mixing nostalgia and
+            experimentation. Feel free to listen around!
+          </p>
+          <p>
+            Pick a logo color below to switch the site vibe!
+          </p>
+          <div style="clear: both"></div>
+        </div>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <!-- REK Theme / Logo Options Selector -->
+      <div class="rek-side-box" id="rek-palette-box" style="margin-bottom: 14px;">
+        <div class="box-deco-top"></div>
+        <h2 class="rek-box-header">
+          <img src="music/src/sem-fundo-branco.png" class="headericon" alt="REK" />
+          IDV / Palette
+        </h2>
+        <div class="rek-palette-grid">
+          <button type="button" class="rek-palette-btn is-active" data-theme="roxo-verde" title="Roxo + Verde Ácido">
+            <img src="music/src/Roxo-verde.png" alt="Logo Roxo Verde" />
+          </button>
+          <button type="button" class="rek-palette-btn" data-theme="rosa-verde" title="Rosa + Verde Ácido">
+            <img src="music/src/rosa-verde.png" alt="Logo Rosa Verde" />
+          </button>
+          <button type="button" class="rek-palette-btn" data-theme="azul" title="Azul + Roxo + Rosa">
+            <img src="music/src/azul.png" alt="Logo Azul" />
+          </button>
+          <button type="button" class="rek-palette-btn" data-theme="roxo-verde" title="Roxo + Rosa">
+            <img src="music/src/roxo-rosa.png" alt="Logo Roxo Rosa" />
+          </button>
+        </div>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <!-- Music GIF decorations -->
+      <div style="
+            background: linear-gradient(175deg, rgba(44, 16, 70, 0.9), rgba(18, 6, 31, 0.96)), url(&quot;music/src/black.gif&quot;);
+            border: 2px double var(--rek-border);
+            margin-bottom: 14px;
+          ">
+        <div class="box-deco-top"></div>
+        <div class="sidebar-gif-row" style="
+              padding: 10px 4px;
+              display: flex;
+              gap: 4px;
+              justify-content: center;
+            ">
+          <img src="https://blob.gifcities.org/gifcities/2GEUTTMSVZB6SGSMTKJGYPWRWENJ5L7Y.gif" title="music"
+            style="width: 35px; height: auto" />
+          <img src="https://blob.gifcities.org/gifcities/2GFQMUYFJE3ZRL6FYUVFP2MIMFIAFDTT.gif" title="music"
+            style="width: 35px; height: auto" />
+          <img src="https://blob.gifcities.org/gifcities/33NY7NQDOL6YJH4FCOFLDSXEH3T4QOEN.gif" title="music"
+            style="width: 35px; height: auto" />
+        </div>
+        <div class="box-deco-bottom"></div>
+      </div>
+
+      <!-- Visitor counter -->
+      <div class="y2k-counter-box">
+        <div style="font-size: 11px; letter-spacing: 2px; margin-bottom: 2px">
+          ✦ VISITORS ✦
+        </div>
+        <div class="y2k-counter-digits" id="visitorCounter">000000</div>
+        <div style="font-size: 10px; margin-top: 2px; opacity: 0.7">
+          since APR 2026
+        </div>
+      </div>
+
+      <!-- Badge strip -->
+      <div style="
+            background: linear-gradient(175deg, rgba(44, 16, 70, 0.9), rgba(18, 6, 31, 0.96)), url(&quot;music/src/black.gif&quot;);
+            border: 2px double var(--rek-border);
+            margin-bottom: 14px;
+          ">
+        <div class="badge-strip" style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 4px;
+              padding: 8px 0;
+            ">
+          <img src="https://soapbubbleseal.net/happypeach.gif" title="Happy Peach"
+            style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/aloha.gif" title="Aloha" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/new.gif" title="NEW!" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/loveabug.gif" title="Love a Bug" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/exitbutton.gif" title="Exit" style="max-width: 90%; height: auto" />
+          <img src="https://soapbubbleseal.net/kawasaki.gif" title="Kawasaki" style="max-width: 90%; height: auto" />
+        </div>
+      </div>
+
+      <!-- More music GIFs -->
+      <div class="sidebar-gif-row" style="margin-top: 8px; justify-content: space-evenly">
+        <img src="https://blob.gifcities.org/gifcities/36Q2B5MPXW7CE66DLLJC5A7F7SBCHEGU.gif" title="music"
+          style="width: 40%; max-width: 65px; height: auto" />
+        <img src="https://blob.gifcities.org/gifcities/4IKK5SLS6UTBURIKTPYNI63LUSLMIF67.gif" title="music"
+          style="width: 40%; max-width: 65px; height: auto" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Back Button -->
+  <a href="#" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999" id="floating-back-btn">
+    <img src="https://blob.gifcities.org/gifcities/JEWJXWXSNRAGZ4DTPQHOGLO6WAAQTWFL.gif" alt="Back"
+      style="image-rendering: pixelated; width: 140px; height: auto" id="btt-btn-img" />
+  </a>
+
+  <!-- Floating Windows Media Player Visualizer Left -->
+  <div id="wmp-float" style="
+        position: fixed;
+        top: 60px;
+        left: 15px;
+        width: 320px;
+        border: 2px outset #dfdfdf;
+        background: #c0c0c0;
+        font-family:
+          &quot;MS Sans Serif&quot;, sans-serif, &quot;Courier New&quot;;
+        z-index: 100001;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        display: none;
+      ">
+    <div style="
+          background: linear-gradient(90deg, #000080, #1084d0);
+          padding: 5px 8px;
+          color: white;
+          font-weight: bold;
+          font-size: 13px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        ">
+      <span>Windows Media Player</span>
+      <span style="
+            background: #c0c0c0;
+            color: black;
+            border: 1px outset #fff;
+            padding: 0 4px;
+            font-size: 11px;
+            cursor: default;
+          ">X</span>
+    </div>
+    <div style="
+          background: #000;
+          margin: 6px;
+          height: 180px;
+          border: 2px inset #fff;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        ">
+      <!-- State: Paused / Stopped -->
+      <div id="wmp-text" style="
+            color: #0f0;
+            font-family: &quot;Departure Mono&quot;, monospace;
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.2;
+            padding: 10px;
+          ">
+        <img src="https://blob.gifcities.org/gifcities/MCBIF7OO7JJHFWBXGBJWKDLUVJGRFTH7.gif"
+          style="width: 30px; margin-bottom: 5px" /><br />
+        Play any music<br />to see<br />something cool
+      </div>
+
+      <!-- State: Playing (Visualizer) -->
+      <div id="wmp-vis" style="
+            display: none;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+          ">
+        <canvas id="wmp-canvas" width="300" height="175" style="width: 100%; height: 100%; display: block;"></canvas>
+      </div>
+    </div>
+    <!-- Simple WMP controls decor -->
+    <div style="
+          display: flex;
+          gap: 4px;
+          padding: 2px 4px 4px 4px;
+          justify-content: center;
+        ">
+      <div style="
+            width: 20px;
+            height: 12px;
+            border: 1px outset #fff;
+            background: #c0c0c0;
+          "></div>
+      <div style="
+            width: 20px;
+            height: 12px;
+            border: 1px outset #fff;
+            background: #c0c0c0;
+          "></div>
+      <div style="
+            width: 20px;
+            height: 12px;
+            border: 1px outset #fff;
+            background: #c0c0c0;
+          "></div>
+    </div>
+  </div>
+
+  <script>
+    const playlist = [
+      {
+        title: ">.<",
+        file: "Audio/>.<.mp3",
+        bpm: "120",
+        timeSignature: "4/4",
+        key: "G Min",
+        size: "8.2 MB",
+        description: "IDK bro, this is my favourite song. It is still developing but I like it so much I already put it here!!"
+      },
+      {
+        title: "Very BASSic tune",
+        file: "music/src/sounds/chipbass.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "3.3 MB",
+        description: "I wanted a very agressive bass on this one, and I think I got it! I really liked the vibe of this one. (Don't listen it on a car, it will likely explode)"
+      },
+      {
+        title: "I am dumb but not so much",
+        file: "music/src/sounds/nowIalmostunderstand.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "4.5 MB",
+        description: "This is an experiment I made for a game which the villan was kinda goofy, but needed a battle theme that transmited exitement and a little bit of worry. I think I did a good job!"
+      },
+      {
+        title: "Waiting for you <3",
+        file: "music/src/sounds/waitingforyou.wav",
+        bpm: 138,
+        timeSignature: "3/4",
+        key: "A Min",
+        size: "3.1 MB",
+        description: "It was the menu song for a project of a dark themed rhythm game called Ravenous Rhythm. It fitted pretty well."
+      },
+      {
+        title: "Falling on a steady pace",
+        file: "music/src/sounds/staircase.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "6.2 MB",
+        description: "A chiptune study to try to give some movement to the song, giving the impression it keeps going and going and going and going and going..."
+      },
+      {
+        title: "Bubble Café",
+        file: "music/src/sounds/bubble-café.wav",
+        bpm: 165,
+        timeSignature: "4/4",
+        key: "F# Min",
+        size: "2.8 MB",
+        description: "The coffee area theme for a Fuitiger Aero 8bit themed game on the global game jam in 2024."
+      },
+      {
+        title: "Very Cheap Tune :P",
+        file: "music/src/sounds/cheaptune.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "1.9 MB",
+        description: "A scalating chiptune with a lot texture on it made inpired by the chipsets and Trackers from the 90's. One of my favourites"
+      },
+      {
+        title: "Synthwave 80's",
+        file: "music/src/sounds/synthwave.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "5.1 MB",
+        description: "A very very very synthwave sound. Made for the sake of it! I really liked exploring gate verbs, this aesthetic and the sounds of the 80's. Maybe in the future I'll put lyrics on it!."
+      },
+      {
+        title: "50% of a Dubstep",
+        file: "music/src/sounds/Dubstep-estudo.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "2.4 MB",
+        description: "This is my first attempt to make the 'wobble basses' of Dubstep. I think it turned out pretty well! Focus on the drop, the buildup was kinda lazy tho"
+      },
+      {
+        title: "Baarh",
+        file: "music/src/sounds/dnb-medieval-final.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "7.0 MB",
+        description: "Medieval meets DnB. I made it for a game I created with my girfriend on the GGJ26, an autorunner with a lot of energy!"
+      },
+      {
+        title: "PS2000",
+        file: "music/src/sounds/ambiental-microtonal.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "8.5 MB",
+        description: "This one I made with an App I created called iMicro, a microtonal controller for iOS. I really liked exploring microtonal music, it's something I want to explore more in the future. It is the menu song for a game"
+      },
+      {
+        title: "Let it rainnn",
+        file: "music/src/sounds/lofionarainyday.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "4.8 MB",
+        description: "Lo-fi with a looot of rain on it, a little bit of everything and a very chill vibe. A good experimentation!"
+      },
+      {
+        title: "Nomarl",
+        file: "music/src/sounds/normaluntilnotnormal.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "2.6 MB",
+        description: "A song for a trailer of the Ravenous Rhythm game, it all seems fine until it is not..."
+      },
+      {
+        title: "Nightwave",
+        file: "music/src/sounds/nightwave.wav",
+        bpm: 120,
+        timeSignature: "4/4",
+        key: "G Maj",
+        size: "6.0 MB",
+        description: "An agressive synthwave inspired bu the game Furi, Carpenter Brut and this kind of vibe."
+      },
+    ];
+
+    const trackTotalElements = document.querySelectorAll(".trackTotal");
+    trackTotalElements.forEach((el) => (el.innerText = playlist.length));
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let audio = new Audio();
+    audio.crossOrigin = "anonymous";
+    let isShowingAll = false;
+
+    let audioCtx, analyser, audioSource, dataArray;
+    let wmpCanvas, wmpCtx;
+    let timeOffset = 0;
+
+    async function initVisualizer() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        audioSource = audioCtx.createMediaElementSource(audio);
+        audioSource.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        wmpCanvas = document.getElementById("wmp-canvas");
+        if (wmpCanvas) wmpCtx = wmpCanvas.getContext("2d");
+        drawVisualizer();
+      }
+      if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+      }
+    }
+
+    let smoothedData = null;
+    let particles = [];
+
+    function drawVisualizer() {
+      requestAnimationFrame(drawVisualizer);
+      if (!analyser || !wmpCtx || !wmpCanvas) return;
+
+      analyser.getByteFrequencyData(dataArray);
+
+      let isBlocked = true;
+      for (let i = 0; i < dataArray.length; i++) {
+        if (dataArray[i] > 0) { isBlocked = false; break; }
+      }
+
+      // Smooth the data for fluid motion
+      if (!smoothedData) smoothedData = new Float32Array(dataArray.length);
+      for (let i = 0; i < dataArray.length; i++) {
+        let target = isBlocked && isPlaying
+          ? Math.abs(Math.sin(timeOffset * 2.5 + i * 0.15) * 140) + Math.random() * 40
+          : dataArray[i];
+        smoothedData[i] += (target - smoothedData[i]) * 0.45; // Increased from 0.18 for more responsiveness
+      }
+
+      // Calculate average energy for the background glow
+      let avgEnergy = 0;
+      for (let i = 0; i < smoothedData.length; i++) avgEnergy += smoothedData[i];
+      avgEnergy /= smoothedData.length;
+
+      // Update the background glow element
+      const glowEl = document.getElementById("music-glow");
+      if (glowEl && isPlaying) {
+        const glowIntensity = Math.min(avgEnergy / 255 * 0.8, 0.65); // Increased max from 0.2 to 0.65
+        const hue = (timeOffset * 15) % 360;
+        glowEl.style.opacity = glowIntensity;
+        glowEl.style.background = `radial-gradient(ellipse at center, hsla(${hue}, 80%, 50%, 0.25) 0%, transparent 80%)`;
+      } else if (glowEl) {
+        glowEl.style.opacity = "0";
+      }
+
+      if (!isPlaying) return;
+
+      timeOffset += 0.04;
+      const W = wmpCanvas.width, H = wmpCanvas.height;
+      const cx = W / 2, cy = H / 2;
+
+      // Fade previous frame (trail effect)
+      wmpCtx.fillStyle = "rgba(0, 0, 0, 0.18)";
+      wmpCtx.fillRect(0, 0, W, H);
+
+      // === Layer 1: 3D rotating wireframe ring ===
+      const ringCount = 3;
+      for (let ring = 0; ring < ringCount; ring++) {
+        const ringPhase = ring * (Math.PI * 2 / ringCount);
+        wmpCtx.beginPath();
+        const pts = 48;
+        for (let i = 0; i <= pts; i++) {
+          const angle = (i / pts) * Math.PI * 2;
+          const freqIdx = Math.floor((i / pts) * smoothedData.length) % smoothedData.length;
+          const amp = smoothedData[freqIdx] / 255;
+
+          // 3D torus projection with proportional frequency balancing
+          const baseR = 30 + ring * 12;
+          const highFreqFactor = 1 + (freqIdx / smoothedData.length) * 0.6;
+          const r = baseR + (amp * highFreqFactor * 28);
+          const tilt = 0.6 + ring * 0.15;
+          const rotateSpeed = timeOffset * (0.4 + ring * 0.2) + ringPhase;
+
+          let x3d = r * Math.cos(angle + rotateSpeed);
+          let y3d = r * Math.sin(angle + rotateSpeed) * tilt;
+          let z3d = r * Math.sin(angle + rotateSpeed) * 0.3;
+
+          // Simple perspective
+          const perspective = 120 / (120 + z3d);
+          const x = cx + x3d * perspective;
+          const y = cy + y3d * perspective;
+
+          if (i === 0) wmpCtx.moveTo(x, y);
+          else wmpCtx.lineTo(x, y);
+        }
+        const hue = (timeOffset * 30 + ring * 90) % 360;
+        wmpCtx.strokeStyle = `hsla(${hue}, 100%, 65%, 0.7)`;
+        wmpCtx.lineWidth = 1.5;
+        wmpCtx.stroke();
+      }
+
+      // === Layer 2: Frequency bars arranged in a circle (equalizer ring) ===
+      const barCount = 32;
+      for (let i = 0; i < barCount; i++) {
+        const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+        const freqIdx = Math.floor((i / barCount) * smoothedData.length);
+        const amp = smoothedData[freqIdx] / 255;
+
+        const highFreqFactor = 1 + (freqIdx / smoothedData.length) * 0.6;
+        const innerR = 18;
+        const outerR = innerR + (amp * highFreqFactor * 35);
+
+        const x1 = cx + innerR * Math.cos(angle);
+        const y1 = cy + innerR * Math.sin(angle);
+        const x2 = cx + outerR * Math.cos(angle);
+        const y2 = cy + outerR * Math.sin(angle);
+
+        const hue = (i / barCount * 360 + timeOffset * 50) % 360;
+        wmpCtx.beginPath();
+        wmpCtx.moveTo(x1, y1);
+        wmpCtx.lineTo(x2, y2);
+        wmpCtx.strokeStyle = `hsla(${hue}, 100%, 55%, ${0.3 + amp * 0.7})`;
+        wmpCtx.lineWidth = 2.5;
+        wmpCtx.stroke();
+      }
+
+      // === Layer 3: Center pulsing orb ===
+      const bassAvg = (smoothedData[0] + smoothedData[1] + smoothedData[2]) / 3 / 255;
+      const orbR = 8 + Math.pow(bassAvg, 1.2) * 25; // More bouncy orb
+      const orbHue = (timeOffset * 60) % 360;
+      const grad = wmpCtx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
+      grad.addColorStop(0, `hsla(${orbHue}, 100%, 80%, 0.9)`);
+      grad.addColorStop(0.5, `hsla(${orbHue}, 100%, 60%, 0.4)`);
+      grad.addColorStop(1, "transparent");
+      wmpCtx.fillStyle = grad;
+      wmpCtx.beginPath();
+      wmpCtx.arc(cx, cy, orbR, 0, Math.PI * 2);
+      wmpCtx.fill();
+
+      // === Layer 4: Floating particles ===
+      if (particles.length < 30 && Math.random() < 0.3) {
+        particles.push({
+          x: cx, y: cy,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          life: 1,
+          hue: Math.random() * 360,
+          size: 1 + Math.random() * 2
         });
+      }
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx * (1 + bassAvg * 2);
+        p.y += p.vy * (1 + bassAvg * 2);
+        p.life -= 0.015;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        wmpCtx.beginPath();
+        wmpCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        wmpCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.life * 0.6})`;
+        wmpCtx.fill();
+      }
+    }
+
+    const playerWrapper = document.getElementById("playerWrapper");
+    const playerCore = document.getElementById("playerCore");
+    const waveform = document.getElementById("waveform");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const trackTitle = document.getElementById("trackTitle");
+    const trackNumber = document.getElementById("trackNumber");
+    const trackNumberSub = document.getElementById("trackNumberSub");
+    const playlistUl = document.getElementById("playlist-ul");
+    const btnShowMore = document.getElementById("btnShowMore");
+
+    const statBpm = document.getElementById("statBpm");
+    const statTime = document.getElementById("statTime");
+    const statKey = document.getElementById("statKey");
+
+    const playGif =
+      "https://blob.gifcities.org/gifcities/JFVT6XCY7WO2LQYDTOJROPUABH4BLQGC.gif";
+    const pauseGif =
+      "https://blob.gifcities.org/gifcities/QSACATJGJTXCUYFQOEGUDRDAOMSCMO5D.gif";
+
+    // 1. GERADOR DA ONDA ESTÁTICA E DESLIZANTE
+    function buildWaveform() {
+      waveform.innerHTML = "";
+      const waveHeights = [];
+      const numUniqueBars = 80;
+
+      // Gera alturas aleatórias simulando uma onda de áudio densa
+      for (let i = 0; i < numUniqueBars; i++) {
+        waveHeights.push(Math.floor(Math.random() * 70) + 20); // Alturas entre 20% e 90%
+      }
+
+      // Duplica o array para o loop de scroll funcionar perfeitamente sem cortes
+      const fullWave = [...waveHeights, ...waveHeights];
+
+      fullWave.forEach((h) => {
+        let bar = document.createElement("div");
+        bar.className = "wave-bar";
+        bar.style.height = `${h}%`;
+        waveform.appendChild(bar);
       });
-    </script>
-  </body>
+    }
+    buildWaveform();
+
+    function renderPlaylist() {
+      playlistUl.innerHTML = "";
+      const limit = isShowingAll ? playlist.length : 5;
+
+      for (let index = 0; index < limit; index++) {
+        let track = playlist[index];
+        let li = document.createElement("li");
+
+        // GIF Funcional
+        let gifDiv = document.createElement("div");
+        gifDiv.className = "track-left";
+        let img = document.createElement("img");
+        img.src =
+          index === currentTrackIndex && isPlaying ? pauseGif : playGif;
+        img.className = "status-gif";
+        img.id = `status-gif-${index}`;
+        gifDiv.appendChild(img);
+
+        // Dados da música
+        let infoDiv = document.createElement("div");
+        infoDiv.className = "track-right";
+
+        let titleSpan = document.createElement("span");
+        titleSpan.className = "track-title";
+        titleSpan.innerText = `${index + 1}. ${track.title}.mp3`;
+        titleSpan.id = `track-title-${index}`;
+
+        let statsSpan = document.createElement("span");
+        statsSpan.className = "track-stats";
+        statsSpan.innerText = `SIZE: ${track.size}`;
+
+        infoDiv.appendChild(titleSpan);
+        infoDiv.appendChild(statsSpan);
+
+        li.appendChild(gifDiv);
+        li.appendChild(infoDiv);
+
+        // Função de click
+        const handleTrackClick = () => {
+          if (!localStorage.getItem("rek_first_play_done")) {
+            localStorage.setItem("rek_first_play_done", "true");
+            const overlay = document.getElementById("first-play-overlay");
+            const perspective = document.getElementById("playerPerspective");
+            if (overlay) overlay.style.display = "none";
+            if (perspective) perspective.classList.remove("player-highlight");
+          }
+
+          if (currentTrackIndex === index) {
+            togglePlay();
+          } else {
+            currentTrackIndex = index;
+            loadTrack(currentTrackIndex);
+            initVisualizer();
+            audio.play().catch((err) => console.log(err));
+            isPlaying = true;
+            updatePlayState();
+          }
+        };
+
+        li.onclick = handleTrackClick;
+
+        playlistUl.appendChild(li);
+      }
+
+      updatePlaylistHighlight();
+    }
+
+    btnShowMore.onclick = () => {
+      isShowingAll = !isShowingAll;
+      btnShowMore.innerText = isShowingAll ? "SHOW LESS" : "SHOW MORE";
+      renderPlaylist();
+    };
+
+    function updatePlayState() {
+      const wmpText = document.getElementById("wmp-text");
+      const wmpVis = document.getElementById("wmp-vis");
+
+      const isStatic = document.body.classList.contains("static-mode");
+
+      if (isPlaying) {
+        if (isStatic) {
+          btnPlay.innerHTML = '<span style="font-weight:bold; font-size:16px;">❚❚ PAUSE</span>';
+        } else {
+          btnPlay.innerHTML =
+            '<img src="https://blob.gifcities.org/gifcities/57UH7EA3WLOGZIJE6YJFJ3Z3EUUGKHS6.gif" alt="Pause" style="height:35px; image-rendering:pixelated;" />';
+        }
+        playerCore.classList.add("is-playing");
+        if (wmpText) wmpText.style.display = "none";
+        if (wmpVis) wmpVis.style.display = "flex";
+      } else {
+        if (isStatic) {
+          btnPlay.innerHTML = '<span style="font-weight:bold; font-size:16px;">► PLAY</span>';
+        } else {
+          btnPlay.innerHTML =
+            '<img src="https://blob.gifcities.org/gifcities/BAQTUDFRHRCC6TEY36YZ6LZZ3GF5ULYR.gif" alt="Play" style="height:35px; image-rendering:pixelated;" />';
+        }
+        playerCore.classList.remove("is-playing");
+        if (wmpText) wmpText.style.display = "block";
+        if (wmpVis) wmpVis.style.display = "none";
+      }
+      updatePlaylistHighlight();
+    }
+
+    function updatePlaylistHighlight() {
+      const limit = isShowingAll ? playlist.length : 5;
+      for (let idx = 0; idx < limit; idx++) {
+        const titleSpan = document.getElementById(`track-title-${idx}`);
+        const statusGif = document.getElementById(`status-gif-${idx}`);
+
+        if (!titleSpan || !statusGif) continue;
+
+        if (idx === currentTrackIndex) {
+          titleSpan.style.backgroundColor = "var(--rek-secondary)";
+          titleSpan.style.color = "#ffffff";
+          statusGif.src = isPlaying ? pauseGif : playGif;
+        } else {
+          titleSpan.style.backgroundColor = "transparent";
+          titleSpan.style.color = "var(--rek-primary)";
+          statusGif.src = playGif;
+        }
+      }
+    }
+
+    const pixelGrids = [
+      document.getElementById("pixelGrid1"),
+      document.getElementById("pixelGrid2"),
+      document.getElementById("pixelGrid3"),
+    ];
+
+    pixelGrids.forEach((grid) => {
+      for (let i = 0; i < 25; i++) {
+        let p = document.createElement("div");
+        p.className = "pixel";
+        grid.appendChild(p);
+      }
+    });
+
+    const frames = [
+      [
+        0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+        0, 0,
+      ],
+      [
+        0, 0, 1, 0, 0, 0, 1, 2, 1, 0, 1, 2, 2, 2, 1, 0, 1, 2, 1, 0, 0, 0, 1,
+        0, 0,
+      ],
+      [
+        1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0,
+        0, 1,
+      ],
+      [
+        1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 2, 0, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1,
+        1, 1,
+      ],
+    ];
+
+    const idleFrame = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0,
+    ];
+
+    let currentFrameIndex = 0;
+
+    setInterval(() => {
+      pixelGrids.forEach((grid, index) => {
+        let frameToDraw = idleFrame;
+
+        if (isPlaying) {
+          let offsetIndex = (currentFrameIndex + index) % frames.length;
+          frameToDraw = frames[offsetIndex];
+        }
+
+        const pixels = grid.children;
+        for (let i = 0; i < 25; i++) {
+          pixels[i].className = "pixel";
+          if (frameToDraw[i] === 1) pixels[i].classList.add("on");
+          else if (frameToDraw[i] === 2) pixels[i].classList.add("on-alt");
+        }
+      });
+
+      if (isPlaying) {
+        currentFrameIndex = (currentFrameIndex + 1) % frames.length;
+      }
+    }, 300);
+
+    function loadTrack(index) {
+      const track = playlist[index];
+      trackTitle.innerText = track.title;
+
+      const trackDescription = document.getElementById("trackDescription");
+      if (trackDescription) {
+        trackDescription.innerText = track.description || "Descrição em breve...";
+      }
+      trackNumber.innerText = String(index + 1).padStart(2, "0");
+      trackNumberSub.innerText = index + 1;
+
+      statBpm.innerText = track.bpm || "---";
+      statTime.innerText = track.timeSignature || "--/--";
+      statKey.innerText = track.key || "---";
+
+      audio.src = track.file;
+
+      if (index >= 5 && !isShowingAll) {
+        isShowingAll = true;
+        btnShowMore.innerText = "SHOW LESS";
+        renderPlaylist();
+      } else {
+        updatePlaylistHighlight();
+      }
+    }
+
+    function dismissOverlay() {
+      if (!localStorage.getItem("rek_first_play_done")) {
+        localStorage.setItem("rek_first_play_done", "true");
+        const overlay = document.getElementById("first-play-overlay");
+        const perspective = document.getElementById("playerPerspective");
+        const skipBtn = document.getElementById("skip-audio-btn");
+        const playBtn = document.getElementById("btnPlay");
+        if (overlay) overlay.style.display = "none";
+        if (perspective) perspective.classList.remove("player-highlight");
+        if (skipBtn) skipBtn.style.display = "none";
+        if (playBtn) playBtn.classList.remove("first-play-glow");
+      }
+    }
+
+    async function togglePlay() {
+      dismissOverlay();
+
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+        updatePlayState();
+      } else {
+        await initVisualizer();
+        audio
+          .play()
+          .catch((e) => console.log("Simulando reprodução visual."));
+        isPlaying = true;
+        updatePlayState();
+      }
+    }
+
+    function nextTrack() {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+      if (isPlaying) audio.play().catch((e) => { });
+      updatePlayState();
+    }
+
+    function prevTrack() {
+      currentTrackIndex =
+        (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrackIndex);
+      if (isPlaying) audio.play().catch((e) => { });
+      updatePlayState();
+    }
+
+    btnPlay.addEventListener("click", togglePlay);
+    btnNext.addEventListener("click", nextTrack);
+    btnPrev.addEventListener("click", prevTrack);
+    audio.addEventListener("ended", nextTrack);
+
+    loadTrack(0);
+    renderPlaylist();
+
+    if (!localStorage.getItem("rek_first_play_done")) {
+      document.getElementById("first-play-overlay").style.display = "block";
+      document.getElementById("onboarding-warning").style.display = "block";
+    } else {
+      document.getElementById("wmp-float").style.display = "block";
+      if (localStorage.getItem("rek_static_mode") === "true") {
+        enableStaticMode();
+      }
+    }
+
+    function chooseExperience(type) {
+      document.getElementById("onboarding-warning").style.display = "none";
+      if (type === 'static') {
+        localStorage.setItem("rek_static_mode", "true");
+        enableStaticMode();
+        dismissOverlay();
+        document.getElementById("wmp-float").style.display = "block";
+      } else {
+        localStorage.removeItem("rek_static_mode");
+        document.getElementById("skip-audio-btn").style.display = "block";
+        document.getElementById("playerPerspective").classList.add("player-highlight");
+        document.getElementById("btnPlay").classList.add("first-play-glow");
+        document.getElementById("wmp-float").style.display = "block";
+      }
+    }
+
+    function enableStaticMode() {
+      document.body.classList.add("static-mode");
+
+      const staticFallbacks = document.querySelectorAll('img[src*=".gif"]');
+      staticFallbacks.forEach(img => {
+        if (img.dataset.frozen) return;
+
+        let alt = img.alt ? img.alt.toUpperCase() : "";
+        let fallbackText = "";
+
+        // Generate text fallbacks ONLY for functional buttons. Use standard unicode symbols, NO EMOJIS.
+        if (img.closest('#btnPlay')) {
+          fallbackText = isPlaying ? "❚❚ PAUSE" : "► PLAY";
+        }
+        else if (img.closest('.chaos-btn')) {
+          fallbackText = img.parentElement.title ? `[ ${img.parentElement.title.toUpperCase()} ]` : (alt ? `[ ${alt} ]` : "[ BTN ]");
+        }
+        else if (alt === "BACK" && img.closest('a')) {
+          fallbackText = "▲ BACK TO TOP";
+        }
+
+        if (fallbackText) {
+          let fallback = document.createElement("span");
+          fallback.className = "static-fallback-text";
+          fallback.style.fontSize = "16px";
+          fallback.style.fontWeight = "bold";
+          fallback.style.fontFamily = "monospace";
+          fallback.innerText = fallbackText;
+          img.parentNode.insertBefore(fallback, img);
+        }
+
+        img.dataset.frozen = "true";
+      });
+    }
+
+    /* --- Visitor Counter --- */
+    (function animateCounter() {
+      const el = document.getElementById("visitorCounter");
+      if (!el) return;
+      // Fake a stored count from localStorage, start at a "realistic" base
+      const storageKey = "rek_visit_count";
+      let count = parseInt(localStorage.getItem(storageKey) || "0");
+      if (count === 0) {
+        count = 14723 + Math.floor(Math.random() * 2000);
+        localStorage.setItem(storageKey, count);
+      } else {
+        count += 1;
+        localStorage.setItem(storageKey, count);
+      }
+      // Animate count-up from 0 to count
+      const duration = 1800;
+      const start = Date.now();
+      function tick() {
+        const progress = Math.min((Date.now() - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * count);
+        el.textContent = String(current).padStart(6, "0");
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+    let isTicking = false;
+    playerWrapper.addEventListener("mousemove", (e) => {
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          const rect = playerWrapper.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          const rotateX = ((y - e.clientY) / (rect.height / 2)) * 10;
+          const rotateY = ((e.clientX - x) / (rect.width / 2)) * 10;
+
+          playerWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+          isTicking = false;
+        });
+        isTicking = true;
+      }
+    });
+
+    playerWrapper.addEventListener("mouseleave", () => {
+      playerWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    });
+  </script>
+
+  <!-- ============================= CHAOS ZONE JS ============================= -->
+  <script>
+    /* MLG Module Removed */
+
+    /* ------------- Nyan Cats ------------- */
+    const nyanSrc = "https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif"; // nyan cat
+
+    function spawnNyanCat() {
+      const cat = document.createElement("img");
+      cat.src = nyanSrc;
+      cat.className = "nyan-cat-spawn";
+      const topPct = Math.random() * 90;
+      cat.style.top = topPct + "vh";
+      cat.style.left = "-300px";
+      const duration = 2.5 + Math.random() * 2;
+      cat.style.animationDuration = duration + "s";
+      document.body.appendChild(cat);
+      cat.addEventListener("animationend", () => cat.remove());
+    }
+
+    document.getElementById("btn-nyan").addEventListener("click", () => {
+      const totalCats = 15;
+      for (let i = 0; i < totalCats; i++) {
+        setTimeout(spawnNyanCat, i * 200);
+      }
+    });
+
+    /* ------------- 360 Spin ------------- */
+    let spinTimeout360 = null;
+    document.getElementById("btn-360").addEventListener("click", () => {
+      document.body.style.transformOrigin = "center center";
+      document.body.classList.remove("spinning-360"); // reset
+      void document.body.offsetWidth; // force reflow
+      document.body.classList.add("spinning-360");
+      clearTimeout(spinTimeout360);
+      spinTimeout360 = setTimeout(
+        () => document.body.classList.remove("spinning-360"),
+        800,
+      );
+    });
+
+    /* ------------- Earthquake Shake + Confetti ------------- */
+    const confettiColors = [
+      "#ff0000",
+      "#ffff00",
+      "#00ff00",
+      "#00ffff",
+      "#ff00ff",
+      "#ff6600",
+      "#7f0fd5",
+      "#190cff",
+    ];
+
+    function launchConfetti() {
+      const count = 80;
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.left = Math.random() * 100 + "vw";
+          piece.style.top = "-20px";
+          piece.style.background =
+            confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          piece.style.width = 6 + Math.random() * 10 + "px";
+          piece.style.height = 6 + Math.random() * 10 + "px";
+          piece.style.animationDuration = 2 + Math.random() * 3 + "s";
+          piece.style.animationDelay = Math.random() * 0.5 + "s";
+          document.body.appendChild(piece);
+          piece.addEventListener("animationend", () => piece.remove());
+        }, i * 30);
+      }
+    }
+
+    let shakeTimeout = null;
+    document.getElementById("btn-shake").addEventListener("click", () => {
+      document.body.classList.remove("shaking");
+      void document.body.offsetWidth;
+      document.body.classList.add("shaking");
+      launchConfetti();
+      clearTimeout(shakeTimeout);
+      shakeTimeout = setTimeout(
+        () => document.body.classList.remove("shaking"),
+        600,
+      );
+    });
+
+
+
+    /* ------------- REK Palette Theme Switcher ------------- */
+    const paletteBtns = document.querySelectorAll(".rek-palette-btn");
+    function applyRekTheme(themeName, activeBtn) {
+      if (themeName === "azul" || themeName === "rosa-verde") {
+        document.body.setAttribute("data-rek-theme", themeName);
+      } else {
+        document.body.removeAttribute("data-rek-theme");
+      }
+      localStorage.setItem("rek_theme", themeName || "roxo-verde");
+      paletteBtns.forEach((b) => b.classList.toggle("is-active", activeBtn ? b === activeBtn : b.dataset.theme === themeName));
+    }
+
+    const savedTheme = localStorage.getItem("rek_theme") || "roxo-verde";
+    applyRekTheme(savedTheme, document.querySelector(`.rek-palette-btn[data-theme="${savedTheme}"]`));
+
+    paletteBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyRekTheme(btn.dataset.theme, btn);
+      });
+    });
+
+    /* ------------- PFP Zoom Animation ------------- */
+    document.getElementById("pfp").addEventListener("click", function (e) {
+      if (document.getElementById("pfp-clone")) return;
+      const rect = this.getBoundingClientRect();
+
+      const clone = document.createElement("img");
+      clone.id = "pfp-clone";
+      clone.src = "music/src/logo-principal.png";
+      clone.style.position = "fixed";
+      clone.style.width = rect.width + "px";
+      clone.style.height = rect.height + "px";
+      clone.style.top = rect.top + "px";
+      clone.style.left = rect.left + "px";
+      clone.style.margin = "0";
+      clone.style.objectFit = "cover";
+      clone.style.border = "2px solid var(--rek-primary)";
+      clone.style.zIndex = "999999";
+      clone.style.transition = "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)";
+      document.body.appendChild(clone);
+
+      setTimeout(() => {
+        clone.style.top = "50%";
+        clone.style.left = "50%";
+        clone.style.transform = "translate(-50%, -50%) scale(5)";
+      }, 50);
+
+      setTimeout(() => {
+        clone.style.top = rect.top + "px";
+        clone.style.left = rect.left + "px";
+        clone.style.transform = "translate(0, 0) scale(1)";
+      }, 2500);
+
+      setTimeout(() => {
+        clone.remove();
+      }, 3000);
+    });
+  </script>
+</body>
+
 </html>

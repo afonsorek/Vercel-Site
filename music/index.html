@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>𝄞⨾💿✮˚.⋆•アフォンソ — Music Portfolio</title>
+  <title>𝄞⨾💿✮˚.⋆• REK — Music Portfolio</title>
   <link rel="canonical" href="https://www.afonso.io/music/" />
   <meta name="description"
-    content="Music portfolio of Afonso Rekbaim — chiptune, DnB, synthwave, and experimental sound design for games and interactive media." />
-  <meta property="og:title" content="Afonso Rekbaim :: Music Portfolio" />
+    content="Music portfolio of REK (r3k.wav) — chiptune, DnB, synthwave, and experimental sound design for games and interactive media." />
+  <meta property="og:title" content="REK :: Music Portfolio" />
   <meta property="og:description"
-    content="Chiptune, DnB, synthwave, and experimental sound design for games. Listen to my tracks and explore my musical journey." />
+    content="Chiptune, DnB, synthwave, and experimental sound design for games. Listen to REK tracks and explore the sonic archive." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.afonso.io/music/" />
+  <meta property="og:image" content="https://www.afonso.io/music/src/logo-principal.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://www.afonso.io/music/src/logo-principal.png" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=VT323&display=swap"
     rel="stylesheet" />
   <style>
@@ -23,6 +26,55 @@
       font-display: swap;
     }
 
+    :root {
+      /* Paleta Principal REK: Roxo Profundo + Verde Ácido + Rosa Choque */
+      --rek-bg-deep: #180828;
+      --rek-bg-mid: #2c1046;
+      --rek-surface: #3f1d63;
+      --rek-surface-card: #12061f;
+      --rek-primary: #b7e100;
+      --rek-secondary: #ed0080;
+      --rek-accent: #0077b8;
+      --rek-border: #b7e100;
+      --rek-border-alt: #ed0080;
+      --rek-text: #f3ffe2;
+      --rek-text-muted: #d6c4ff;
+      --rek-ink-dark: #12061f;
+      --rek-glow: rgba(183, 225, 0, 0.28);
+    }
+
+    body[data-rek-theme="azul"] {
+      --rek-bg-deep: #00233d;
+      --rek-bg-mid: #004e7c;
+      --rek-surface: #0066a1;
+      --rek-surface-card: #17082a;
+      --rek-primary: #ff1e9b;
+      --rek-secondary: #00d4ff;
+      --rek-accent: #7a1fa2;
+      --rek-border: #ff1e9b;
+      --rek-border-alt: #00d4ff;
+      --rek-text: #f0f9ff;
+      --rek-text-muted: #bde5ff;
+      --rek-ink-dark: #001c33;
+      --rek-glow: rgba(255, 30, 155, 0.34);
+    }
+
+    body[data-rek-theme="rosa-verde"] {
+      --rek-bg-deep: #16040f;
+      --rek-bg-mid: #3a0522;
+      --rek-surface: #ed0080;
+      --rek-surface-card: #0c080e;
+      --rek-primary: #b7e100;
+      --rek-secondary: #ff1e9b;
+      --rek-accent: #ff1e9b;
+      --rek-border: #b7e100;
+      --rek-border-alt: #ff1e9b;
+      --rek-text: #f7ffe0;
+      --rek-text-muted: #ffcbe6;
+      --rek-ink-dark: #0c080e;
+      --rek-glow: rgba(255, 30, 155, 0.36);
+    }
+
     html,
     body {
       margin: 0;
@@ -31,11 +83,16 @@
     }
 
     body {
-      background-image: url("src/bg-tile.png");
-      background-repeat: repeat;
+      background-color: var(--rek-bg-deep);
+      background-image:
+        radial-gradient(circle at 50% 18%, var(--rek-bg-mid) 0%, transparent 65%),
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
       overflow-x: hidden;
       font-family: "Century Gothic", Verdana, sans-serif;
-      color: #55c1ef;
+      color: var(--rek-text);
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     #topborder {
@@ -48,6 +105,8 @@
       left: 0;
       z-index: 999;
       pointer-events: none;
+      opacity: 0.72;
+      filter: hue-rotate(48deg) saturate(1.5) drop-shadow(0 0 8px var(--rek-secondary));
     }
 
     #bottomborder {
@@ -61,6 +120,8 @@
       z-index: 999;
       pointer-events: none;
       transform: scaleY(-1);
+      opacity: 0.72;
+      filter: hue-rotate(48deg) saturate(1.5) drop-shadow(0 0 8px var(--rek-secondary));
     }
 
     #all {
@@ -74,7 +135,7 @@
     }
 
     /* =========================================
-         CAIXAS EXTERNAS (RETAS, BRUTALISTAS, Y2K)
+         CAIXAS EXTERNAS (REK // Y2K / NEOFUTURISMO)
          ========================================= */
     #side {
       width: 175px;
@@ -94,42 +155,45 @@
     }
 
     #profile {
-      background-image:
-        linear-gradient(0deg,
-          rgba(255, 255, 255, 0.1),
-          rgba(255, 255, 255, 0.1)),
+      background:
+        linear-gradient(165deg, rgba(63, 29, 99, 0.85), rgba(18, 6, 31, 0.96)),
         url("src/black.gif");
-      background-color: #f0ffff;
+      background-color: var(--rek-surface-card);
       width: 175px;
       margin-bottom: 25px;
-      color: #ffffff;
-      border: 2px double #7f0fd5;
+      color: var(--rek-text);
+      border: 2px double var(--rek-border);
+      box-shadow: 0 0 18px var(--rek-glow);
       padding: 15px;
       box-sizing: border-box;
     }
 
     #pfp {
-      background-image: url("src/oiiai.gif");
-      background-size: cover;
-      width: 140px;
-      height: 115px;
+      background: var(--rek-bg-deep);
+      width: 141px;
+      height: 141px;
       cursor: pointer;
       position: relative;
       z-index: 1;
+      border: 2px solid var(--rek-primary);
+      box-shadow: 0 0 12px var(--rek-glow);
+      overflow: hidden;
+      margin: 0 auto;
     }
 
     #nav,
     #chatbox,
-    #aboutme-box {
-      background-image:
-        linear-gradient(0deg,
-          rgba(255, 255, 255, 0.3),
-          rgba(255, 255, 255, 0.3)), url("src/black.gif");
-      background-color: #fefefe;
+    #aboutme-box,
+    .rek-side-box {
+      background:
+        linear-gradient(175deg, rgba(44, 16, 70, 0.9), rgba(18, 6, 31, 0.96)),
+        url("src/black.gif");
+      background-color: var(--rek-surface-card);
       width: 175px;
-      color: #ffffff;
-      text-shadow: 1px 1px 0px #7f0fd5;
-      border: 2px double #7f0fd5;
+      color: var(--rek-text);
+      text-shadow: 1px 1px 0px var(--rek-ink-dark);
+      border: 2px double var(--rek-border);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
       box-sizing: border-box;
       position: relative;
       margin-bottom: 20px;
@@ -141,7 +205,8 @@
       background-repeat: repeat-x;
       height: 18px;
       width: 100%;
-      border-bottom: 2px double #7f0fd5;
+      border-bottom: 2px double var(--rek-border);
+      filter: hue-rotate(48deg) saturate(1.3);
     }
 
     .box-deco-bottom {
@@ -150,24 +215,54 @@
       background-repeat: repeat-x;
       height: 18px;
       width: 100%;
-      border-top: 2px double #7f0fd5;
+      border-top: 2px double var(--rek-border);
       transform: scaleY(-1);
+      filter: hue-rotate(48deg) saturate(1.3);
     }
 
     #navheader,
     #chatboxheader,
-    #aboutmeheader {
-      border-bottom: 2px double #7f0fd5;
-      background-color: #f4f2f6;
+    #aboutmeheader,
+    .rek-box-header {
+      border-bottom: 2px double var(--rek-border);
+      background-color: var(--rek-bg-deep);
       margin: 0px;
       line-height: 16px;
       padding: 8px 5px;
       font-size: 16px;
-      color: #723dcc;
-      text-shadow: none;
+      color: var(--rek-primary);
+      text-shadow: 1px 1px 0px var(--rek-secondary);
       display: flex;
       align-items: center;
       gap: 5px;
+    }
+
+    .rek-palette-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .rek-palette-btn {
+      padding: 2px;
+      background: var(--rek-bg-deep);
+      border: 2px solid var(--rek-border-alt);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .rek-palette-btn:hover,
+    .rek-palette-btn.is-active {
+      transform: scale(1.06);
+      border-color: var(--rek-primary);
+      box-shadow: 0 0 10px var(--rek-glow);
+    }
+
+    .rek-palette-btn img {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .headericon {
@@ -215,16 +310,16 @@
     #side a,
     #side-right a {
       text-decoration: none;
-      color: #ffffff;
-      text-shadow: 1px 1px 0px #7f0fd5;
+      color: var(--rek-text);
+      text-shadow: 1px 1px 0px var(--rek-secondary);
       background-color: transparent;
     }
 
     #side a:hover,
     #side-right a:hover {
       font-style: italic;
-      color: #190cff;
-      text-shadow: 1px 1px 0px #ffffff;
+      color: var(--rek-primary);
+      text-shadow: 0 0 8px var(--rek-primary);
     }
 
     #title {
@@ -232,21 +327,30 @@
         Century Gothic,
         Verdana,
         sans-serif;
-      border-bottom: 3px double #190cff;
-      line-height: 15px;
-      width: 600px;
+      border-bottom: 3px double var(--rek-border);
+      border-top: 2px solid var(--rek-border-alt);
+      border-left: 2px solid var(--rek-border-alt);
+      border-right: 2px solid var(--rek-border-alt);
+      line-height: 22px;
+      width: 605px;
+      box-sizing: border-box;
       margin: 0px;
-      color: #7f0fd5;
-      background-color: #f4f2f6;
-      padding: 16px 0px 12px 5px;
+      color: var(--rek-primary);
+      background-color: var(--rek-bg-deep);
+      padding: 12px 10px 10px 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      text-shadow: 2px 2px 0 var(--rek-secondary);
     }
 
     #content {
-      background-color: #fefefe;
-      width: 575px;
+      background-color: var(--rek-surface-card);
+      border: 2px solid var(--rek-border-alt);
+      border-top: none;
+      box-shadow: 0 0 32px var(--rek-glow);
+      width: 605px;
+      box-sizing: border-box;
       padding: 15px;
       min-height: 500px;
     }
@@ -263,7 +367,7 @@
     /* PLAYLIST STYLE */
     .playlist-container {
       margin-top: 30px;
-      border-top: 2px dotted #190cff;
+      border-top: 2px dotted var(--rek-border-alt);
       padding-top: 20px;
     }
 
@@ -273,12 +377,13 @@
         Verdana,
         sans-serif;
       font-size: 18px;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       margin-bottom: 15px;
       font-weight: bold;
       display: flex;
       align-items: center;
       gap: 8px;
+      text-shadow: 1px 1px 0 var(--rek-secondary);
     }
 
     #playlist-ul {
@@ -290,7 +395,7 @@
       display: flex;
       align-items: center;
       padding: 8px 0;
-      border-bottom: 1px dotted #7f0fd5;
+      border-bottom: 1px dotted var(--rek-border-alt);
       list-style: none;
       margin: 0;
       cursor: pointer;
@@ -319,7 +424,7 @@
     .track-title {
       font-family: "Departure Mono", monospace;
       font-size: 20px;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       background-color: transparent;
       padding: 2px 8px;
       text-shadow: none;
@@ -327,23 +432,23 @@
     }
 
     .track-title:hover {
-      color: white;
-      background-color: #190cff;
+      color: #ffffff;
+      background-color: var(--rek-secondary);
     }
 
     .track-stats {
       font-family: "Outfit", sans-serif;
       font-size: 12px;
-      color: #7f0fd5;
-      opacity: 0.8;
+      color: var(--rek-text-muted);
+      opacity: 0.85;
     }
 
     .btn-show-more {
       display: block;
       margin: 20px auto 0;
       background-color: transparent;
-      color: #7f0fd5;
-      border: 2px solid #7f0fd5;
+      color: var(--rek-primary);
+      border: 2px solid var(--rek-primary);
       padding: 8px 20px;
       font-family: "Departure Mono", monospace;
       font-size: 18px;
@@ -352,8 +457,8 @@
     }
 
     .btn-show-more:hover {
-      background-color: #7f0fd5;
-      color: white;
+      background-color: var(--rek-primary);
+      color: var(--rek-ink-dark);
     }
 
     /* =========================================
@@ -394,17 +499,16 @@
     }
 
     .stats-panel {
-      background: rgba(244, 242, 246, 0.7);
+      background: rgba(18, 6, 31, 0.85);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(127, 15, 213, 0.2);
+      border: 1px solid var(--rek-border);
       border-radius: 12px;
-      /* RESTAURADO */
       padding: 8px 12px;
       display: flex;
       align-items: center;
       gap: 15px;
-      box-shadow: 0 4px 15px rgba(127, 15, 213, 0.1);
+      box-shadow: 0 4px 18px var(--rek-glow);
     }
 
     .stat-block {
@@ -415,18 +519,18 @@
 
     .stat-label {
       font-size: 11px;
-      color: #723dcc;
+      color: var(--rek-text-muted);
       letter-spacing: 1px;
       font-family: "Departure Mono", monospace;
     }
 
     .stat-value {
       font-size: 18px;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       font-family: "Departure Mono", monospace;
       text-shadow:
-        1px 0px 0px #190cff,
-        -1px 0px 0px #d710ff;
+        1px 0px 0px var(--rek-secondary),
+        -1px 0px 0px var(--rek-accent);
       line-height: 1;
     }
 
@@ -440,7 +544,7 @@
     .pixel {
       width: 4px;
       height: 4px;
-      background: rgba(127, 15, 213, 0.1);
+      background: rgba(183, 225, 0, 0.14);
       border-radius: 1px;
       transition:
         background 0.1s,
@@ -448,42 +552,41 @@
     }
 
     .pixel.on {
-      background: #7f0fd5;
-      box-shadow: 0 0 5px #7f0fd5;
+      background: var(--rek-primary);
+      box-shadow: 0 0 6px var(--rek-primary);
     }
 
     .pixel.on-alt {
-      background: #d710ff;
-      box-shadow: 0 0 5px #d710ff;
+      background: var(--rek-secondary);
+      box-shadow: 0 0 6px var(--rek-secondary);
     }
 
     .artist-badge {
-      background: rgba(244, 242, 246, 0.7);
+      background: rgba(18, 6, 31, 0.88);
       backdrop-filter: blur(10px);
       border-radius: 20px;
-      /* RESTAURADO */
       padding: 8px 15px;
       display: flex;
       align-items: center;
       gap: 10px;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       transform: translateZ(30px);
-      box-shadow: 0 4px 15px rgba(127, 15, 213, 0.1);
-      border: 1px solid rgba(127, 15, 213, 0.2);
+      box-shadow: 0 4px 18px var(--rek-glow);
+      border: 1px solid var(--rek-border);
     }
 
     .artist-avatar {
-      width: 25px;
-      height: 25px;
-      background: rgba(127, 15, 213, 0.1);
+      width: 28px;
+      height: 28px;
+      background: var(--rek-bg-mid);
       border-radius: 50%;
-      /* RESTAURADO */
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 12px;
       font-weight: bold;
-      border: 1px solid rgba(127, 15, 213, 0.3);
+      border: 1px solid var(--rek-border-alt);
+      overflow: hidden;
     }
 
     .artist-info h2 {
@@ -492,26 +595,25 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 0;
-      color: #7f0fd5;
+      color: var(--rek-primary);
     }
 
     .artist-info p {
       font-family: "Departure Mono", monospace;
       font-size: 13px;
-      color: #723dcc;
+      color: var(--rek-text-muted);
       margin: 0;
     }
 
     .player-core {
-      background: rgba(244, 242, 246, 0.8);
+      background: rgba(18, 6, 31, 0.9);
       backdrop-filter: blur(10px);
       border-radius: 15px;
-      /* RESTAURADO */
       padding: 10px 20px;
       width: 100%;
       height: 100px;
-      box-shadow: 0 10px 30px rgba(127, 15, 213, 0.15);
-      border: 1px solid rgba(127, 15, 213, 0.3);
+      box-shadow: 0 10px 30px var(--rek-glow);
+      border: 1px solid var(--rek-border);
       position: relative;
       transform-style: preserve-3d;
       display: flex;
@@ -557,7 +659,7 @@
 
     .wave-bar {
       width: 4px;
-      background: rgba(127, 15, 213, 0.2);
+      background: rgba(237, 0, 128, 0.32);
       border-radius: 2px;
       /* Barras da wave devem manter a ponta redonda para estética */
       transition:
@@ -566,8 +668,8 @@
     }
 
     .is-playing .wave-bar {
-      background: #7f0fd5;
-      box-shadow: 0 0 8px rgba(127, 15, 213, 0.6);
+      background: var(--rek-primary);
+      box-shadow: 0 0 8px var(--rek-primary);
     }
 
     /* Loop perfeito de 0 a 50% */
@@ -584,7 +686,7 @@
     .submission-text {
       text-align: center;
       font-family: "Departure Mono", monospace;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       font-size: 16px;
       margin-top: 10px;
       transform: translateZ(20px);
@@ -601,24 +703,22 @@
     }
 
     .controls-pill {
-      background: rgba(244, 242, 246, 0.8);
+      background: rgba(18, 6, 31, 0.9);
       padding: 5px 20px;
       border-radius: 30px;
-      /* RESTAURADO */
       display: flex;
       gap: 20px;
       align-items: center;
-      border: 1px solid rgba(127, 15, 213, 0.3);
-      box-shadow: 0 5px 15px rgba(127, 15, 213, 0.1);
+      border: 1px solid var(--rek-border);
+      box-shadow: 0 5px 15px var(--rek-glow);
     }
 
     .controls-pill button {
       background: none;
       border: none;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       cursor: pointer;
       font-size: 20px;
-      /* RESTAURADO PARA ÍCONES */
       transition: all 0.2s;
       display: flex;
       align-items: center;
@@ -627,39 +727,39 @@
     }
 
     .controls-pill button:hover {
-      color: #190cff;
+      color: var(--rek-secondary);
       transform: scale(1.1);
     }
 
     .controls-pill .btn-play {
       background: none;
-      color: #7f0fd5;
+      color: var(--rek-primary);
       width: auto;
       height: 35px;
       font-size: 24px;
       padding: 0;
       border: none;
-      box-shadow: 0 3px 10px rgba(127, 15, 213, 0.3);
+      box-shadow: 0 3px 10px var(--rek-glow);
       border-radius: 5px;
     }
 
     @keyframes pulseGlow {
       0% {
         transform: scale(1);
-        box-shadow: 0 0 5px #7f0fd5;
-        background: rgba(127, 15, 213, 0.1);
+        box-shadow: 0 0 5px var(--rek-primary);
+        background: rgba(183, 225, 0, 0.12);
       }
 
       50% {
         transform: scale(1.15);
-        box-shadow: 0 0 20px #ff00ff, 0 0 10px #fff;
-        background: rgba(127, 15, 213, 0.4);
+        box-shadow: 0 0 20px var(--rek-secondary), 0 0 10px #fff;
+        background: rgba(237, 0, 128, 0.35);
       }
 
       100% {
         transform: scale(1);
-        box-shadow: 0 0 5px #7f0fd5;
-        background: rgba(127, 15, 213, 0.1);
+        box-shadow: 0 0 5px var(--rek-primary);
+        background: rgba(183, 225, 0, 0.12);
       }
     }
 
@@ -682,7 +782,7 @@
     }
 
     .controls-pill .btn-play:hover {
-      background: #190cff;
+      background: var(--rek-secondary);
       color: white;
     }
 
@@ -1003,24 +1103,24 @@
 
     /* --- Visitor counter box --- */
     .y2k-counter-box {
-      background: #000;
-      border: 2px double #7f0fd5;
+      background: #0d0418;
+      border: 2px double var(--rek-border);
       font-family: "Departure Mono", monospace;
       font-size: 14px;
-      color: #00ff00;
+      color: var(--rek-primary);
       text-align: center;
       padding: 6px 8px;
       margin: 8px 0;
-      text-shadow: 0 0 6px #00ff00;
+      text-shadow: 0 0 6px var(--rek-primary);
     }
 
     .y2k-counter-digits {
       font-size: 26px;
       letter-spacing: 4px;
-      color: #00ff00;
+      color: var(--rek-primary);
       text-shadow:
-        0 0 10px #00ff00,
-        0 0 20px #00ff00;
+        0 0 10px var(--rek-primary),
+        0 0 20px var(--rek-secondary);
     }
 
     /* --- Music GIF decorations in sidebar --- */
@@ -1398,7 +1498,8 @@
       }
     }
   </style>
-  <link rel="icon" href="../Images/favicon.png" />
+  <link rel="icon" type="image/png" href="src/logo-principal.png" />
+  <link rel="apple-touch-icon" href="src/logo-principal.png" />
 </head>
 
 <body>
@@ -1452,18 +1553,17 @@
     <div id="side">
       <div id="profile">
         <center>
-          <p style="text-shadow: none">
-            ɑׁׅ֮⨍ᨵׁׅꪀׁׅ꯱ׁׅ֒ᨵׁׅ's 𝕸𝖚𝖘𝖎𝖈 𝕻𝖔𝖗𝖙𝖋𝖔𝖑𝖎𝖔 2026
+          <p style="text-shadow: none; color: var(--rek-primary);">
+            ᏒᏋᏦ's 𝕸𝖚𝖘𝖎𝖈 𝕻𝖔𝖗𝖙𝖋𝖔𝖑𝖎𝖔 2026
           </p>
         </center>
-        <div id="pfp">
-          <center>
-            <img src="src/paint.png" width="155" height="155" style="margin-left: -5px; margin-top: -5px" />
-          </center>
+        <div id="pfp" title="Click to zoom REK logo">
+          <img src="src/logo-principal.png" alt="REK Logo"
+            style="width: 100%; height: 100%; object-fit: cover; display: block;" />
         </div>
         <br />
         <center>
-          <p style="text-shadow: none">Welcome to my site!!!</p>
+          <p style="text-shadow: none; color: var(--rek-text);">Welcome to r3k.wav!!!</p>
         </center>
       </div>
 
@@ -1476,12 +1576,12 @@
         </h2>
         <span>
           <ul>
-            <li><a href="/" style="text-decoration:none">💻 Portfolio</a></li>
             <li><a href="#title" style="text-decoration:none">🏠 Welcome</a></li>
             <li><a href="#playerPerspective" style="text-decoration:none">🎵 Player</a></li>
             <li><a href="#trackDescription" style="text-decoration:none">ℹ️ Track Info</a></li>
             <li><a href="#playlist-header-nav" style="text-decoration:none">💿 Track List</a></li>
             <li><a href="#careerSection" style="text-decoration:none">💼 Career</a></li>
+            <li><a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer" style="text-decoration:none">📸 @r3k.wav</a></li>
           </ul>
         </span>
         <div class="box-deco-bottom"></div>
@@ -1509,8 +1609,8 @@
 
     <div id="main">
       <h1 id="title">
-        <img src="https://soapbubbleseal.net/c12-flower-hibiscus.gif" class="headericon" />
-        𝄞⨾💿✮˚.⋆ Aϝσɳʂσ ᏒᏋᏦᏰᏗᎥᎷ
+        <img src="src/sem-fundo-preto.png" alt="REK" class="headericon" style="height: 36px; width: auto;" />
+        𝄞⨾💿✮˚.⋆ ᏒᏋᏦ // r3k.wav
       </h1>
 
       <div id="content">
@@ -1546,7 +1646,9 @@
               </div>
 
               <div class="artist-badge">
-                <div class="artist-avatar">🎧</div>
+                <div class="artist-avatar">
+                  <img src="src/sem-fundo-preto.png" alt="REK" style="width: 24px; height: 24px; object-fit: contain;" />
+                </div>
                 <div class="artist-info">
                   <h2 id="trackTitle">NOME DA MÚSICA</h2>
                   <p>
@@ -1625,9 +1727,9 @@
           Track Info
         </div>
         <div id="trackDescription" style="
-            background: #fbf9ff;
-            border: 2px dashed #7f0fd5;
-            color: #7f0fd5;
+            background: var(--rek-bg-deep);
+            border: 2px dashed var(--rek-border);
+            color: var(--rek-text);
             padding: 12px;
             text-shadow: none;
             line-height: 1.4;
@@ -1660,9 +1762,9 @@
             Career
           </div>
           <div id="careerSection" style="
-            background: #fbf9ff;
-            border: 2px dashed #7f0fd5;
-            color: #723dcc;
+            background: var(--rek-bg-deep);
+            border: 2px dashed var(--rek-border);
+            color: var(--rek-text-muted);
             padding: 14px;
             text-shadow: none;
             line-height: 1.6;
@@ -1670,17 +1772,17 @@
             font-size: 21px;
           ">
             <!-- ===== EDITAR CARREIRA AQUI ===== -->
-            <p style="color: #d710ff; font-size: 23px; margin-top: 0;">Musical Producer & Sound Designer</p>
+            <p style="color: var(--rek-secondary); font-size: 23px; margin-top: 0;">Musical Producer &amp; Sound Designer</p>
 
-            <p style="font-size: 16px; margin-left: 10px;">I started producing in <b style="color:#d710ff">2021</b>,
+            <p style="font-size: 16px; margin-left: 10px;">I started producing in <b style="color:var(--rek-primary)">2021</b>,
               using
-              <b style="color:#d710ff">Ableton
+              <b style="color:var(--rek-primary)">Ableton
                 Live</b> as my main DAW. My focus is on experimental sound design and sounds that mix
               nostalgia with my personal taste. I have made music for over 20 games along the way, with 5 awarded games
               by Apple on the WWDC Swift Student challenge competition using my tunes.
             </p>
 
-            <p style="color: #d710ff; font-size: 23px;">Interest</p>
+            <p style="color: var(--rek-secondary); font-size: 23px;">Interest</p>
             <ul style="margin: 0;">
               <li>Sound Design for games and interactive media</li>
               <li>Sound synthesis (FM, granular, subtractive)</li>
@@ -1688,52 +1790,44 @@
               <li>Chiptune, DnB, Acustic, Dubstep and Synthwave</li>
             </ul>
 
-            <p style="color: #d710ff; font-size: 23px;">Tools</p>
+            <p style="color: var(--rek-secondary); font-size: 23px;">Tools</p>
             <ul style="margin: 0; padding-left: 18px;">
               <li>Unity, FMOD, Godot, Apple Spatial Audio</li>
               <li>Ableton Live Suite, Reaper, Pro Tools</li>
               <li>Serum, Vital, Operator, Trackers</li>
             </ul>
 
-            <p style="color: #d710ff; font-size: 23px;">Contact</p>
-            <p style="font-size: 16px; margin-left: 10;">Want to collaborate or exchange ideas about sound? Look at the
-              box on the side
-              and get in touch with me through my social medias!</p>
+            <p style="color: var(--rek-secondary); font-size: 23px;">Contact</p>
+            <p style="font-size: 16px; margin-left: 10px;">Want to collaborate or exchange ideas about sound? Hit me up on
+              <a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer"
+                style="color: var(--rek-primary); text-decoration: underline;">Instagram (@r3k.wav)</a>!
+            </p>
 
             <div id="mobile-contact-container">
               <!-- Floating Ad Banner Right -->
-              <a href="#" style="position: fixed; top: 150px; right: 20px; z-index: 9999" id="floating-ad-banner">
-                <img src="https://blob.gifcities.org/gifcities/2445PYAJG2TWMJCW3J3HD62RZGA6YSTG.gif"
-                  style="image-rendering: pixelated; width: 150px; height: auto" alt="Advertisement" />
+              <a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer"
+                style="position: fixed; top: 140px; right: 20px; z-index: 9999; border: 2px solid var(--rek-border);"
+                id="floating-ad-banner" title="@r3k.wav">
+                <img src="src/rosa-verde.png"
+                  style="width: 145px; height: auto; display: block;" alt="REK Sticker" />
               </a>
 
-              <!-- Floating Contact Me Banner Right -->
+              <!-- Floating Contact Me Banner Right (Only Instagram) -->
               <div id="floating-contact-banner"
-                style="position: fixed; top: 50%; transform: translateY(-50%); right: 20px; z-index: 9999; width: 190px; background: #fbf9ff; border: 2px double #7f0fd5; text-align: center; font-family: 'Departure Mono', monospace;">
+                style="position: fixed; top: 52%; transform: translateY(-50%); right: 20px; z-index: 9999; width: 190px; background: var(--rek-surface-card); border: 2px double var(--rek-border); box-shadow: 0 0 18px var(--rek-glow); text-align: center; font-family: 'Departure Mono', monospace;">
                 <div
-                  style="background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('src/black.gif'); padding: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; border-bottom: 1px solid #7f0fd5;">
-                  <span style="color:white;text-shadow: 1px 1px 0 #7f0fd5;font-size:20px;">Contact Me</span>
+                  style="background: var(--rek-bg-deep); padding: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; border-bottom: 1px solid var(--rek-border);">
+                  <span style="color: var(--rek-primary); text-shadow: 1px 1px 0 var(--rek-secondary); font-size: 20px;">Contact</span>
                 </div>
                 <div style="padding: 12px;">
-                  <a href="mailto:afonsorrekbaim@gmail.com"
-                    style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
-                    <img src="https://soapbubbleseal.net/h02-icon-shell.gif"
-                      style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
-                    Email Me
+                  <a href="https://www.instagram.com/r3k.wav/" target="_blank" rel="noopener noreferrer"
+                    style="display:block; color: var(--rek-text); text-decoration: none; border: 1px dashed var(--rek-border); background: var(--rek-bg-deep); padding: 8px; font-size: 18px;">
+                    <img src="src/Instagram.png" alt="r3k.wav Instagram"
+                      style="width: 64px; height: 64px; object-fit: cover; display: block; margin: 0 auto 8px auto; border: 2px solid var(--rek-primary);" />
+                    Instagram
                   </a>
-                  <div
-                    style="font-size: 10px; color: #723dcc; margin-top: 4px; margin-bottom: 14px; word-break: break-word;">
-                    afonsorrekbaim@gmail.com
-                  </div>
-
-                  <a href="https://linkedin.com/in/afonsorek" target="_blank"
-                    style="display:block; color: #7f0fd5; text-decoration: none; border: 1px dashed #7f0fd5; background: #fff; padding: 6px; font-size: 18px;">
-                    <img src="https://soapbubbleseal.net/small_palm.gif"
-                      style="width:16px; image-rendering: pixelated; vertical-align: middle; margin-right: 4px;" />
-                    LinkedIn
-                  </a>
-                  <div style="font-size: 14px; color: #723dcc; margin-top: 4px; word-break: break-word;">
-                    /in/afonsorek
+                  <div style="font-size: 14px; color: var(--rek-primary); margin-top: 6px; word-break: break-word;">
+                    @r3k.wav
                   </div>
                 </div>
               </div>
@@ -1753,44 +1847,62 @@
         <div class="box-deco-top"></div>
         <h2 id="aboutmeheader">
           <img src="https://soapbubbleseal.net/f05-icon-tropical_drink.gif" class="headericon" />
-          About Me
+          About REK
         </h2>
         <div style="
               padding: 10px;
               font-size: 14px;
               text-align: justify;
               line-height: 1.4;
-              text-shadow: 1px 1px 0px #7f0fd5;
-              color: #ffffff;
+              text-shadow: 1px 1px 0px var(--rek-ink-dark);
+              color: var(--rek-text);
             ">
           <img
-            src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUydHVhZHZidzFvYTkwZTVrYndzbW5ta29tYmRpN3Iwc3k1bHg1Z2t2bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3oriO6yTZKmTqUI9tS/200.gif"
-            style="width: 100%; margin-bottom: 10px" />
+            src="src/Preto e branco pixel.png"
+            alt="REK Pixel Logo"
+            style="width: 100%; margin-bottom: 10px; border: 2px solid var(--rek-border); display: block;" />
 
           <p style="margin-top: 0">
-            Hi! I'm Afonso. This is my music portfolio. I created this little
-            corner to document my sound projects, mixing a bit of nostalgia and
-            experimentation. Feel free to look around and listen to my music, this is a safe place!
+            Hi! I'm <b style="color: var(--rek-primary);">REK</b>. This is my music portfolio. I created this little
+            corner to document my sound projects, mixing nostalgia and
+            experimentation. Feel free to listen around!
           </p>
           <p>
-            There are some cool things on the side,
-            click on everything!
+            Pick a logo color below to switch the site vibe!
           </p>
           <div style="clear: both"></div>
         </div>
         <div class="box-deco-bottom"></div>
       </div>
 
+      <!-- REK Theme / Logo Options Selector -->
+      <div class="rek-side-box" id="rek-palette-box" style="margin-bottom: 14px;">
+        <div class="box-deco-top"></div>
+        <h2 class="rek-box-header">
+          <img src="src/sem-fundo-branco.png" class="headericon" alt="REK" />
+          IDV / Palette
+        </h2>
+        <div class="rek-palette-grid">
+          <button type="button" class="rek-palette-btn is-active" data-theme="roxo-verde" title="Roxo + Verde Ácido">
+            <img src="src/Roxo-verde.png" alt="Logo Roxo Verde" />
+          </button>
+          <button type="button" class="rek-palette-btn" data-theme="rosa-verde" title="Rosa + Verde Ácido">
+            <img src="src/rosa-verde.png" alt="Logo Rosa Verde" />
+          </button>
+          <button type="button" class="rek-palette-btn" data-theme="azul" title="Azul + Roxo + Rosa">
+            <img src="src/azul.png" alt="Logo Azul" />
+          </button>
+          <button type="button" class="rek-palette-btn" data-theme="roxo-verde" title="Roxo + Rosa">
+            <img src="src/roxo-rosa.png" alt="Logo Roxo Rosa" />
+          </button>
+        </div>
+        <div class="box-deco-bottom"></div>
+      </div>
+
       <!-- Music GIF decorations -->
       <div style="
-            background-image:
-              linear-gradient(
-                0deg,
-                rgba(255, 255, 255, 0.15),
-                rgba(255, 255, 255, 0.15)
-              ),
-              url(&quot;src/black.gif&quot;);
-            border: 2px double #7f0fd5;
+            background: linear-gradient(175deg, rgba(44, 16, 70, 0.9), rgba(18, 6, 31, 0.96)), url(&quot;src/black.gif&quot;);
+            border: 2px double var(--rek-border);
             margin-bottom: 14px;
           ">
         <div class="box-deco-top"></div>
@@ -1823,14 +1935,8 @@
 
       <!-- Badge strip -->
       <div style="
-            background-image:
-              linear-gradient(
-                0deg,
-                rgba(255, 255, 255, 0.1),
-                rgba(255, 255, 255, 0.1)
-              ),
-              url(&quot;src/black.gif&quot;);
-            border: 2px double #7f0fd5;
+            background: linear-gradient(175deg, rgba(44, 16, 70, 0.9), rgba(18, 6, 31, 0.96)), url(&quot;src/black.gif&quot;);
+            border: 2px double var(--rek-border);
             margin-bottom: 14px;
           ">
         <div class="badge-strip" style="
@@ -2355,8 +2461,8 @@
 
         // Função de click
         const handleTrackClick = () => {
-          if (!localStorage.getItem("afonso_first_play_done")) {
-            localStorage.setItem("afonso_first_play_done", "true");
+          if (!localStorage.getItem("rek_first_play_done")) {
+            localStorage.setItem("rek_first_play_done", "true");
             const overlay = document.getElementById("first-play-overlay");
             const perspective = document.getElementById("playerPerspective");
             if (overlay) overlay.style.display = "none";
@@ -2428,12 +2534,12 @@
         if (!titleSpan || !statusGif) continue;
 
         if (idx === currentTrackIndex) {
-          titleSpan.style.backgroundColor = "#7f0fd5";
-          titleSpan.style.color = "white";
+          titleSpan.style.backgroundColor = "var(--rek-secondary)";
+          titleSpan.style.color = "#ffffff";
           statusGif.src = isPlaying ? pauseGif : playGif;
         } else {
           titleSpan.style.backgroundColor = "transparent";
-          titleSpan.style.color = "#7f0fd5";
+          titleSpan.style.color = "var(--rek-primary)";
           statusGif.src = playGif;
         }
       }
@@ -2528,8 +2634,8 @@
     }
 
     function dismissOverlay() {
-      if (!localStorage.getItem("afonso_first_play_done")) {
-        localStorage.setItem("afonso_first_play_done", "true");
+      if (!localStorage.getItem("rek_first_play_done")) {
+        localStorage.setItem("rek_first_play_done", "true");
         const overlay = document.getElementById("first-play-overlay");
         const perspective = document.getElementById("playerPerspective");
         const skipBtn = document.getElementById("skip-audio-btn");
@@ -2581,12 +2687,12 @@
     loadTrack(0);
     renderPlaylist();
 
-    if (!localStorage.getItem("afonso_first_play_done")) {
+    if (!localStorage.getItem("rek_first_play_done")) {
       document.getElementById("first-play-overlay").style.display = "block";
       document.getElementById("onboarding-warning").style.display = "block";
     } else {
       document.getElementById("wmp-float").style.display = "block";
-      if (localStorage.getItem("afonso_static_mode") === "true") {
+      if (localStorage.getItem("rek_static_mode") === "true") {
         enableStaticMode();
       }
     }
@@ -2594,12 +2700,12 @@
     function chooseExperience(type) {
       document.getElementById("onboarding-warning").style.display = "none";
       if (type === 'static') {
-        localStorage.setItem("afonso_static_mode", "true");
+        localStorage.setItem("rek_static_mode", "true");
         enableStaticMode();
         dismissOverlay();
         document.getElementById("wmp-float").style.display = "block";
       } else {
-        localStorage.removeItem("afonso_static_mode");
+        localStorage.removeItem("rek_static_mode");
         document.getElementById("skip-audio-btn").style.display = "block";
         document.getElementById("playerPerspective").classList.add("player-highlight");
         document.getElementById("btnPlay").classList.add("first-play-glow");
@@ -2647,7 +2753,7 @@
       const el = document.getElementById("visitorCounter");
       if (!el) return;
       // Fake a stored count from localStorage, start at a "realistic" base
-      const storageKey = "afonso_visit_count";
+      const storageKey = "rek_visit_count";
       let count = parseInt(localStorage.getItem(storageKey) || "0");
       if (count === 0) {
         count = 14723 + Math.floor(Math.random() * 2000);
@@ -2779,15 +2885,35 @@
 
 
 
+    /* ------------- REK Palette Theme Switcher ------------- */
+    const paletteBtns = document.querySelectorAll(".rek-palette-btn");
+    function applyRekTheme(themeName, activeBtn) {
+      if (themeName === "azul" || themeName === "rosa-verde") {
+        document.body.setAttribute("data-rek-theme", themeName);
+      } else {
+        document.body.removeAttribute("data-rek-theme");
+      }
+      localStorage.setItem("rek_theme", themeName || "roxo-verde");
+      paletteBtns.forEach((b) => b.classList.toggle("is-active", activeBtn ? b === activeBtn : b.dataset.theme === themeName));
+    }
+
+    const savedTheme = localStorage.getItem("rek_theme") || "roxo-verde";
+    applyRekTheme(savedTheme, document.querySelector(`.rek-palette-btn[data-theme="${savedTheme}"]`));
+
+    paletteBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyRekTheme(btn.dataset.theme, btn);
+      });
+    });
+
     /* ------------- PFP Zoom Animation ------------- */
     document.getElementById("pfp").addEventListener("click", function (e) {
       if (document.getElementById("pfp-clone")) return;
       const rect = this.getBoundingClientRect();
 
-      // Create a raw <img> of the cat GIF instead of cloning the frame
       const clone = document.createElement("img");
       clone.id = "pfp-clone";
-      clone.src = "src/oiiai.gif";
+      clone.src = "src/logo-principal.png";
       clone.style.position = "fixed";
       clone.style.width = rect.width + "px";
       clone.style.height = rect.height + "px";
@@ -2795,8 +2921,8 @@
       clone.style.left = rect.left + "px";
       clone.style.margin = "0";
       clone.style.objectFit = "cover";
+      clone.style.border = "2px solid var(--rek-primary)";
       clone.style.zIndex = "999999";
-      clone.style.imageRendering = "pixelated";
       clone.style.transition = "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)";
       document.body.appendChild(clone);
 
